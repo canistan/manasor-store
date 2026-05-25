@@ -1,26 +1,53 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-olive-50: #f7f9f7;
+  --color-olive-100: #eaecea;
+  --color-olive-500: #687a66;
+  --color-olive-600: #4f644f;
+  --color-olive-700: #3a4a3a;
+  --color-olive-900: #232c23;
+  
+  --color-gold-400: #d4b86a;
+  --color-gold-500: #c5a059;
+  --color-gold-600: #b08d4b;
 
-@theme inline {
+  --color-luxury-black: #0c0c0c;
+  --color-luxury-charcoal: #1a1a1a;
+  
+  --color-cream: #faf9f6;
+  
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --font-serif: var(--font-playfair), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --background: #faf9f6;
+  --foreground: #1a1a1a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0c0c0c;
+    --foreground: #faf9f6;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utilities for premium feel */
+.text-balance {
+  text-wrap: balance;
+}
+.tracking-widest-plus {
+  letter-spacing: 0.2em;
 }

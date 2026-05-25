@@ -1,65 +1,103 @@
 import Image from "next/image";
+import Link from "next/link";
+import { products } from "@/data/products";
+import ProductCard from "@/components/ProductCard";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-col min-h-screen bg-[#FDFBF7]">
+      
+      {/* 1. HERO SLIDER / BANNER ALANI (E-Ticaret Stili) */}
+      <section className="relative w-full h-[500px] md:h-[600px] flex items-center bg-olive-900">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/hero_banner_1779729149147.png"
+            alt="Yeni Hasat Başladı"
+            fill
+            className="object-cover opacity-80"
+            priority
+          />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-xl bg-white/90 p-8 md:p-12 backdrop-blur-sm shadow-xl rounded-sm">
+            <span className="text-gold-600 font-bold uppercase tracking-wider text-sm mb-4 block">
+              Erken Hasat, Soğuk Sıkım
+            </span>
+            <h1 className="text-4xl md:text-5xl font-serif text-luxury-charcoal mb-6 leading-tight">
+              2026 Yeni Hasat <br/> Zeytinyağları Çıktı!
+            </h1>
+            <p className="text-olive-700 mb-8 font-medium">
+              Ege'nin bereketli topraklarından özenle toplanan zeytinlerle hazırlanan, asit oranı düşük premium lezzet.
+            </p>
+            <Link 
+              href="/products/soguk-sikim-zeytinyagi" 
+              className="inline-block bg-olive-700 hover:bg-olive-900 text-white font-medium px-8 py-4 uppercase tracking-wider transition-colors rounded-sm"
+            >
+              Hemen İncele
+            </Link>
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* 2. KATEGORİ VİTRİNİ */}
+      <section className="py-16 bg-white border-b border-olive-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-serif text-luxury-charcoal">Kategoriler</h2>
+            <div className="w-16 h-1 bg-gold-500 mx-auto mt-4"></div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Link href="#products" className="group block text-center">
+              <div className="relative aspect-square md:aspect-video rounded-sm overflow-hidden mb-4 bg-cream border border-olive-100 group-hover:border-gold-400 transition-colors">
+                <Image src="/images/olive_oil_bottle_1779729109843.png" alt="Zeytinyağları" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+              </div>
+              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600">Zeytinyağları</h3>
+            </Link>
+            <Link href="#products" className="group block text-center">
+              <div className="relative aspect-square md:aspect-video rounded-sm overflow-hidden mb-4 bg-cream border border-olive-100 group-hover:border-gold-400 transition-colors">
+                <Image src="/images/black_olives_jar_1779729123320.png" alt="Zeytinler" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+              </div>
+              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600">Zeytin Çeşitleri</h3>
+            </Link>
+            <Link href="#products" className="group block text-center">
+              <div className="relative aspect-square md:aspect-video rounded-sm overflow-hidden mb-4 bg-cream border border-olive-100 group-hover:border-gold-400 transition-colors">
+                <Image src="/images/olive_soap_1779729135941.png" alt="Kişisel Bakım" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+              </div>
+              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600">Kişisel Bakım</h3>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. ÖNE ÇIKAN ÜRÜNLER (E-Ticaret Grid) */}
+      <section id="products" className="py-20 bg-[#FDFBF7]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-serif text-luxury-charcoal mb-2">Çok Satanlar</h2>
+              <p className="text-olive-600">Manasor'un en çok tercih edilen doğal ürünleri.</p>
+            </div>
+            <Link href="/products" className="hidden md:inline-block text-olive-700 hover:text-gold-600 font-medium underline underline-offset-4">
+              Tüm Ürünleri Gör
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          
+          <div className="mt-12 text-center md:hidden">
+            <Link href="/products" className="inline-block border border-olive-700 text-olive-700 hover:bg-olive-700 hover:text-white px-8 py-3 rounded-sm transition-colors font-medium">
+              Tüm Ürünleri Gör
+            </Link>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
