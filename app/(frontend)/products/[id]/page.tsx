@@ -2,15 +2,33 @@
 
 import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
-import { products } from '@/data/products';
 import { useCartStore } from '@/store/useCartStore';
 import { Minus, Plus, ShoppingCart, Check } from 'lucide-react';
+
+interface Variation {
+  variantId: string;
+  size: string;
+  packaging: string;
+  price: number;
+  stock: number;
+}
+
+interface ProductData {
+  id: string;
+  slug: string;
+  name: string;
+  shortDescription?: string;
+  description?: string;
+  category: string;
+  image: any;
+  variations: Variation[];
+}
 
 export default function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const [mounted, setMounted] = useState(false);
-  const [product, setProduct] = useState<typeof products[0] | null>(null);
-  const [selectedVariation, setSelectedVariation] = useState<typeof products[0]['variations'][0] | null>(null);
+  const [product, setProduct] = useState<ProductData | null>(null);
+  const [selectedVariation, setSelectedVariation] = useState<Variation | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   
@@ -18,11 +36,20 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
 
   useEffect(() => {
     setMounted(true);
-    const foundProduct = products.find(p => p.id === resolvedParams.id);
-    if (foundProduct) {
-      setProduct(foundProduct);
-      setSelectedVariation(foundProduct.variations[0]);
-    }
+    
+    // Payload API'den ürünü çek
+    fetch(`/api/products?where[slug][equals]=${resolvedParams.id}&limit=1`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.docs && data.docs.length > 0) {
+          const doc = data.docs[0];
+          setProduct(doc);
+          if (doc.variations && doc.variations.length > 0) {
+            setSelectedVariation(doc.variations[0]);
+          }
+        }
+      })
+      .catch(console.error);
   }, [resolvedParams.id]);
 
   if (!mounted || !product || !selectedVariation) {
@@ -33,14 +60,18 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
     );
   }
 
+  const imageUrl = typeof product.image === 'object' && product.image?.url 
+    ? product.image.url 
+    : '/images/olive_oil_bottle_1779729109843.png';
+
   const handleAddToCart = () => {
     addItem({
-      variationId: selectedVariation.id,
-      productId: product.id,
+      variationId: selectedVariation.variantId,
+      productId: product.slug,
       name: product.name,
       price: selectedVariation.price,
       quantity: quantity,
-      image: product.image,
+      image: imageUrl,
       size: selectedVariation.size,
       packaging: selectedVariation.packaging
     });
@@ -67,7 +98,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
           {/* Sol: Ürün Görseli */}
           <div className="relative aspect-square overflow-hidden bg-cream border border-olive-100 rounded-sm">
             <Image
-              src={product.image}
+              src={imageUrl}
               alt={product.name}
               fill
               className="object-contain p-8"
@@ -96,13 +127,13 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
               <div className="flex flex-wrap gap-3">
                 {product.variations.map((variation) => (
                   <button
-                    key={variation.id}
+                    key={variation.variantId}
                     onClick={() => {
                       setSelectedVariation(variation);
                       setQuantity(1);
                     }}
                     className={`px-5 py-3 rounded-sm border transition-all ${
-                      selectedVariation.id === variation.id 
+                      selectedVariation.variantId === variation.variantId 
                       ? 'border-olive-700 bg-olive-50 text-olive-900 shadow-inner' 
                       : 'border-olive-200 text-olive-600 hover:border-olive-400 bg-white'
                     }`}

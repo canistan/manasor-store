@@ -49,7 +49,7 @@ export default function CartDrawer() {
             </div>
           ) : (
             <div className="space-y-6">
-              {items.map((item) => (
+              {items.map((item: any) => (
                 <div key={item.variationId} className="flex gap-4">
                   <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-olive-50 flex-shrink-0">
                     <Image 

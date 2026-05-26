@@ -1,9 +1,33 @@
 import Image from "next/image";
 import Link from "next/link";
-import { products } from "@/data/products";
 import ProductCard from "@/components/ProductCard";
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 
-export default function Home() {
+export default async function Home() {
+  let products: any[] = [];
+  
+  try {
+    const payload = await getPayload({ config: configPromise });
+    const result = await payload.find({
+      collection: 'products',
+      limit: 10,
+      sort: '-createdAt',
+    });
+    products = result.docs;
+  } catch {
+    // Veritabanı henüz bağlı değilse veya hata varsa boş array
+    products = [];
+  }
+
+  // Ürün görseli URL'sini belirle
+  const getImageUrl = (product: any): string => {
+    if (typeof product.image === 'object' && product.image?.url) {
+      return product.image.url;
+    }
+    return '/images/olive_oil_bottle_1779729109843.png'; // fallback
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-[#FDFBF7]">
       
@@ -28,10 +52,10 @@ export default function Home() {
               2026 Yeni Hasat <br/> Zeytinyağları Çıktı!
             </h1>
             <p className="text-olive-700 mb-8 font-medium">
-              Ege'nin bereketli topraklarından özenle toplanan zeytinlerle hazırlanan, asit oranı düşük premium lezzet.
+              Ege&apos;nin bereketli topraklarından özenle toplanan zeytinlerle hazırlanan, asit oranı düşük premium lezzet.
             </p>
             <Link 
-              href="/products/soguk-sikim-zeytinyagi" 
+              href={products.length > 0 ? `/products/${products[0].slug}` : "/products/soguk-sikim-zeytinyagi"} 
               className="inline-block bg-olive-700 hover:bg-olive-900 text-white font-medium px-8 py-4 uppercase tracking-wider transition-colors rounded-sm"
             >
               Hemen İncele
@@ -77,18 +101,41 @@ export default function Home() {
           <div className="flex justify-between items-end mb-12">
             <div>
               <h2 className="text-3xl md:text-4xl font-serif text-luxury-charcoal mb-2">Çok Satanlar</h2>
-              <p className="text-olive-600">Manasor'un en çok tercih edilen doğal ürünleri.</p>
+              <p className="text-olive-600">Manasor&apos;un en çok tercih edilen doğal ürünleri.</p>
             </div>
             <Link href="/products" className="hidden md:inline-block text-olive-700 hover:text-gold-600 font-medium underline underline-offset-4">
               Tüm Ürünleri Gör
             </Link>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {products.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {products.map((product: any) => (
+                <ProductCard 
+                  key={product.id} 
+                  product={{
+                    id: product.slug,
+                    name: product.name,
+                    shortDescription: product.shortDescription || '',
+                    category: product.category,
+                    image: getImageUrl(product),
+                    variations: (product.variations || []).map((v: any) => ({
+                      id: v.variantId,
+                      size: v.size,
+                      packaging: v.packaging,
+                      price: v.price,
+                      stock: v.stock,
+                    })),
+                  }} 
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 text-olive-500">
+              <p className="text-lg">Henüz ürün eklenmemiş.</p>
+              <p className="text-sm mt-2">Admin panelinden ürün eklemek için <Link href="/admin" className="text-gold-600 underline">/admin</Link> adresine gidin.</p>
+            </div>
+          )}
           
           <div className="mt-12 text-center md:hidden">
             <Link href="/products" className="inline-block border border-olive-700 text-olive-700 hover:bg-olive-700 hover:text-white px-8 py-3 rounded-sm transition-colors font-medium">
