@@ -63,7 +63,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
 
   const imageUrl = typeof product.image === 'object' && product.image?.url 
     ? product.image.url 
-    : '/images/olive_oil_bottle_1779729109843.png';
+    : 'https://images.unsplash.com/photo-1668094497457-29f4bd775c95?w=600&q=80';
 
   const handleAddToCart = () => {
     addItem({
@@ -112,11 +112,59 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
             </div>
             {/* Thumbnail Galerisi */}
             <div className="flex gap-4">
-              {[imageUrl, "https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=600&q=80", "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&q=80", "https://images.unsplash.com/photo-1599839619722-39751411ea63?w=600&q=80"].map((img, i) => (
+              {[imageUrl, "https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=600&q=80", "https://images.unsplash.com/photo-1591122523233-22037c1dec9f?w=600&q=80"].map((img, i) => (
                 <div key={i} onClick={() => setActiveImage(img)} className={`relative w-20 h-20 rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${currentImage === img ? 'border-gold-500' : 'border-transparent hover:border-olive-200'}`}>
                   <Image src={img} alt="" fill className="object-cover opacity-70 hover:opacity-100 bg-cream" />
                 </div>
               ))}
+            </div>
+
+            {/* Müşteri Yorumları */}
+            <div className="mt-8 pt-8 border-t border-olive-100">
+              <h3 className="text-xl font-serif text-luxury-charcoal mb-6">Müşteri Yorumları (124)</h3>
+              
+              {/* Yorum Yapma Barı */}
+              <div className="bg-olive-50 p-6 rounded-xl mb-8 border border-olive-100">
+                <h4 className="text-sm font-medium text-luxury-charcoal mb-3">Siz de yorum yapın</h4>
+                <div className="flex flex-col gap-3">
+                  <div className="flex text-olive-300 gap-1 cursor-pointer">
+                    <Star className="w-5 h-5 hover:text-gold-500 hover:fill-gold-500 transition-all" />
+                    <Star className="w-5 h-5 hover:text-gold-500 hover:fill-gold-500 transition-all" />
+                    <Star className="w-5 h-5 hover:text-gold-500 hover:fill-gold-500 transition-all" />
+                    <Star className="w-5 h-5 hover:text-gold-500 hover:fill-gold-500 transition-all" />
+                    <Star className="w-5 h-5 hover:text-gold-500 hover:fill-gold-500 transition-all" />
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input type="text" placeholder="Yorumunuzu buraya yazın..." className="flex-1 bg-white border border-olive-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-olive-500 transition-colors" />
+                    <button className="bg-olive-900 text-white px-8 py-3 rounded-lg text-sm font-medium hover:bg-gold-500 transition-colors whitespace-nowrap shadow-sm">Gönder</button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Yorum Listesi */}
+              <div className="space-y-6">
+                <div className="border-b border-olive-50 pb-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-luxury-charcoal">Ayşe Yılmaz</span>
+                    <div className="flex text-gold-500"><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/></div>
+                  </div>
+                  <p className="text-sm text-olive-600 leading-relaxed">Kokusuna ve rengine bayıldık. Kesinlikle gerçek bir soğuk sıkım. Kargolama çok özenliydi.</p>
+                </div>
+                <div className="border-b border-olive-50 pb-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-luxury-charcoal">Mehmet K.</span>
+                    <div className="flex text-gold-500"><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/></div>
+                  </div>
+                  <p className="text-sm text-olive-600 leading-relaxed">Salatalarda mükemmel bir tat bırakıyor. Boğazı yakan o orijinal hissi veriyor. Sürekli alacağım.</p>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-luxury-charcoal">Zeynep D.</span>
+                    <div className="flex text-gold-500"><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 text-olive-200 fill-current"/></div>
+                  </div>
+                  <p className="text-sm text-olive-600 leading-relaxed">Teneke ambalajı çok pratik. Yağın lezzeti de tam beklediğim gibi, hafif ve taze.</p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -144,7 +192,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
             </div>
             
             <p className="text-olive-700 leading-relaxed mb-6">
-              {product.shortDescription || product.description}
+              Erken hasat döneminde, zeytinler henüz yeşilken özenle toplanır ve 24°C'nin altında soğuk sıkım yöntemiyle sıkılır. Meyvemsi aroması ve nefis kokusuyla Manasor kalitesini sofralarınıza taşır.
             </p>
 
             {/* Hızlı Bilgiler */}
@@ -166,7 +214,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                     }}
                     className={`px-6 py-3 rounded-full border transition-all ${
                       selectedVariation.variantId === variation.variantId 
-                      ? 'border-gold-500 bg-gold-50 text-gold-700 shadow-sm' 
+                      ? 'border-olive-900 bg-olive-900 text-white shadow-md' 
                       : 'border-olive-200 text-olive-600 hover:border-olive-400 bg-white'
                     }`}
                   >
@@ -231,15 +279,20 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
             </div>
 
             {/* Akordeon Detaylar */}
-            <div className="mt-auto space-y-3">
-              {['Ürün Açıklaması', 'Kullanım Tavsiyesi', 'Müşteri Yorumları (124)'].map((tab, idx) => (
+            <div className="space-y-3">
+              {['Ürün Açıklaması', 'Kullanım Tavsiyesi'].map((tab, idx) => (
                 <details key={idx} className="group bg-white border border-olive-100 rounded-xl overflow-hidden cursor-pointer" open={idx === 0}>
                   <summary className="flex justify-between items-center font-medium p-4 text-luxury-charcoal bg-olive-50/30 hover:bg-olive-50 transition-colors">
                     {tab}
                     <ChevronDown className="w-5 h-5 text-olive-500 group-open:rotate-180 transition-transform" />
                   </summary>
                   <div className="p-4 text-sm text-olive-600 border-t border-olive-100 bg-white leading-relaxed">
-                    {idx === 0 ? product.description || "Doğal ortamında yetişen zeytinlerden elde edilmiştir." : "Bu alan yakında güncellenecektir."}
+                    {idx === 0 && (
+                      "Erken hasat döneminde, zeytinler henüz yeşilken özenle toplanır ve 24°C'nin altında soğuk sıkım yöntemiyle sıkılır. Bu sayede zeytinin içerdiği fenolik bileşenler ve antioksidanlar maksimum seviyede korunur. Meyvemsi aroması, boğazda bıraktığı hafif yakıcılık ve nefis kokusuyla Manasor kalitesini sofralarınıza taşır."
+                    )}
+                    {idx === 1 && (
+                      "Soğuk ve sıcak tüm yemeklerinizde güvenle kullanabilirsiniz. Özellikle sabah kahvaltılarında çiğ olarak tüketilmesi, salatalara ve mezelere son dokunuş olarak eklenmesi tavsiye edilir. Isıdan ve güneş ışığından koruyarak, serin ve rutubetsiz ortamda saklayınız."
+                    )}
                   </div>
                 </details>
               ))}
