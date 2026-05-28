@@ -38,7 +38,7 @@ export default async function Home() {
         name: "Gemlik Lüks Siyah Zeytin (XL Boy)",
         shortDescription: "İnce kabuklu, küçük çekirdekli ve etli Gemlik tipi siyah zeytin.",
         category: "Zeytin",
-        image: { url: "https://images.unsplash.com/photo-1541336032412-2048a678540d?w=600&q=80" },
+        image: { url: "https://images.unsplash.com/photo-1591122523233-22037c1dec9f?w=600&q=80" },
         secondaryImage: "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=600&q=80",
         variations: [{ variantId: 'v2', size: '1Kg', packaging: 'Vakum', price: 320, stock: 100 }]
       },
@@ -47,7 +47,7 @@ export default async function Home() {
         name: "Edremit Çizik Yeşil Zeytin",
         shortDescription: "Sadece su ve tuz ile fermente edilmiş doğal yeşil zeytin.",
         category: "Zeytin",
-        image: { url: "https://images.unsplash.com/photo-1615397323744-128c7c94b2f4?w=600&q=80" },
+        image: { url: "https://images.unsplash.com/photo-1501959915551-4e8d30928317?w=600&q=80" },
         secondaryImage: "https://images.unsplash.com/photo-1599839619722-39751411ea63?w=600&q=80",
         variations: [{ variantId: 'v3', size: '1Kg', packaging: 'Kavanoz', price: 290, stock: 30 }]
       },
