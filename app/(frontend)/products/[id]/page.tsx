@@ -31,6 +31,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
   const [selectedVariation, setSelectedVariation] = useState<Variation | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [activeImage, setActiveImage] = useState<string>('');
   
   const { addItem } = useCartStore();
 
@@ -80,6 +81,8 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
     setTimeout(() => setAdded(false), 2000);
   };
 
+  const currentImage = activeImage || imageUrl;
+
   return (
     <div className="bg-[#FDFBF7] min-h-screen pt-24 pb-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -99,7 +102,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
           <div className="flex flex-col gap-4">
             <div className="relative aspect-square overflow-hidden bg-cream border border-olive-100 rounded-2xl">
               <Image
-                src={imageUrl}
+                src={currentImage}
                 alt={product.name}
                 fill
                 className="object-contain p-8 transition-transform duration-500 hover:scale-105"
@@ -107,11 +110,11 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </div>
-            {/* Thumbnail Mockup */}
+            {/* Thumbnail Galerisi */}
             <div className="flex gap-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className={`relative w-20 h-20 rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${i === 1 ? 'border-gold-500' : 'border-transparent hover:border-olive-200'}`}>
-                  <Image src={imageUrl} alt="" fill className="object-cover opacity-70 hover:opacity-100 bg-cream" />
+              {[imageUrl, "https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=600&q=80", "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&q=80", "https://images.unsplash.com/photo-1599839619722-39751411ea63?w=600&q=80"].map((img, i) => (
+                <div key={i} onClick={() => setActiveImage(img)} className={`relative w-20 h-20 rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${currentImage === img ? 'border-gold-500' : 'border-transparent hover:border-olive-200'}`}>
+                  <Image src={img} alt="" fill className="object-cover opacity-70 hover:opacity-100 bg-cream" />
                 </div>
               ))}
             </div>
@@ -131,8 +134,13 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
               {product.name}
             </h1>
             
-            <div className="text-3xl font-bold text-olive-900 mb-6">
-              {selectedVariation.price.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+            <div className="flex items-end space-x-4 mb-6">
+              <div className="text-4xl font-bold text-olive-900">
+                {selectedVariation.price.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+              </div>
+              <div className="text-xl text-olive-400 line-through mb-1">
+                {(selectedVariation.price * 1.25).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+              </div>
             </div>
             
             <p className="text-olive-700 leading-relaxed mb-6">
@@ -169,47 +177,49 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
               </div>
             </div>
 
-            <div className="flex flex-col gap-4 mb-8">
-              <div className="flex gap-4">
-                {/* Miktar Seçici */}
-                <div className="flex items-center border border-olive-200 rounded-full bg-white px-2 w-32 justify-between">
-                  <button 
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-3 text-olive-500 hover:text-luxury-charcoal transition-colors"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="font-medium text-luxury-charcoal">{quantity}</span>
-                  <button 
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="p-3 text-olive-500 hover:text-luxury-charcoal transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
+            <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-olive-100 p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.1)] lg:static lg:bg-transparent lg:border-none lg:p-0 lg:shadow-none lg:mb-8">
+              <div className="max-w-7xl mx-auto flex flex-col gap-4">
+                <div className="flex gap-4">
+                  {/* Miktar Seçici */}
+                  <div className="flex items-center border border-olive-200 rounded-full bg-cream px-2 w-32 justify-between">
+                    <button 
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="p-3 text-olive-500 hover:text-luxury-charcoal transition-colors"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="font-medium text-luxury-charcoal">{quantity}</span>
+                    <button 
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="p-3 text-olive-500 hover:text-luxury-charcoal transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
 
-                {/* Sepete Ekle Butonu */}
-                <button 
-                  onClick={handleAddToCart}
-                  disabled={added}
-                  className={`flex-1 flex items-center justify-center space-x-2 py-4 px-8 rounded-full font-medium uppercase tracking-wider transition-all ${
-                    added 
-                    ? 'bg-green-600 text-white' 
-                    : 'bg-olive-900 hover:bg-gold-500 text-white shadow-lg hover:shadow-xl hover:-translate-y-1'
-                  }`}
-                >
-                {added ? (
-                  <>
-                    <Check className="w-5 h-5" />
-                    <span>Sepete Eklendi</span>
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart className="w-5 h-5" />
-                    <span>Sepete Ekle</span>
-                  </>
-                )}
-              </button>
+                  {/* Sepete Ekle Butonu */}
+                  <button 
+                    onClick={handleAddToCart}
+                    disabled={added}
+                    className={`flex-1 flex items-center justify-center space-x-2 py-4 px-8 rounded-full font-medium uppercase tracking-wider transition-all active:scale-95 ${
+                      added 
+                      ? 'bg-green-600 text-white' 
+                      : 'bg-olive-900 hover:bg-gold-500 text-white shadow-lg hover:shadow-xl hover:-translate-y-1'
+                    }`}
+                  >
+                  {added ? (
+                    <>
+                      <Check className="w-5 h-5" />
+                      <span>Eklendi</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-5 h-5" />
+                      <span>Sepete Ekle</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
           
