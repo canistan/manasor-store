@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
-import { Minus, Plus, ShoppingCart, Check } from 'lucide-react';
+import { Minus, Plus, ShoppingCart, Check, Star, ChevronDown, Info } from 'lucide-react';
 
 interface Variation {
   variantId: string;
@@ -93,34 +93,58 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
           <span className="text-luxury-charcoal font-medium">{product.name}</span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 bg-white p-6 md:p-12 rounded-sm shadow-sm border border-olive-100">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 bg-white p-6 md:p-12 rounded-2xl shadow-sm border border-olive-100">
           
-          {/* Sol: Ürün Görseli */}
-          <div className="relative aspect-square overflow-hidden bg-cream border border-olive-100 rounded-sm">
-            <Image
-              src={imageUrl}
-              alt={product.name}
-              fill
-              className="object-contain p-8"
-              priority
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
+          {/* Sol: Ürün Görseli Galerisi */}
+          <div className="flex flex-col gap-4">
+            <div className="relative aspect-square overflow-hidden bg-cream border border-olive-100 rounded-2xl">
+              <Image
+                src={imageUrl}
+                alt={product.name}
+                fill
+                className="object-contain p-8 transition-transform duration-500 hover:scale-105"
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+            </div>
+            {/* Thumbnail Mockup */}
+            <div className="flex gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className={`relative w-20 h-20 rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${i === 1 ? 'border-gold-500' : 'border-transparent hover:border-olive-200'}`}>
+                  <Image src={imageUrl} alt="" fill className="object-cover opacity-70 hover:opacity-100 bg-cream" />
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Sağ: Ürün Bilgileri ve Satın Alma */}
           <div className="flex flex-col">
             
+            <div className="flex items-center space-x-2 mb-3">
+              <div className="flex text-gold-500">
+                {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-current" />)}
+              </div>
+              <span className="text-sm text-olive-500 underline cursor-pointer">4.8 (124 Yorum)</span>
+            </div>
+
             <h1 className="text-3xl md:text-4xl font-serif text-luxury-charcoal mb-4">
               {product.name}
             </h1>
             
-            <div className="text-3xl font-medium text-luxury-charcoal mb-6">
+            <div className="text-3xl font-bold text-olive-900 mb-6">
               {selectedVariation.price.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
             </div>
             
-            <p className="text-olive-700 leading-relaxed mb-8 border-b border-olive-100 pb-8">
-              {product.description}
+            <p className="text-olive-700 leading-relaxed mb-6">
+              {product.shortDescription || product.description}
             </p>
+
+            {/* Hızlı Bilgiler */}
+            <div className="flex flex-col space-y-2 mb-8 bg-olive-50 p-4 rounded-xl border border-olive-100">
+              <div className="flex items-center text-sm text-olive-700"><Check className="w-4 h-4 text-gold-500 mr-2"/> Asitlik Derecesi: Maksimum %0.3</div>
+              <div className="flex items-center text-sm text-olive-700"><Check className="w-4 h-4 text-gold-500 mr-2"/> Hasat Zamanı: Ekim 2026 (Erken Hasat)</div>
+              <div className="flex items-center text-sm text-olive-700"><Check className="w-4 h-4 text-gold-500 mr-2"/> Sıkım Tipi: 24°C Soğuk Sıkım</div>
+            </div>
 
             <div className="mb-8">
               <h3 className="text-sm font-medium text-luxury-charcoal mb-3">Seçenekler:</h3>
@@ -132,9 +156,9 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                       setSelectedVariation(variation);
                       setQuantity(1);
                     }}
-                    className={`px-5 py-3 rounded-sm border transition-all ${
+                    className={`px-6 py-3 rounded-full border transition-all ${
                       selectedVariation.variantId === variation.variantId 
-                      ? 'border-olive-700 bg-olive-50 text-olive-900 shadow-inner' 
+                      ? 'border-gold-500 bg-gold-50 text-gold-700 shadow-sm' 
                       : 'border-olive-200 text-olive-600 hover:border-olive-400 bg-white'
                     }`}
                   >
@@ -145,34 +169,35 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              {/* Miktar Seçici */}
-              <div className="flex items-center border border-olive-200 rounded-sm bg-white">
-                <button 
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="p-4 text-olive-500 hover:text-luxury-charcoal hover:bg-olive-50 transition-colors"
-                >
-                  <Minus className="w-5 h-5" />
-                </button>
-                <span className="w-12 text-center font-medium text-luxury-charcoal">{quantity}</span>
-                <button 
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="p-4 text-olive-500 hover:text-luxury-charcoal hover:bg-olive-50 transition-colors"
-                >
-                  <Plus className="w-5 h-5" />
-                </button>
-              </div>
+            <div className="flex flex-col gap-4 mb-8">
+              <div className="flex gap-4">
+                {/* Miktar Seçici */}
+                <div className="flex items-center border border-olive-200 rounded-full bg-white px-2 w-32 justify-between">
+                  <button 
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="p-3 text-olive-500 hover:text-luxury-charcoal transition-colors"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="font-medium text-luxury-charcoal">{quantity}</span>
+                  <button 
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="p-3 text-olive-500 hover:text-luxury-charcoal transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
 
-              {/* Sepete Ekle Butonu */}
-              <button 
-                onClick={handleAddToCart}
-                disabled={added}
-                className={`flex-1 flex items-center justify-center space-x-2 py-4 px-8 rounded-sm font-medium uppercase tracking-wider transition-all ${
-                  added 
-                  ? 'bg-green-600 text-white' 
-                  : 'bg-olive-700 hover:bg-olive-900 text-white'
-                }`}
-              >
+                {/* Sepete Ekle Butonu */}
+                <button 
+                  onClick={handleAddToCart}
+                  disabled={added}
+                  className={`flex-1 flex items-center justify-center space-x-2 py-4 px-8 rounded-full font-medium uppercase tracking-wider transition-all ${
+                    added 
+                    ? 'bg-green-600 text-white' 
+                    : 'bg-olive-900 hover:bg-gold-500 text-white shadow-lg hover:shadow-xl hover:-translate-y-1'
+                  }`}
+                >
                 {added ? (
                   <>
                     <Check className="w-5 h-5" />
@@ -188,10 +213,25 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
             </div>
             
             {/* Güven ve Kargo Bilgisi */}
-            <div className="bg-olive-50 border border-olive-100 p-4 rounded-sm text-sm text-olive-700 space-y-2 mt-auto">
-              <p>✓ <strong>Ücretsiz Kargo:</strong> 500 TL ve üzeri alışverişlerinizde.</p>
-              <p>✓ <strong>Güvenli Alışveriş:</strong> 256-bit SSL sertifikası ile korunmaktadır.</p>
-              <p>✓ <strong>Hızlı Gönderim:</strong> Siparişleriniz 24 saat içinde kargoda.</p>
+            <div className="bg-cream border border-olive-100 p-4 rounded-xl text-sm text-olive-700 space-y-2 mb-8">
+              <p className="flex items-center"><Check className="w-4 h-4 text-green-500 mr-2"/> <strong>Ücretsiz Kargo:</strong> 1500 TL ve üzeri alışverişlerinizde.</p>
+              <p className="flex items-center"><Check className="w-4 h-4 text-green-500 mr-2"/> <strong>Güvenli Alışveriş:</strong> 256-bit SSL sertifikası ile korunmaktadır.</p>
+              <p className="flex items-center"><Check className="w-4 h-4 text-green-500 mr-2"/> <strong>Hızlı Gönderim:</strong> Siparişleriniz 24 saat içinde kargoda.</p>
+            </div>
+
+            {/* Akordeon Detaylar */}
+            <div className="mt-auto space-y-3">
+              {['Ürün Açıklaması', 'Kullanım Tavsiyesi', 'Müşteri Yorumları (124)'].map((tab, idx) => (
+                <details key={idx} className="group bg-white border border-olive-100 rounded-xl overflow-hidden cursor-pointer" open={idx === 0}>
+                  <summary className="flex justify-between items-center font-medium p-4 text-luxury-charcoal bg-olive-50/30 hover:bg-olive-50 transition-colors">
+                    {tab}
+                    <ChevronDown className="w-5 h-5 text-olive-500 group-open:rotate-180 transition-transform" />
+                  </summary>
+                  <div className="p-4 text-sm text-olive-600 border-t border-olive-100 bg-white leading-relaxed">
+                    {idx === 0 ? product.description || "Doğal ortamında yetişen zeytinlerden elde edilmiştir." : "Bu alan yakında güncellenecektir."}
+                  </div>
+                </details>
+              ))}
             </div>
             
           </div>

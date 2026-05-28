@@ -1,24 +1,39 @@
 "use client";
 
-import { X, Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag, Truck } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const FREE_SHIPPING_THRESHOLD = 1500;
 
 export default function CartDrawer() {
   const { isDrawerOpen, closeDrawer, items, updateQuantity, removeItem, getCartTotal } = useCartStore();
-
-  if (!isDrawerOpen) return null;
+  const currentTotal = getCartTotal();
+  const remaining = FREE_SHIPPING_THRESHOLD - currentTotal;
+  const progress = Math.min((currentTotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
 
   return (
-    <>
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-olive-900/40 backdrop-blur-sm z-50 transition-opacity"
-        onClick={closeDrawer}
-      />
+    <AnimatePresence>
+      {isDrawerOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-luxury-black/40 backdrop-blur-sm z-50"
+            onClick={closeDrawer}
+          />
 
-      {/* Drawer */}
-      <div className="fixed inset-y-0 right-0 w-full md:w-96 bg-cream shadow-2xl z-50 flex flex-col animate-in slide-in-from-right duration-300">
+          {/* Drawer */}
+          <motion.div 
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed inset-y-0 right-0 w-full sm:w-[400px] bg-cream shadow-2xl z-50 flex flex-col"
+          >
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-olive-100">
@@ -33,6 +48,28 @@ export default function CartDrawer() {
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Free Shipping Progress */}
+        {items.length > 0 && (
+          <div className="px-6 pb-4 bg-cream border-b border-olive-100">
+            <div className="flex items-center space-x-2 mb-2">
+              <Truck className="w-4 h-4 text-olive-600" />
+              <p className="text-sm font-medium text-olive-700">
+                {remaining > 0 
+                  ? `Ücretsiz kargoya ${remaining.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })} kaldı!`
+                  : 'Tebrikler! Ücretsiz kargo kazandınız.'}
+              </p>
+            </div>
+            <div className="w-full bg-olive-100 rounded-full h-1.5 overflow-hidden">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className={`h-full rounded-full ${remaining <= 0 ? 'bg-green-500' : 'bg-gold-500'}`}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
@@ -117,7 +154,9 @@ export default function CartDrawer() {
             </button>
           </div>
         )}
-      </div>
-    </>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 }

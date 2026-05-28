@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-olive-900 text-cream pt-16 pb-8 border-t border-olive-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           
           {/* Brand */}
           <div className="space-y-4">
@@ -64,7 +64,7 @@ export default function Footer() {
             <ul className="space-y-4 text-sm text-olive-100">
               <li className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-gold-400 flex-shrink-0" />
-                <span>Umurbey Mahallesi, Zeytin Dalı Sokak No:12<br/>Gemlik / Bursa</span>
+                <span>Ceyhun Mah. Zeytinlik Cad. No:5<br/>Gemlik / Bursa</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-gold-400 flex-shrink-0" />
@@ -80,11 +80,17 @@ export default function Footer() {
 
         <div className="border-t border-olive-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-olive-100/60">
           <p>&copy; {new Date().getFullYear()} Manasor Zeytincilik. Tüm hakları saklıdır.</p>
-          <div className="mt-4 md:mt-0 flex space-x-4">
-            {/* Payment Icons Placeholder */}
-            <span className="px-2 py-1 border border-olive-800 rounded bg-olive-900">Visa</span>
-            <span className="px-2 py-1 border border-olive-800 rounded bg-olive-900">Mastercard</span>
-            <span className="px-2 py-1 border border-olive-800 rounded bg-olive-900">Iyzico</span>
+          <div className="mt-4 md:mt-0 flex items-center space-x-3">
+            <span className="flex items-center space-x-1 px-3 py-1.5 border border-olive-800 rounded bg-olive-900/50 text-olive-50">
+              <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+              <span className="font-medium tracking-wide">256-bit SSL</span>
+            </span>
+            <span className="flex items-center space-x-1 px-3 py-1.5 border border-olive-800 rounded bg-olive-900/50 text-olive-50 font-bold tracking-wider">
+              <span className="text-blue-400">iyzi</span><span className="text-white">co</span>
+            </span>
+            <span className="flex items-center space-x-1 px-3 py-1.5 border border-olive-800 rounded bg-olive-900/50 text-olive-50 font-serif italic">
+              Masterpass
+            </span>
           </div>
         </div>
       </div>

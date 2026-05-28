@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingBag, Menu, X } from 'lucide-react';
+import { ShoppingBag, Menu, X, Search, User } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
 import { useState } from 'react';
 
@@ -10,7 +10,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-40 w-full bg-cream/90 backdrop-blur-md border-b border-olive-100">
+    <nav className="sticky top-0 z-40 w-full bg-cream/95 backdrop-blur-md border-b border-olive-100 shadow-sm transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           
@@ -29,8 +29,14 @@ export default function Navbar() {
             <Link href="/contact" className="text-olive-700 hover:text-gold-500 transition-colors font-medium">İletişim</Link>
           </div>
 
-          {/* Cart Icon & Mobile menu button */}
-          <div className="flex items-center space-x-4">
+          {/* Icons & Mobile menu button */}
+          <div className="flex items-center space-x-2 md:space-x-4">
+            <button className="p-2 text-olive-900 hover:text-gold-500 transition-colors hidden md:block" aria-label="Ara">
+              <Search className="w-5 h-5" />
+            </button>
+            <button className="p-2 text-olive-900 hover:text-gold-500 transition-colors hidden md:block" aria-label="Hesabım">
+              <User className="w-5 h-5" />
+            </button>
             <button 
               onClick={openDrawer}
               className="relative p-2 text-olive-900 hover:text-gold-500 transition-colors"

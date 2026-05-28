@@ -1,27 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  --color-olive-50: #f7f9f7;
-  --color-olive-100: #eaecea;
-  --color-olive-500: #687a66;
-  --color-olive-600: #4f644f;
-  --color-olive-700: #3a4a3a;
-  --color-olive-900: #232c23;
+  /* Primary Color (Zeytin Yeşili) */
+  --color-olive-500: #556B2F;
+  --color-olive-600: #4A5D23;
+  --color-olive-700: #3E4E1D;
+  --color-olive-900: #2B3614;
   
-  --color-gold-400: #d4b86a;
-  --color-gold-500: #c5a059;
-  --color-gold-600: #b08d4b;
+  /* Accent Color (Altın/Hardal) */
+  --color-gold-400: #E6C247;
+  --color-gold-500: #D4AF37;
+  --color-gold-600: #B8972D;
 
-  --color-luxury-black: #0c0c0c;
-  --color-luxury-charcoal: #1a1a1a;
+  /* Text Color (Koyu Gri/Antrasit) */
+  --color-luxury-black: #1A1A1A;
+  --color-luxury-charcoal: #2C2C2C;
   
-  --color-cream: #faf9f6;
+  /* Secondary Color (Krem/Bej) */
+  --color-cream: #F9F6F0;
+  --color-olive-50: #FDFCF9;
+  --color-olive-100: #F4EFE6;
   
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
   --font-serif: var(--font-playfair), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {

@@ -3,6 +3,7 @@ import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { Truck, Leaf, ShieldCheck } from "lucide-react";
 
 export default async function Home() {
   let products: any[] = [];
@@ -20,6 +21,48 @@ export default async function Home() {
     products = [];
   }
 
+  // EĞER ÜRÜN YOKSA DUMMY DATA KULLAN (Test ve UI/UX gösterimi için)
+  if (products.length === 0) {
+    products = [
+      {
+        slug: "soguk-sikim-zeytinyagi",
+        name: "Erken Hasat Soğuk Sıkım Natürel Sızma Zeytinyağı",
+        shortDescription: "0.3 asit oranına sahip, taş baskı yöntemiyle üretilmiş ödüllü zeytinyağımız.",
+        category: "Zeytinyağı",
+        image: { url: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&q=80" },
+        secondaryImage: "https://images.unsplash.com/photo-1628191140046-2489c67bc2cd?w=600&q=80",
+        variations: [{ variantId: 'v1', size: '500ml', packaging: 'Cam Şişe', price: 450, stock: 50 }]
+      },
+      {
+        slug: "gemlik-siyah-zeytin",
+        name: "Gemlik Lüks Siyah Zeytin (XL Boy)",
+        shortDescription: "İnce kabuklu, küçük çekirdekli ve etli Gemlik tipi siyah zeytin.",
+        category: "Zeytin",
+        image: { url: "https://images.unsplash.com/photo-1541336032412-2048a678540d?w=600&q=80" },
+        secondaryImage: "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=600&q=80",
+        variations: [{ variantId: 'v2', size: '1Kg', packaging: 'Vakum', price: 320, stock: 100 }]
+      },
+      {
+        slug: "cizik-yesil-zeytin",
+        name: "Edremit Çizik Yeşil Zeytin",
+        shortDescription: "Sadece su ve tuz ile fermente edilmiş doğal yeşil zeytin.",
+        category: "Zeytin",
+        image: { url: "https://images.unsplash.com/photo-1615397323744-128c7c94b2f4?w=600&q=80" },
+        secondaryImage: "https://images.unsplash.com/photo-1599839619722-39751411ea63?w=600&q=80",
+        variations: [{ variantId: 'v3', size: '1Kg', packaging: 'Kavanoz', price: 290, stock: 30 }]
+      },
+      {
+        slug: "zeytinyagli-sabun",
+        name: "Geleneksel Zeytinyağlı Sabun",
+        shortDescription: "Saf zeytinyağından el yapımı, cildi besleyen doğal sabun.",
+        category: "Kişisel Bakım",
+        image: { url: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=600&q=80" },
+        secondaryImage: "https://images.unsplash.com/photo-1600857062241-98e5dba7f214?w=600&q=80",
+        variations: [{ variantId: 'v4', size: 'Standart', packaging: 'Kutu', price: 120, stock: 200 }]
+      }
+    ];
+  }
+
   // Ürün görseli URL'sini belirle
   const getImageUrl = (product: any): string => {
     if (typeof product.image === 'object' && product.image?.url) {
@@ -32,102 +75,139 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-[#FDFBF7]">
       
       {/* 1. HERO SLIDER / BANNER ALANI (E-Ticaret Stili) */}
-      <section className="relative w-full h-[500px] md:h-[600px] flex items-center bg-olive-900">
+      <section className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center text-center">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/hero_banner_1779729149147.png"
-            alt="Yeni Hasat Başladı"
+            src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=2000&auto=format&fit=crop"
+            alt="Zeytin Bahçesi"
             fill
-            className="object-cover opacity-80"
+            className="object-cover"
             priority
           />
+          <div className="absolute inset-0 bg-luxury-black/40"></div>
         </div>
         
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="max-w-xl bg-white/90 p-8 md:p-12 backdrop-blur-sm shadow-xl rounded-sm">
-            <span className="text-gold-600 font-bold uppercase tracking-wider text-sm mb-4 block">
-              Erken Hasat, Soğuk Sıkım
-            </span>
-            <h1 className="text-4xl md:text-5xl font-serif text-luxury-charcoal mb-6 leading-tight">
-              2026 Yeni Hasat <br/> Zeytinyağları Çıktı!
-            </h1>
-            <p className="text-olive-700 mb-8 font-medium">
-              Ege&apos;nin bereketli topraklarından özenle toplanan zeytinlerle hazırlanan, asit oranı düşük premium lezzet.
-            </p>
-            <Link 
-              href={products.length > 0 ? `/products/${products[0].slug}` : "/products/soguk-sikim-zeytinyagi"} 
-              className="inline-block bg-olive-700 hover:bg-olive-900 text-white font-medium px-8 py-4 uppercase tracking-wider transition-colors rounded-sm"
-            >
-              Hemen İncele
-            </Link>
+        <div className="relative z-10 max-w-4xl mx-auto px-4 flex flex-col items-center">
+          <span className="text-gold-400 font-medium tracking-widest-plus uppercase text-sm md:text-base mb-6 drop-shadow-md">
+            Doğadan Sofranıza
+          </span>
+          <h1 className="text-5xl md:text-7xl font-serif text-white mb-8 leading-tight drop-shadow-lg">
+            Yeni Hasat <br/> Soğuk Sıkım
+          </h1>
+          <p className="text-olive-50 text-lg md:text-xl mb-10 max-w-2xl font-light">
+            Ege'nin bereketli topraklarından özenle toplanan zeytinlerle hazırlanan, asit oranı düşük premium lezzet.
+          </p>
+          <Link 
+            href="/products" 
+            className="bg-gold-500 hover:bg-gold-600 text-white font-medium px-10 py-4 uppercase tracking-wider transition-all duration-300 rounded-full hover:scale-105 shadow-lg"
+          >
+            Hemen Keşfet
+          </Link>
+        </div>
+      </section>
+
+      {/* 1.5 GÜVEN ROZETLERİ (Trust Badges) */}
+      <section className="bg-olive-900 text-white py-8 border-t border-olive-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-olive-800">
+            <div className="p-4 flex flex-col items-center justify-center group">
+              <span className="text-gold-400 mb-3 group-hover:scale-110 transition-transform duration-300">
+                <Truck size={36} strokeWidth={1.5} />
+              </span>
+              <h3 className="font-semibold text-lg mb-1 tracking-wide">Hızlı & Güvenli Kargo</h3>
+              <p className="text-olive-300 text-sm">Özenle paketlenmiş, kırılmaya karşı garantili</p>
+            </div>
+            <div className="p-4 flex flex-col items-center justify-center group">
+              <span className="text-gold-400 mb-3 group-hover:scale-110 transition-transform duration-300">
+                <Leaf size={36} strokeWidth={1.5} />
+              </span>
+              <h3 className="font-semibold text-lg mb-1 tracking-wide">%100 Doğal Ürünler</h3>
+              <p className="text-olive-300 text-sm">Ege'nin bahçelerinden, katkısız ve koruyucusuz</p>
+            </div>
+            <div className="p-4 flex flex-col items-center justify-center group">
+              <span className="text-gold-400 mb-3 group-hover:scale-110 transition-transform duration-300">
+                <ShieldCheck size={36} strokeWidth={1.5} />
+              </span>
+              <h3 className="font-semibold text-lg mb-1 tracking-wide">Güvenli Ödeme</h3>
+              <p className="text-olive-300 text-sm">256-bit SSL ve Iyzico güvencesiyle</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* 2. KATEGORİ VİTRİNİ */}
-      <section className="py-16 bg-white border-b border-olive-100">
+      <section className="py-20 bg-cream">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-serif text-luxury-charcoal">Kategoriler</h2>
-            <div className="w-16 h-1 bg-gold-500 mx-auto mt-4"></div>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif text-luxury-charcoal">Kategorilerimiz</h2>
+            <div className="w-16 h-1 bg-gold-500 mx-auto mt-6 rounded-full"></div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Link href="#products" className="group block text-center">
-              <div className="relative aspect-square md:aspect-video rounded-sm overflow-hidden mb-4 bg-cream border border-olive-100 group-hover:border-gold-400 transition-colors">
-                <Image src="/images/olive_oil_bottle_1779729109843.png" alt="Zeytinyağları" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <Link href="#products" className="group flex flex-col items-center text-center">
+              <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
+                <Image src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&q=80" alt="Ahşap masada dalıyla birlikte organik natürel sızma zeytinyağı" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
               </div>
-              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600">Zeytinyağları</h3>
+              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Zeytinyağları</h3>
             </Link>
-            <Link href="#products" className="group block text-center">
-              <div className="relative aspect-square md:aspect-video rounded-sm overflow-hidden mb-4 bg-cream border border-olive-100 group-hover:border-gold-400 transition-colors">
-                <Image src="/images/black_olives_jar_1779729123320.png" alt="Zeytinler" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+            <Link href="#products" className="group flex flex-col items-center text-center">
+              <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
+                <Image src="https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=500&q=80" alt="Doğal ahşap tabakta taze siyah ve yeşil zeytin çeşitleri" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
               </div>
-              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600">Zeytin Çeşitleri</h3>
+              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Zeytin Çeşitleri</h3>
             </Link>
-            <Link href="#products" className="group block text-center">
-              <div className="relative aspect-square md:aspect-video rounded-sm overflow-hidden mb-4 bg-cream border border-olive-100 group-hover:border-gold-400 transition-colors">
-                <Image src="/images/olive_soap_1779729135941.png" alt="Kişisel Bakım" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+            <Link href="#products" className="group flex flex-col items-center text-center">
+              <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
+                <Image src="https://images.unsplash.com/photo-1599839619722-39751411ea63?w=500&q=80" alt="Taze fesleğen ve domatesli gurme zeytinyağlı meze tabağı" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
               </div>
-              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600">Kişisel Bakım</h3>
+              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Gurme Paketler</h3>
+            </Link>
+            <Link href="#products" className="group flex flex-col items-center text-center">
+              <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
+                <Image src="https://images.unsplash.com/photo-1600857062241-98e5dba7f214?w=500&q=80" alt="Doğal zeytinyağlı el yapımı kişisel bakım sabunları" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+              </div>
+              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Kişisel Bakım</h3>
             </Link>
           </div>
         </div>
       </section>
 
       {/* 3. ÖNE ÇIKAN ÜRÜNLER (E-Ticaret Grid) */}
-      <section id="products" className="py-20 bg-[#FDFBF7]">
+      <section id="products" className="py-24 bg-olive-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-12">
+          <div className="flex justify-between items-end mb-16">
             <div>
-              <h2 className="text-3xl md:text-4xl font-serif text-luxury-charcoal mb-2">Çok Satanlar</h2>
+              <h2 className="text-3xl md:text-4xl font-serif text-luxury-charcoal mb-4">Öne Çıkanlar</h2>
               <p className="text-olive-600">Manasor&apos;un en çok tercih edilen doğal ürünleri.</p>
             </div>
-            <Link href="/products" className="hidden md:inline-block text-olive-700 hover:text-gold-600 font-medium underline underline-offset-4">
-              Tüm Ürünleri Gör
+            <Link href="/products" className="hidden md:flex items-center text-olive-700 hover:text-gold-600 font-medium uppercase tracking-wider text-sm">
+              Tümünü Gör
+              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
             </Link>
           </div>
           
           {products.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="flex flex-wrap justify-center gap-6 md:gap-8 mx-auto w-full">
               {products.map((product: any) => (
-                <ProductCard 
-                  key={product.id} 
-                  product={{
-                    id: product.slug,
-                    name: product.name,
-                    shortDescription: product.shortDescription || '',
-                    category: product.category,
-                    image: getImageUrl(product),
-                    variations: (product.variations || []).map((v: any) => ({
-                      id: v.variantId,
-                      size: v.size,
-                      packaging: v.packaging,
-                      price: v.price,
-                      stock: v.stock,
-                    })),
-                  }} 
-                />
+                <div key={product.id || product.slug} className="w-full sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] xl:w-[calc(25%-1.5rem)] max-w-sm flex-shrink-0">
+                  <ProductCard 
+                    product={{
+                      id: product.slug,
+                      name: product.name,
+                      shortDescription: product.shortDescription || '',
+                      category: product.category,
+                      image: getImageUrl(product),
+                      secondaryImage: product.secondaryImage,
+                      variations: (product.variations || []).map((v: any) => ({
+                        id: v.variantId,
+                        size: v.size,
+                        packaging: v.packaging,
+                        price: v.price,
+                        stock: v.stock
+                      }))
+                    }} 
+                  />
+                </div>
               ))}
             </div>
           ) : (

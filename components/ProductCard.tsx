@@ -16,22 +16,33 @@ interface Product {
   shortDescription: string;
   category: string;
   image: string;
+  secondaryImage?: string;
   variations: Variation[];
 }
 
 export default function ProductCard({ product }: { product: Product }) {
   const startingPrice = Math.min(...product.variations.map(v => v.price));
+  const oldPrice = startingPrice * 1.25; // Dummy %20 indirim gösterimi
 
   return (
-    <div className="group flex flex-col h-full bg-white border border-olive-100 hover:border-olive-300 transition-all duration-300 rounded-sm overflow-hidden hover:shadow-lg">
-      <Link href={`/products/${product.id}`} className="block relative aspect-square overflow-hidden bg-cream p-4">
+    <div className="group flex flex-col h-full bg-white border border-olive-100 hover:border-gold-500 transition-all duration-300 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-2">
+      <Link href={`/products/${product.id}`} className="block relative aspect-square overflow-hidden bg-[#F4EFE6] p-4 group/image">
         <Image
           src={product.image}
-          alt={product.name}
+          alt={`Manasor ${product.category} - ${product.name}`}
           fill
-          className="object-contain p-6 transition-transform duration-500 group-hover:scale-105"
+          className={`object-contain p-6 transition-opacity duration-700 ${product.secondaryImage ? 'group-hover/image:opacity-0' : 'group-hover/image:scale-105'}`}
           sizes="(max-width: 768px) 100vw, 33vw"
         />
+        {product.secondaryImage && (
+          <Image
+            src={product.secondaryImage}
+            alt={`Manasor ${product.category} Dokusu - ${product.name}`}
+            fill
+            className="object-cover transition-opacity duration-700 opacity-0 group-hover/image:opacity-100"
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
+        )}
         {/* Etiket / Category Tag */}
         <div className="absolute top-4 left-4 bg-olive-600 text-white text-[10px] uppercase tracking-wider px-2 py-1 rounded-sm">
           {product.category}
@@ -49,17 +60,22 @@ export default function ProductCard({ product }: { product: Product }) {
           {product.shortDescription}
         </p>
         
-        <div className="mt-auto">
-          <div className="text-xl font-medium text-luxury-charcoal mb-4">
-            {startingPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+        <div className="mt-auto pt-4 border-t border-olive-50">
+          <div className="flex items-center justify-center space-x-3 mb-5">
+            <span className="text-sm text-olive-400 line-through">
+              {oldPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+            </span>
+            <span className="text-xl font-bold text-olive-900">
+              {startingPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+            </span>
           </div>
           
           <Link 
             href={`/products/${product.id}`}
-            className="w-full flex items-center justify-center space-x-2 bg-olive-700 hover:bg-olive-900 text-white py-3 px-4 rounded-sm transition-colors text-sm font-medium uppercase tracking-wider"
+            className="w-full flex items-center justify-center space-x-2 bg-olive-700 hover:bg-olive-900 text-white py-3 px-4 rounded-full transition-all duration-300 text-sm font-medium uppercase tracking-wider group-hover:bg-gold-500"
           >
             <ShoppingBag className="w-4 h-4" />
-            <span>İncele & Sepete Ekle</span>
+            <span>Sepete Ekle</span>
           </Link>
         </div>
       </div>

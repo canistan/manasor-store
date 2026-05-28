@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Outfit, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
 });
@@ -30,7 +31,7 @@ export default function RootLayout({
   return (
     <html
       lang="tr"
-      className={`${outfit.variable} ${playfair.variable} h-full antialiased font-light`}
+      className={`${inter.variable} ${playfair.variable} h-full antialiased font-light`}
     >
       <body className="min-h-full flex flex-col font-sans">
         <Navbar />
@@ -39,6 +40,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <CartDrawer />
+        <WhatsAppButton />
       </body>
     </html>
   );
