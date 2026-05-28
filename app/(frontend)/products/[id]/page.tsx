@@ -211,7 +211,8 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                 )}
               </button>
             </div>
-            
+          </div>
+          
             {/* Güven ve Kargo Bilgisi */}
             <div className="bg-cream border border-olive-100 p-4 rounded-xl text-sm text-olive-700 space-y-2 mb-8">
               <p className="flex items-center"><Check className="w-4 h-4 text-green-500 mr-2"/> <strong>Ücretsiz Kargo:</strong> 1500 TL ve üzeri alışverişlerinizde.</p>
