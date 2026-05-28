@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  serverExternalPackages: ['iyzipay'],
 };
 
 export default withPayload(nextConfig);

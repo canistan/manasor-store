@@ -9,23 +9,28 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
     "@payloadcms/db-postgres": "^3.85.0",
     "@payloadcms/next": "^3.85.0",
     "@payloadcms/richtext-lexical": "^3.85.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.40.0",
     "graphql": "^16.14.0",
+    "iyzipay": "^2.0.67",
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
     "payload": "^3.85.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-hook-form": "^7.76.1",
     "sharp": "^0.34.5",
     "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3",
     "zustand": "^5.0.13"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/iyzipay": "^2.0.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
