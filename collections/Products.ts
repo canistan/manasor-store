@@ -124,6 +124,21 @@ export const Products: CollectionConfig = {
           min: 0,
           defaultValue: 0,
         },
+        {
+          name: 'weight_kg',
+          type: 'number',
+          label: 'Ağırlık / Desi (KG)',
+          required: true,
+          admin: {
+            description: 'Kargo maliyet hesaplaması için zorunludur',
+          },
+        },
+        {
+          name: 'sku',
+          type: 'text',
+          label: 'Stok Kodu (SKU)',
+          required: true,
+        },
       ],
     },
     {
@@ -134,6 +149,35 @@ export const Products: CollectionConfig = {
       admin: {
         description: 'Ana sayfada gösterilecek ürünler için işaretleyin',
       },
+    },
+    {
+      name: 'traceability',
+      type: 'group',
+      label: 'İzlenebilirlik ve Gıda Kalitesi',
+      admin: {
+        description: 'Zeytinyağı ve gıda ürünleri için zorunlu kalite kontrol verileri',
+        position: 'sidebar',
+      },
+      fields: [
+        {
+          name: 'batch_number',
+          type: 'text',
+          label: 'Parti No (Batch)',
+          required: true,
+        },
+        {
+          name: 'harvest_year',
+          type: 'text',
+          label: 'Hasat Yılı',
+          required: true,
+        },
+        {
+          name: 'expiry_date',
+          type: 'date',
+          label: 'Son Kullanma Tarihi (SKT)',
+          required: true,
+        },
+      ],
     },
   ],
 }

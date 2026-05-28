@@ -8,6 +8,8 @@ import { fileURLToPath } from 'url'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Products } from './collections/Products'
+import { Orders } from './collections/Orders'
+import { RmaRequests } from './collections/RmaRequests'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -21,7 +23,7 @@ export default buildConfig({
     avatar: 'default',
   },
 
-  collections: [Users, Media, Products],
+  collections: [Users, Media, Products, Orders, RmaRequests],
 
   db: postgresAdapter({
     pool: {
