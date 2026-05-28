@@ -64,7 +64,7 @@ export default function Footer() {
             <ul className="space-y-4 text-sm text-olive-100">
               <li className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-gold-400 flex-shrink-0" />
-                <span>Ceyhun Mah. Zeytinlik Cad. No:5<br/>Gemlik / Bursa</span>
+                <span>Umurbey Mahallesi, Zeytin Dalı Sokak No:12<br/>Gemlik / Bursa</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-gold-400 flex-shrink-0" />
