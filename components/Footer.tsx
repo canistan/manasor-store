@@ -145,11 +145,11 @@ export default function Footer() {
 
       {/* Subscription Toast Notification */}
       {isSubscribed && (
-        <div className="fixed bottom-8 right-8 z-[9999] bg-olive-900 border border-gold-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 transition-all duration-500 animate-in slide-in-from-bottom-5 fade-in">
-          <CheckCircle className="w-6 h-6 text-gold-500" />
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] bg-olive-900 border border-gold-500 text-white px-8 py-6 rounded-2xl shadow-2xl flex flex-col items-center text-center space-y-4 animate-in zoom-in-95 duration-300">
+          <CheckCircle className="w-12 h-12 text-gold-500" />
           <div>
-            <h4 className="font-serif font-medium text-lg">Aramıza Hoş Geldiniz!</h4>
-            <p className="text-sm text-olive-100">Bülten aboneliğiniz başarıyla gerçekleşti.</p>
+            <h4 className="font-serif font-medium text-xl mb-1">Aramıza Hoş Geldiniz!</h4>
+            <p className="text-olive-100">Bülten aboneliğiniz başarıyla gerçekleşti.</p>
           </div>
         </div>
       )}
