@@ -80,6 +80,20 @@ export default function Navbar() {
             >
               Ürünlerimiz
             </Link>
+            <Link 
+              href="/about" 
+              className="block px-3 py-2 text-olive-700 hover:text-gold-500 hover:bg-olive-50 rounded-md font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Hakkımızda
+            </Link>
+            <Link 
+              href="/contact" 
+              className="block px-3 py-2 text-olive-700 hover:text-gold-500 hover:bg-olive-50 rounded-md font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              İletişim
+            </Link>
           </div>
         </div>
       )}
