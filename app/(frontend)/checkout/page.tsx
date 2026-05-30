@@ -30,6 +30,7 @@ const checkoutSchema = z.object({
   kvkkAccepted: z.literal(true, {
     message: 'KVKK aydınlatma metnini onaylamanız gerekmektedir.',
   }),
+  newsletterAccepted: z.boolean().optional(),
 }).superRefine((data, ctx) => {
   if (data.invoiceType === 'bireysel' && (!data.identityNumber || data.identityNumber.length < 11)) {
     ctx.addIssue({
@@ -58,6 +59,9 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [iyzicoContent, setIyzicoContent] = useState<string | null>(null);
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [isKvkkModalOpen, setIsKvkkModalOpen] = useState(false);
 
   const total = getCartTotal();
   const shipping = total > 1500 || total === 0 ? 0 : 79.90;
@@ -257,15 +261,25 @@ export default function CheckoutPage() {
                     <label className="flex items-start cursor-pointer">
                       <input {...register('termsAccepted')} type="checkbox" className="form-checkbox mt-1 h-5 w-5 rounded border-olive-300 text-gold-500 focus:ring-gold-500" />
                       <div className="ml-3">
-                        <span className="text-sm text-olive-800 leading-relaxed block">Ön Bilgilendirme Koşullarını ve Mesafeli Satış Sözleşmesini okudum, onaylıyorum.</span>
+                        <span className="text-sm text-olive-800 leading-relaxed block">
+                          <button type="button" onClick={(e) => { e.preventDefault(); setIsTermsModalOpen(true); }} className="text-gold-600 hover:underline font-medium">Ön Bilgilendirme Koşullarını</button> ve <button type="button" onClick={(e) => { e.preventDefault(); setIsTermsModalOpen(true); }} className="text-gold-600 hover:underline font-medium">Mesafeli Satış Sözleşmesini</button> okudum, onaylıyorum.
+                        </span>
                         {errors.termsAccepted && <span className="text-xs text-red-500 mt-1 block">{errors.termsAccepted.message}</span>}
                       </div>
                     </label>
                     <label className="flex items-start cursor-pointer">
                       <input {...register('kvkkAccepted')} type="checkbox" className="form-checkbox mt-1 h-5 w-5 rounded border-olive-300 text-gold-500 focus:ring-gold-500" />
                       <div className="ml-3">
-                        <span className="text-sm text-olive-800 leading-relaxed block">Kişisel verilerimin KVKK kapsamında işlenmesini kabul ediyorum.</span>
+                        <span className="text-sm text-olive-800 leading-relaxed block">
+                          Kişisel verilerimin <button type="button" onClick={(e) => { e.preventDefault(); setIsKvkkModalOpen(true); }} className="text-gold-600 hover:underline font-medium">KVKK kapsamında</button> işlenmesini kabul ediyorum.
+                        </span>
                         {errors.kvkkAccepted && <span className="text-xs text-red-500 mt-1 block">{errors.kvkkAccepted.message}</span>}
+                      </div>
+                    </label>
+                    <label className="flex items-start cursor-pointer pt-2 border-t border-olive-200/50">
+                      <input {...register('newsletterAccepted')} type="checkbox" className="form-checkbox mt-1 h-5 w-5 rounded border-olive-300 text-gold-500 focus:ring-gold-500" />
+                      <div className="ml-3">
+                        <span className="text-sm text-olive-800 leading-relaxed block font-medium">Bültene abone olmak ve kampanyalardan haberdar olmak istiyorum.</span>
                       </div>
                     </label>
                   </div>
@@ -347,6 +361,55 @@ export default function CheckoutPage() {
 
         </div>
       </div>
+
+      {/* Modals */}
+      {isTermsModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[80vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-olive-100 flex justify-between items-center">
+              <h2 className="text-xl font-serif text-luxury-charcoal">Ön Bilgilendirme ve Mesafeli Satış Sözleşmesi</h2>
+              <button onClick={() => setIsTermsModalOpen(false)} className="text-olive-400 hover:text-luxury-charcoal transition-colors p-2 rounded-full hover:bg-olive-50">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto prose prose-sm max-w-none prose-olive">
+              <p>İşbu sözleşme, alıcı ve satıcı arasındaki mesafeli satış hükümlerini düzenler. Detaylı sözleşme metni dinamik olarak sipariş verilerine göre üretilecektir.</p>
+              <h3>MADDE 1: TARAFLAR</h3>
+              <p>Satıcı: Manasor Zeytincilik (ZeytinCo) <br/> Alıcı: Sipariş veren müşteri</p>
+              <h3>MADDE 2: SÖZLEŞMENİN KONUSU</h3>
+              <p>İşbu Sözleşme'nin konusu, Alıcı'nın Satıcı'ya ait internet sitesinden elektronik ortamda siparişini yaptığı ürünlerin satışı ve teslimi ile ilgili yasal hakların belirlenmesidir.</p>
+              <p>... (Hukuki metnin tamamı buraya eklenecektir)</p>
+            </div>
+            <div className="p-6 border-t border-olive-100 flex justify-end">
+              <button onClick={() => setIsTermsModalOpen(false)} className="bg-olive-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-gold-500 transition-colors">Kapat ve Anladım</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isKvkkModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-olive-100 flex justify-between items-center">
+              <h2 className="text-xl font-serif text-luxury-charcoal">KVKK Aydınlatma Metni</h2>
+              <button onClick={() => setIsKvkkModalOpen(false)} className="text-olive-400 hover:text-luxury-charcoal transition-colors p-2 rounded-full hover:bg-olive-50">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto prose prose-sm max-w-none prose-olive">
+              <p>Kişisel verileriniz, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca veri sorumlusu sıfatıyla Manasor tarafından işlenmektedir.</p>
+              <h3>Hangi Veriler İşleniyor?</h3>
+              <p>Ad, soyad, adres, e-posta, iletişim numarası, fatura bilgileri.</p>
+              <h3>İşleme Amacı</h3>
+              <p>Sipariş süreçlerinin yürütülmesi, fatura kesimi, kargo teslimatı ve yasal yükümlülüklerin yerine getirilmesi.</p>
+              <p>... (Aydınlatma metninin tamamı buraya eklenecektir)</p>
+            </div>
+            <div className="p-6 border-t border-olive-100 flex justify-end">
+              <button onClick={() => setIsKvkkModalOpen(false)} className="bg-olive-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-gold-500 transition-colors">Kapat ve Anladım</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

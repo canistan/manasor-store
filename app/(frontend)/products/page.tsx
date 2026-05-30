@@ -6,7 +6,7 @@ import ProductCard from '@/components/ProductCard';
 import { Filter, ChevronDown, X } from 'lucide-react';
 
 // Dummy data for PLP
-const dummyProducts = [
+const baseProducts = [
   {
     id: "soguk-sikim-zeytinyagi",
     name: "Erken Hasat Soğuk Sıkım Natürel Sızma Zeytinyağı",
@@ -22,7 +22,6 @@ const dummyProducts = [
     shortDescription: "İnce kabuklu, küçük çekirdekli ve etli Gemlik tipi siyah zeytin.",
     category: "Zeytin",
     image: "https://images.unsplash.com/photo-1591122523233-22037c1dec9f?w=600&q=80",
-    secondaryImage: "/images/black_olives_hover.png",
     variations: [{ id: 'v2', size: '1Kg', packaging: 'Vakum', price: 320, stock: 100 }]
   },
   {
@@ -31,10 +30,19 @@ const dummyProducts = [
     shortDescription: "Sadece su ve tuz ile fermente edilmiş doğal yeşil zeytin.",
     category: "Zeytin",
     image: "https://images.unsplash.com/photo-1501959915551-4e8d30928317?w=600&q=80",
-    secondaryImage: "/images/green_olives_hover.png",
     variations: [{ id: 'v3', size: '1Kg', packaging: 'Kavanoz', price: 290, stock: 30 }]
   },
 ];
+
+const dummyProducts = Array.from({ length: 50 }).map((_, i) => {
+  const base = baseProducts[i % baseProducts.length];
+  return {
+    ...base,
+    id: `${base.id}-${i + 1}`,
+    name: `${base.name} ${i + 1}`,
+    variations: [{ ...base.variations[0], id: `v${i + 1}` }]
+  };
+});
 
 export default function ProductsPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -132,7 +140,7 @@ export default function ProductsPage() {
               </button>
 
               <p className="hidden sm:block text-sm text-olive-600">
-                <span className="font-bold text-luxury-charcoal">3</span> ürün listeleniyor
+                <span className="font-bold text-luxury-charcoal">{dummyProducts.length}</span> ürün listeleniyor
               </p>
 
               <div className="flex items-center space-x-2 ml-auto">

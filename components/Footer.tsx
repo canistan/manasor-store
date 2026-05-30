@@ -5,6 +5,20 @@ export default function Footer() {
   return (
     <footer className="bg-olive-900 text-cream pt-16 pb-8 border-t border-olive-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Newsletter Section */}
+        <div className="border-b border-olive-800 pb-12 mb-12">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="max-w-xl">
+              <h4 className="text-2xl font-serif text-gold-400 mb-2">E-Bültene Kayıt Olun</h4>
+              <p className="text-olive-100 text-sm">Yeni hasat ürünlerimizden, özel kampanyalardan ve zeytinyağı kültürüne dair içeriklerden ilk siz haberdar olun.</p>
+            </div>
+            <form className="w-full md:w-auto flex flex-col sm:flex-row gap-2">
+              <input type="email" placeholder="E-posta adresiniz" className="flex-1 sm:w-72 bg-olive-900/50 border border-olive-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400" required />
+              <button type="submit" className="bg-gold-500 hover:bg-gold-400 text-olive-900 font-medium px-6 py-3 rounded-lg transition-colors">Abone Ol</button>
+            </form>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           
           {/* Brand */}

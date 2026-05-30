@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail } from "lucide-react";
 
 export const metadata = {
   title: "İletişim | Manasor",
@@ -85,18 +85,7 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-6 group">
-                  <div className="w-14 h-14 bg-olive-100 rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-gold-500 transition-colors duration-300">
-                    <Clock className="text-olive-900 group-hover:text-white transition-colors duration-300 w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-luxury-charcoal mb-1">Çalışma Saatleri</h3>
-                    <p className="text-olive-700 font-light">
-                      Pazartesi - Cuma: 09:00 - 18:00<br />
-                      Cumartesi: 10:00 - 15:00
-                    </p>
-                  </div>
-                </div>
+
               </div>
             </div>
 
