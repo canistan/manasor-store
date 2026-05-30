@@ -10,6 +10,7 @@ import { Media } from './collections/Media'
 import { Products } from './collections/Products'
 import { Orders } from './collections/Orders'
 import { RmaRequests } from './collections/RmaRequests'
+import { Subscribers } from './collections/Subscribers'
 import { HomePage } from './globals/HomePage'
 
 const filename = fileURLToPath(import.meta.url)
@@ -24,7 +25,7 @@ export default buildConfig({
     avatar: 'default',
   },
 
-  collections: [Users, Media, Products, Orders, RmaRequests],
+  collections: [Users, Media, Products, Orders, RmaRequests, Subscribers],
 
   globals: [HomePage],
 

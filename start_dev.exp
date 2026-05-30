@@ -1,0 +1,16 @@
+#!/usr/bin/expect
+set timeout -1
+spawn npm run dev
+expect {
+    "Is enum_orders_invoice_type enum created or renamed from another enum?" {
+        send "\r"
+        exp_continue
+    }
+    "Is enum_orders_status enum created or renamed from another enum?" {
+        send "\r"
+        exp_continue
+    }
+    eof {
+        exit
+    }
+}

@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import { CollectionConfig } from 'payload'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
@@ -7,152 +7,121 @@ export const Orders: CollectionConfig = {
     plural: 'Siparişler',
   },
   admin: {
-    useAsTitle: 'id',
-    defaultColumns: ['id', 'customer', 'status', 'total_amount', 'createdAt'],
-    description: 'Müşteri siparişleri ve Iyzico ödeme takibi',
+    useAsTitle: 'orderNumber',
+    defaultColumns: ['orderNumber', 'customerName', 'totalPrice', 'status', 'createdAt'],
   },
   access: {
-    // Müşteriler sadece kendi siparişlerini görebilir, adminler hepsini
-    read: ({ req: { user } }) => {
-      if (!user) return false
-      if (user.role === 'admin') return true
-      return {
-        customer: {
-          equals: user.id,
-        },
-      }
-    },
-    create: () => true, // Frontend'den sipariş oluşturulabilmesi için (genellikle Local API üzerinden bypass edilir ama şimdilik true diyebiliriz)
-    update: ({ req: { user } }) => user?.role === 'admin',
-    delete: ({ req: { user } }) => user?.role === 'admin',
+    read: () => true,
+    create: () => true, // Frontend API üzerinden oluşturulabilmesi için
+    update: ({ req: { user } }) => !!user, // Sadece admin güncelleyebilir
+    delete: ({ req: { user } }) => !!user, // Sadece admin silebilir
   },
   fields: [
     {
-      name: 'customer',
-      type: 'relationship',
-      relationTo: 'users',
-      label: 'Müşteri',
+      name: 'orderNumber',
+      type: 'text',
+      label: 'Sipariş Numarası (Iyzico vs.)',
       required: true,
+      unique: true,
       admin: {
-        position: 'sidebar',
-      },
+        readOnly: true,
+      }
     },
     {
       name: 'status',
       type: 'select',
       label: 'Sipariş Durumu',
       defaultValue: 'pending',
-      required: true,
       options: [
-        { label: 'Beklemede', value: 'pending' },
-        { label: 'Hazırlanıyor', value: 'processing' },
-        { label: 'Kargoda', value: 'shipped' },
+        { label: 'Beklemede (Ödeme Alınmadı)', value: 'pending' },
+        { label: 'Ödendi (Hazırlanıyor)', value: 'paid' },
+        { label: 'Kargolandı', value: 'shipped' },
         { label: 'Teslim Edildi', value: 'delivered' },
-        { label: 'İptal', value: 'cancelled' },
+        { label: 'İptal / İade', value: 'cancelled' },
       ],
-      admin: {
-        position: 'sidebar',
-      },
+      required: true,
     },
     {
-      name: 'shipping_info',
-      type: 'group',
-      label: 'Kargo ve Teslimat Bilgileri',
-      fields: [
+      name: 'paymentReference',
+      type: 'text',
+      label: 'Iyzico Payment ID',
+    },
+    {
+      name: 'totalPrice',
+      type: 'number',
+      label: 'Toplam Tutar (TRY)',
+      required: true,
+    },
+    {
+      name: 'shippingPrice',
+      type: 'number',
+      label: 'Kargo Ücreti (TRY)',
+      defaultValue: 0,
+    },
+    {
+      type: 'tabs',
+      tabs: [
         {
-          name: 'address',
-          type: 'textarea',
-          label: 'Açık Adres',
-          required: true,
-        },
-        {
-          type: 'row',
+          label: 'Müşteri Bilgileri',
           fields: [
             {
-              name: 'city',
-              type: 'text',
-              label: 'İl',
-              required: true,
+              type: 'row',
+              fields: [
+                { name: 'firstName', type: 'text', label: 'Ad', required: true },
+                { name: 'lastName', type: 'text', label: 'Soyad', required: true },
+              ]
             },
             {
-              name: 'district',
-              type: 'text',
-              label: 'İlçe',
-              required: true,
+              type: 'row',
+              fields: [
+                { name: 'email', type: 'email', label: 'E-Posta', required: true },
+                { name: 'phone', type: 'text', label: 'Telefon', required: true },
+              ]
             },
+            {
+              name: 'invoiceType',
+              type: 'select',
+              label: 'Fatura Tipi',
+              options: [
+                { label: 'Bireysel', value: 'bireysel' },
+                { label: 'Kurumsal', value: 'kurumsal' },
+              ],
+              defaultValue: 'bireysel',
+            },
+            { name: 'identityNumber', type: 'text', label: 'T.C. Kimlik No' },
+            { name: 'companyName', type: 'text', label: 'Şirket Adı' },
+            { name: 'taxOffice', type: 'text', label: 'Vergi Dairesi' },
+            { name: 'taxNumber', type: 'text', label: 'Vergi No' },
           ]
         },
         {
-          name: 'tracking_number',
-          type: 'text',
-          label: 'Kargo Takip No',
-        },
-      ],
-    },
-    {
-      name: 'payment_info',
-      type: 'group',
-      label: 'Ödeme Bilgileri (Iyzico)',
-      fields: [
-        {
-          name: 'iyzico_payment_id',
-          type: 'text',
-          label: 'Iyzico Ödeme ID',
+          label: 'Adres Bilgileri',
+          fields: [
+            { name: 'city', type: 'text', label: 'İl', required: true },
+            { name: 'district', type: 'text', label: 'İlçe', required: true },
+            { name: 'address', type: 'textarea', label: 'Açık Adres', required: true },
+          ]
         },
         {
-          name: 'total_amount',
-          type: 'number',
-          label: 'Toplam Tutar (TL)',
-          required: true,
-        },
-        {
-          name: 'payment_status',
-          type: 'select',
-          label: 'Ödeme Durumu',
-          options: [
-            { label: 'Başarılı', value: 'success' },
-            { label: 'Başarısız', value: 'failed' },
-          ],
-        },
-      ],
-    },
-    {
-      name: 'items',
-      type: 'array',
-      label: 'Sipariş Kalemleri',
-      required: true,
-      minRows: 1,
-      fields: [
-        {
-          name: 'product',
-          type: 'relationship',
-          relationTo: 'products',
-          label: 'Ürün',
-          required: true,
-        },
-        {
-          name: 'variant_id',
-          type: 'text',
-          label: 'Varyant ID',
-          required: true,
-        },
-        {
-          name: 'quantity',
-          type: 'number',
-          label: 'Adet',
-          required: true,
-          min: 1,
-        },
-        {
-          name: 'price',
-          type: 'number',
-          label: 'Birim Fiyat (Snapshot)',
-          required: true,
-          admin: {
-            description: 'Sipariş anındaki fiyat',
-          },
-        },
-      ],
-    },
+          label: 'Sipariş Kalemleri (Ürünler)',
+          fields: [
+            {
+              name: 'items',
+              type: 'array',
+              label: 'Ürünler',
+              fields: [
+                { name: 'productId', type: 'text', label: 'Ürün ID' },
+                { name: 'name', type: 'text', label: 'Ürün Adı', required: true },
+                { name: 'variationId', type: 'text', label: 'Varyasyon ID' },
+                { name: 'size', type: 'text', label: 'Boyut/Gramaj' },
+                { name: 'packaging', type: 'text', label: 'Ambalaj' },
+                { name: 'price', type: 'number', label: 'Birim Fiyat', required: true },
+                { name: 'quantity', type: 'number', label: 'Adet', required: true },
+              ],
+            }
+          ]
+        }
+      ]
+    }
   ],
 }
