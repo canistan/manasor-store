@@ -3,11 +3,16 @@
 import Link from 'next/link';
 import { ShoppingBag, Menu, X, Search, User } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Navbar() {
   const { getCartCount, openDrawer } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <nav className="sticky top-0 z-40 w-full bg-cream/95 backdrop-blur-md border-b border-olive-100 shadow-sm transition-all duration-300">
@@ -43,7 +48,7 @@ export default function Navbar() {
               aria-label="Sepeti Aç"
             >
               <ShoppingBag className="w-6 h-6" />
-              {getCartCount() > 0 && (
+              {mounted && getCartCount() > 0 && (
                 <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-gold-500 rounded-full">
                   {getCartCount()}
                 </span>
