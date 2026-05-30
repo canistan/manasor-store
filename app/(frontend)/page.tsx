@@ -7,15 +7,31 @@ import { Truck, Leaf, ShieldCheck } from "lucide-react";
 
 export default async function Home() {
   let products: any[] = [];
+  let homePageData: any = null;
   
   try {
     const payload = await getPayload({ config: configPromise });
-    const result = await payload.find({
-      collection: 'products',
-      limit: 10,
-      sort: '-createdAt',
-    });
-    products = result.docs;
+    
+    // 1. CMS'ten Anasayfa Verilerini Çek
+    try {
+      homePageData = await payload.findGlobal({ slug: 'home-page' });
+    } catch {
+      console.log('HomePage global ayarları henüz kaydedilmemiş.');
+    }
+
+    // 2. Öne Çıkan Ürünleri Belirle
+    if (homePageData?.featuredProducts?.length > 0) {
+      // CMS'ten seçilen ürünler
+      products = homePageData.featuredProducts.map((p: any) => typeof p === 'object' ? p : null).filter(Boolean);
+    } else {
+      // Seçilmediyse en son eklenen 10 ürün
+      const result = await payload.find({
+        collection: 'products',
+        limit: 10,
+        sort: '-createdAt',
+      });
+      products = result.docs;
+    }
   } catch {
     // Veritabanı henüz bağlı değilse veya hata varsa boş array
     products = [];
@@ -69,7 +85,7 @@ export default async function Home() {
       <section className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center text-center">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=2000&auto=format&fit=crop"
+            src={homePageData?.hero?.backgroundImage?.url || "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=2000&auto=format&fit=crop"}
             alt="Zeytin Bahçesi"
             fill
             className="object-cover"
@@ -82,17 +98,18 @@ export default async function Home() {
           <span className="text-gold-400 font-medium tracking-widest-plus uppercase text-sm md:text-base mb-6 drop-shadow-md">
             Doğadan Sofranıza
           </span>
-          <h1 className="text-5xl md:text-7xl font-serif text-white mb-8 leading-tight drop-shadow-lg">
-            Yeni Hasat <br/> Soğuk Sıkım
-          </h1>
+          <h1 
+            className="text-5xl md:text-7xl font-serif text-white mb-8 leading-tight drop-shadow-lg"
+            dangerouslySetInnerHTML={{ __html: homePageData?.hero?.title || "Yeni Hasat <br/> Soğuk Sıkım" }}
+          />
           <p className="text-olive-50 text-lg md:text-xl mb-10 max-w-2xl font-light">
-            Ege'nin bereketli topraklarından özenle toplanan zeytinlerle hazırlanan, asit oranı düşük premium lezzet.
+            {homePageData?.hero?.subtitle || "Ege'nin bereketli topraklarından özenle toplanan zeytinlerle hazırlanan, asit oranı düşük premium lezzet."}
           </p>
           <Link 
-            href="/products" 
+            href={homePageData?.hero?.buttonLink || "/products"} 
             className="bg-gold-500 hover:bg-gold-600 text-white font-medium px-10 py-4 uppercase tracking-wider transition-all duration-300 rounded-full hover:scale-105 shadow-lg"
           >
-            Hemen Keşfet
+            {homePageData?.hero?.buttonText || "Hemen Keşfet"}
           </Link>
         </div>
       </section>

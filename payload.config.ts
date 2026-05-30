@@ -10,6 +10,7 @@ import { Media } from './collections/Media'
 import { Products } from './collections/Products'
 import { Orders } from './collections/Orders'
 import { RmaRequests } from './collections/RmaRequests'
+import { HomePage } from './globals/HomePage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -24,6 +25,8 @@ export default buildConfig({
   },
 
   collections: [Users, Media, Products, Orders, RmaRequests],
+
+  globals: [HomePage],
 
   db: postgresAdapter({
     pool: {
