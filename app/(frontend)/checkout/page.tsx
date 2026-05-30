@@ -373,12 +373,26 @@ export default function CheckoutPage() {
               </button>
             </div>
             <div className="p-6 overflow-y-auto max-w-none text-olive-700 space-y-4 [&>h3]:text-xl [&>h3]:text-luxury-charcoal [&>h3]:font-serif [&>h3]:mt-6">
-              <p>İşbu sözleşme, alıcı ve satıcı arasındaki mesafeli satış hükümlerini düzenler. Detaylı sözleşme metni dinamik olarak sipariş verilerine göre üretilecektir.</p>
+              <p>İşbu sözleşme, alıcı ve satıcı arasındaki mesafeli satış hükümlerini düzenler. Aşağıdaki metin şablon niteliğindedir ve satıcı bilgileri daha sonra eklenecektir.</p>
+              
               <h3>MADDE 1: TARAFLAR</h3>
-              <p>Satıcı: Manasor Zeytincilik (ZeytinCo) <br/> Alıcı: Sipariş veren müşteri</p>
-              <h3>MADDE 2: SÖZLEŞMENİN KONUSU</h3>
-              <p>İşbu Sözleşme'nin konusu, Alıcı'nın Satıcı'ya ait internet sitesinden elektronik ortamda siparişini yaptığı ürünlerin satışı ve teslimi ile ilgili yasal hakların belirlenmesidir.</p>
-              <p>... (Hukuki metnin tamamı buraya eklenecektir)</p>
+              <p><strong>1.1- SATICI:</strong><br/>Ünvanı: [Şirket Ünvanı Buraya Gelecek]<br/>Adresi: [Açık Adres Buraya Gelecek]<br/>Telefon: [Telefon Numarası]<br/>E-posta: [E-posta Adresi]</p>
+              
+              <p><strong>1.2- ALICI:</strong><br/>İşbu sözleşmede sipariş veren ("ALICI") olarak anılacaktır. Alıcının sipariş anında girdiği ad, soyad ve iletişim bilgileri esas alınır.</p>
+              
+              <h3>MADDE 2: KONU</h3>
+              <p>İşbu sözleşmenin konusu, ALICI'nın SATICI'ya ait internet sitesinden elektronik ortamda siparişini yaptığı aşağıda nitelikleri ve satış fiyatı belirtilen ürünün satışı ve teslimi ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmelere Dair Yönetmelik hükümleri gereğince tarafların hak ve yükümlülüklerinin saptanmasıdır.</p>
+              
+              <h3>MADDE 3: SÖZLEŞME KONUSU ÜRÜN, ÖDEME VE TESLİMAT</h3>
+              <p>3.1- Ürünlerin cinsi ve türü, miktarı, marka/modeli, rengi ve tüm vergiler dâhil satış bedeli internet sitesindeki ürün tanıtım sayfasında yer alan bilgilerde ve işbu sözleşmenin ayrılmaz parçası sayılan fatura/sipariş özetinde belirtildiği gibidir.</p>
+              <p>3.2- ALICI, kredi kartı ile tek çekim veya taksitli olarak ödeme yapabilir. İşlem güvenliği Iyzico (veya benzeri BDDK onaylı) ödeme altyapısı ile sağlanmaktadır.</p>
+              <p>3.3- Ürün, ALICI'nın gösterdiği teslimat adresine, en geç 30 (otuz) günlük yasal süreyi aşmamak koşulu ile anlaşmalı kargo şirketi aracılığıyla teslim edilir.</p>
+              
+              <h3>MADDE 4: CAYMA HAKKI</h3>
+              <p>ALICI, sözleşme konusu ürünün kendisine veya gösterdiği adresteki kişi/kuruluşa tesliminden itibaren 14 (on dört) gün içinde hiçbir hukuki ve cezai sorumluluk üstlenmeksizin ve hiçbir gerekçe göstermeksizin malı reddederek sözleşmeden cayma hakkına sahiptir. Gıda ürünlerinde ambalajı açılmış, bozulmuş veya son kullanma tarihi geçmiş ürünlerde cayma hakkı kullanılamaz.</p>
+              
+              <h3>MADDE 5: YETKİLİ MAHKEME</h3>
+              <p>İşbu sözleşmenin uygulanmasında, Gümrük ve Ticaret Bakanlığınca ilan edilen değere kadar Tüketici Hakem Heyetleri ile ALICI'nın veya SATICI'nın yerleşim yerindeki Tüketici Mahkemeleri yetkilidir.</p>
             </div>
             <div className="p-6 border-t border-olive-100 flex justify-end">
               <button onClick={() => setIsTermsModalOpen(false)} className="bg-olive-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-gold-500 transition-colors">Kapat ve Anladım</button>
