@@ -12,8 +12,8 @@ const dummyProducts = [
     name: "Erken Hasat Soğuk Sıkım Natürel Sızma Zeytinyağı",
     shortDescription: "0.3 asit oranına sahip, taş baskı yöntemiyle üretilmiş ödüllü zeytinyağımız.",
     category: "Zeytinyağı",
-    image: "https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=600&q=80",
-    secondaryImage: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&q=80",
+    secondaryImage: "https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=600&q=80",
     variations: [{ id: 'v1', size: '500ml', packaging: 'Cam Şişe', price: 450, stock: 50 }]
   },
   {
@@ -22,7 +22,7 @@ const dummyProducts = [
     shortDescription: "İnce kabuklu, küçük çekirdekli ve etli Gemlik tipi siyah zeytin.",
     category: "Zeytin",
     image: "https://images.unsplash.com/photo-1591122523233-22037c1dec9f?w=600&q=80",
-    secondaryImage: "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=600&q=80",
+    secondaryImage: "/images/black_olives_hover.png",
     variations: [{ id: 'v2', size: '1Kg', packaging: 'Vakum', price: 320, stock: 100 }]
   },
   {
@@ -30,8 +30,8 @@ const dummyProducts = [
     name: "Edremit Çizik Yeşil Zeytin",
     shortDescription: "Sadece su ve tuz ile fermente edilmiş doğal yeşil zeytin.",
     category: "Zeytin",
-    image: "https://images.unsplash.com/photo-1668094497457-29f4bd775c95?w=600&q=80",
-    secondaryImage: "https://images.unsplash.com/photo-1599839619722-39751411ea63?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1501959915551-4e8d30928317?w=600&q=80",
+    secondaryImage: "/images/green_olives_hover.png",
     variations: [{ id: 'v3', size: '1Kg', packaging: 'Kavanoz', price: 290, stock: 30 }]
   },
 ];
