@@ -9,21 +9,50 @@ export default function DashboardPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('orders');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Payload API'den çekilecek kullanıcı bilgileri simülasyonu
-  const user = {
-    name: 'Can Albayrak',
-    email: 'can@example.com',
-    memberSince: 'Ekim 2023',
-  };
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/users/me');
+        const data = await res.json();
+        
+        if (res.ok && data.user) {
+          setUser(data.user);
+        } else {
+          router.push('/login');
+        }
+      } catch (err) {
+        router.push('/login');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkAuth();
+  }, [router]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsLoggingOut(true);
-    // await fetch('/api/users/logout', { method: 'POST' })
-    setTimeout(() => {
-      router.push('/');
-    }, 1000);
+    try {
+      await fetch('/api/users/logout', { method: 'POST' });
+      router.push('/login');
+      router.refresh();
+    } catch (err) {
+      console.error(err);
+      setIsLoggingOut(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-cream flex justify-center items-center">
+        <div className="w-8 h-8 border-4 border-gold-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!user) return null;
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -80,17 +109,13 @@ export default function DashboardPage() {
             <form className="space-y-6 max-w-xl">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-olive-900 mb-1">Adınız</label>
-                  <input type="text" defaultValue="Can" className="w-full p-3 border border-olive-200 rounded-xl focus:ring-gold-500 focus:border-gold-500" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-olive-900 mb-1">Soyadınız</label>
-                  <input type="text" defaultValue="Albayrak" className="w-full p-3 border border-olive-200 rounded-xl focus:ring-gold-500 focus:border-gold-500" />
+                  <label className="block text-sm font-medium text-olive-900 mb-1">Ad Soyad</label>
+                  <input type="text" defaultValue={user.name} className="w-full p-3 border border-olive-200 rounded-xl focus:ring-gold-500 focus:border-gold-500" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-olive-900 mb-1">E-posta Adresi</label>
-                <input type="email" defaultValue="can@example.com" disabled className="w-full p-3 border border-olive-100 bg-olive-50 text-olive-500 rounded-xl cursor-not-allowed" />
+                <input type="email" defaultValue={user.email} disabled className="w-full p-3 border border-olive-100 bg-olive-50 text-olive-500 rounded-xl cursor-not-allowed" />
                 <p className="text-xs text-olive-400 mt-1">E-posta adresinizi değiştirmek için müşteri hizmetleriyle iletişime geçin.</p>
               </div>
               <div>
@@ -123,7 +148,7 @@ export default function DashboardPage() {
                   <MapPin className="w-5 h-5 text-gold-500" />
                   <h4 className="font-medium text-olive-900">Ev Adresim</h4>
                 </div>
-                <p className="text-sm text-olive-600 mb-1">Can Albayrak</p>
+                <p className="text-sm text-olive-600 mb-1">{user.name}</p>
                 <p className="text-sm text-olive-600 mb-1">0555 123 45 67</p>
                 <p className="text-sm text-olive-600 line-clamp-2">Moda Cad. No:15 D:4 Kadıköy / İstanbul</p>
               </div>
@@ -164,7 +189,7 @@ export default function DashboardPage() {
                   <UserIcon className="w-10 h-10 text-olive-400" />
                 </div>
                 <h2 className="font-medium text-olive-900">{user.name}</h2>
-                <p className="text-xs text-olive-500 mt-1">{user.memberSince}'den beri üye</p>
+                <p className="text-xs text-olive-500 mt-1">{new Date(user.createdAt || Date.now()).toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}'den beri üye</p>
               </div>
               <nav className="flex flex-col p-2">
                 <button

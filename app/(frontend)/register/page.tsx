@@ -19,14 +19,45 @@ export default function RegisterPage() {
     setIsLoading(true);
     setError(null);
     
-    // Gerçek Payload CMS kayıt API bağlantısı yapılacak
-    // await fetch('/api/users', ...)
-    
-    setTimeout(() => {
+    try {
+      // 1. Kayıt İşlemi
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: `${firstName} ${lastName}`.trim(),
+          email,
+          password,
+          role: 'customer'
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.errors?.[0]?.message || data.message || 'Kayıt işlemi başarısız oldu. E-posta adresi kullanımda olabilir.');
+      }
+
+      // 2. Otomatik Giriş İşlemi
+      const loginRes = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (loginRes.ok) {
+        router.push('/dashboard');
+        router.refresh();
+      } else {
+        // Eğer giriş başarısız olursa, manuel giriş için yönlendir
+        router.push('/login?registered=true');
+      }
+
+    } catch (err: any) {
+      setError(err.message || 'Bir hata oluştu. Lütfen tekrar deneyin.');
+    } finally {
       setIsLoading(false);
-      // Başarılı kayıt sonrası login veya dashboard'a yönlendir
-      // router.push('/dashboard');
-    }, 1000);
+    }
   };
 
   const handleSocialLogin = (provider: string) => {

@@ -10,7 +10,7 @@ export const Users: CollectionConfig = {
   access: {
     // Sadece giriş yapmış kullanıcılar admin paneline erişebilir
     read: ({ req: { user } }) => !!user,
-    create: ({ req: { user } }) => !!user,
+    create: () => true, // Ziyaretçilerin kayıt olabilmesi için
     update: ({ req: { user } }) => !!user,
     delete: ({ req: { user } }) => !!user,
   },

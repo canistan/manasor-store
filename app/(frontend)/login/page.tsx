@@ -17,14 +17,28 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     
-    // Gerçek Payload CMS Auth API bağlantısı yapılacak
-    // await fetch('/api/users/login', ...)
-    
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Giriş bilgileri hatalı. Lütfen kontrol edip tekrar deneyin.');
+      }
+
+      // Başarılı giriş senaryosunda dashboard'a yönlendir
+      router.push('/dashboard');
+      router.refresh();
+
+    } catch (err: any) {
+      setError(err.message || 'Bir hata oluştu.');
+    } finally {
       setIsLoading(false);
-      // Başarılı giriş senaryosunda dashboard'a yönlendireceğiz
-      // router.push('/dashboard');
-    }, 1000);
+    }
   };
 
   const handleSocialLogin = (provider: string) => {
@@ -100,9 +114,9 @@ export default function LoginPage() {
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-gold-600 hover:text-gold-500 transition-colors">
+                <Link href="/forgot-password" className="font-medium text-gold-600 hover:text-gold-500 transition-colors">
                   Şifremi Unuttum?
-                </a>
+                </Link>
               </div>
             </div>
 
