@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
+import CookieConsent from "@/components/CookieConsent";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -38,6 +40,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <CartDrawer />
+        <CookieConsent />
       </body>
     </html>
   );

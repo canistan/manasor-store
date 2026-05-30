@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Mail, MapPin, Phone } from 'lucide-react';
 
@@ -69,6 +71,14 @@ export default function Footer() {
               <li><Link href="/privacy" className="hover:text-gold-400 transition-colors">Gizlilik Politikası</Link></li>
               <li><Link href="/shipping" className="hover:text-gold-400 transition-colors">Teslimat ve İade</Link></li>
               <li><Link href="/kvkk" className="hover:text-gold-400 transition-colors">KVKK Aydınlatma Metni</Link></li>
+              <li>
+                <button 
+                  onClick={() => window.dispatchEvent(new Event('openCookieConsent'))} 
+                  className="hover:text-gold-400 transition-colors text-left"
+                >
+                  Çerez Seçimini Değiştir
+                </button>
+              </li>
             </ul>
           </div>
 
