@@ -17,7 +17,7 @@ export default function PrivacyPage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-olive-100 prose prose-olive max-w-none">
+        <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-olive-100 text-olive-700 space-y-4 [&>h2]:text-2xl [&>h2]:text-luxury-charcoal [&>h2]:font-serif [&>h2]:mt-8 [&>h3]:text-xl [&>h3]:text-luxury-charcoal [&>h3]:font-serif [&>h3]:mt-8 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5">
           <h3>1. Giriş</h3>
           <p>
             Manasor Zeytincilik ("Biz" veya "Şirket") olarak, müşterilerimizin ve sitemizi ziyaret eden kullanıcıların gizliliğine ve kişisel verilerinin korunmasına büyük önem veriyoruz. Bu Gizlilik Politikası, web sitemizi kullanırken topladığımız verileri nasıl işlediğimizi açıklamaktadır.

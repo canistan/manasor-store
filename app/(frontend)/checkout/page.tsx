@@ -372,7 +372,7 @@ export default function CheckoutPage() {
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
-            <div className="p-6 overflow-y-auto prose prose-sm max-w-none prose-olive">
+            <div className="p-6 overflow-y-auto max-w-none text-olive-700 space-y-4 [&>h3]:text-xl [&>h3]:text-luxury-charcoal [&>h3]:font-serif [&>h3]:mt-6">
               <p>İşbu sözleşme, alıcı ve satıcı arasındaki mesafeli satış hükümlerini düzenler. Detaylı sözleşme metni dinamik olarak sipariş verilerine göre üretilecektir.</p>
               <h3>MADDE 1: TARAFLAR</h3>
               <p>Satıcı: Manasor Zeytincilik (ZeytinCo) <br/> Alıcı: Sipariş veren müşteri</p>
@@ -396,7 +396,7 @@ export default function CheckoutPage() {
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
-            <div className="p-6 overflow-y-auto prose prose-sm max-w-none prose-olive">
+            <div className="p-6 overflow-y-auto max-w-none text-olive-700 space-y-4 [&>h3]:text-xl [&>h3]:text-luxury-charcoal [&>h3]:font-serif [&>h3]:mt-6">
               <p>Kişisel verileriniz, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca veri sorumlusu sıfatıyla Manasor tarafından işlenmektedir.</p>
               <h3>Hangi Veriler İşleniyor?</h3>
               <p>Ad, soyad, adres, e-posta, iletişim numarası, fatura bilgileri.</p>
