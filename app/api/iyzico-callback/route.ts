@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import Iyzipay from 'iyzipay';
+import { getPayload } from 'payload';
+import configPromise from '@/payload.config';
 
 const iyzipay = new Iyzipay({
   apiKey: process.env.IYZICO_API_KEY || 'sandbox-p19v0k7nO8hQIfF4rQ4yGfSihR2Kqj0T',
@@ -36,8 +38,69 @@ export async function POST(request: Request) {
     });
 
     if (result.status === 'success' && result.paymentStatus === 'SUCCESS') {
-      // Ödeme başarılı! Siparişi veritabanına kaydetme (Payload CMS vb.) işlemi burada yapılmalı.
-      // Şimdilik doğrudan success sayfasına yönlendiriyoruz.
+      // Ödeme başarılı!
+      try {
+        const payload = await getPayload({ config: configPromise });
+        const basketId = result.basketId; // Payload order ID
+        const paymentId = result.paymentId;
+
+        // Siparişi bul ve güncelle
+        const order = await payload.findByID({
+          collection: 'orders',
+          id: basketId
+        });
+
+        if (order) {
+          await payload.update({
+            collection: 'orders',
+            id: basketId,
+            data: {
+              status: 'paid',
+              paymentReference: paymentId
+            }
+          });
+
+          // Müşteri Kaydı (User tablosuna ekle/güncelle)
+          const { docs: existingUsers } = await payload.find({
+            collection: 'users',
+            where: {
+              email: { equals: order.email }
+            }
+          });
+
+          if (existingUsers.length === 0) {
+            // Yeni müşteri oluştur (Parola zorunlu olduğu için rastgele oluşturuyoruz)
+            const randomPassword = Math.random().toString(36).slice(-10) + 'A1!';
+            await payload.create({
+              collection: 'users',
+              data: {
+                email: order.email,
+                password: randomPassword,
+                name: `${order.firstName} ${order.lastName}`,
+                role: 'customer',
+                phone_number: order.phone,
+                billing_address: {
+                  address: order.address,
+                  city: order.city,
+                  district: order.district,
+                  tax_office: order.taxOffice || '',
+                  tax_number: order.taxNumber || ''
+                },
+                shipping_address: {
+                  address: order.address,
+                  city: order.city,
+                  district: order.district
+                }
+              } as any
+            });
+          }
+        }
+      } catch (dbError) {
+        console.error("Payload Update Error:", dbError);
+        // Ödeme başarılı olduğu için sipariş hatası alsak bile success'e yönlendirmek en doğrusu,
+        // gerçeğe alınırken burada bir alert/webhook tetiklenebilir.
+      }
+
       return NextResponse.redirect(new URL(`/success?orderId=${result.paymentId}`, request.url));
     } else {
       // Ödeme başarısız

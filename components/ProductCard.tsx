@@ -1,6 +1,9 @@
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { ShoppingBag } from 'lucide-react';
+import { useCartStore } from '@/store/useCartStore';
 
 interface Variation {
   id: string;
@@ -21,8 +24,26 @@ interface Product {
 }
 
 export default function ProductCard({ product }: { product: Product }) {
+  const { addItem } = useCartStore();
   const startingPrice = Math.min(...product.variations.map(v => v.price));
   const oldPrice = startingPrice * 1.25; // Dummy %20 indirim gösterimi
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent Link navigation if it's wrapped in one, though it's not here
+    
+    // Varsayılan olarak ilk varyasyonu sepete ekliyoruz
+    const defaultVariation = product.variations[0];
+    
+    addItem({
+      id: product.id,
+      name: product.name,
+      variationId: defaultVariation.id,
+      size: defaultVariation.size,
+      price: defaultVariation.price,
+      image: product.image,
+      quantity: 1
+    });
+  };
 
   return (
     <div className="group flex flex-col h-full bg-white border border-olive-100 hover:border-gold-500 transition-all duration-300 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-2">
@@ -70,13 +91,13 @@ export default function ProductCard({ product }: { product: Product }) {
             </span>
           </div>
           
-          <Link 
-            href={`/products/${product.id}`}
+          <button 
+            onClick={handleAddToCart}
             className="w-full flex items-center justify-center space-x-2 bg-olive-700 hover:bg-olive-900 text-white py-3 px-4 rounded-full transition-all duration-300 text-sm font-medium uppercase tracking-wider group-hover:bg-gold-500"
           >
             <ShoppingBag className="w-4 h-4" />
             <span>Sepete Ekle</span>
-          </Link>
+          </button>
         </div>
       </div>
     </div>

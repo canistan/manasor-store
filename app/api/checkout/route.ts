@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import Iyzipay from 'iyzipay';
+import { getPayload } from 'payload';
+import configPromise from '@/payload.config';
 
 // Iyzico Sandbox Config
 const iyzipay = new Iyzipay({
@@ -21,18 +23,60 @@ export async function POST(request: Request) {
 
     const price = total.toFixed(2);
     
-    // 2. IYZICO REQUEST HAZIRLIĞI
+    // 2. PAYLOAD CMS SİPARİŞ OLUŞTURMA (PENDING)
+    const payload = await getPayload({ config: configPromise });
+    
+    const newOrder = await payload.create({
+      collection: 'orders',
+      data: {
+        orderNumber: `MANASOR-${Date.now()}`,
+        status: 'pending',
+        totalPrice: Number(price),
+        shippingPrice: Number(shippingPrice),
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        phone: form.phone,
+        invoiceType: form.invoiceType as any,
+        identityNumber: form.identityNumber,
+        companyName: form.companyName,
+        taxOffice: form.taxOffice,
+        taxNumber: form.taxNumber,
+        city: form.city,
+        district: form.district,
+        address: form.address,
+        items: items.map((item: any) => ({
+          productId: item.id || '',
+          name: item.name,
+          variationId: item.variationId || '',
+          size: item.size || '',
+          price: item.price,
+          quantity: item.quantity
+        }))
+      }
+    });
+
+    if (form.newsletterAccepted) {
+      try {
+        await payload.create({
+          collection: 'subscribers',
+          data: { email: form.email, source: 'Checkout Sayfası' }
+        });
+      } catch (err) {}
+    }
+
+    // 3. IYZICO REQUEST HAZIRLIĞI
     const buyerInfo = {
-      id: "BY789", // Geçici User ID
+      id: "BY789", 
       name: form.firstName,
       surname: form.lastName,
       gsmNumber: form.phone,
       email: form.email,
-      identityNumber: form.identityNumber || "11111111111", // Iyzico için zorunlu (Bireysel)
+      identityNumber: form.identityNumber || "11111111111",
       lastLoginDate: "2023-10-10 10:10:10",
       registrationDate: "2023-10-10 10:10:10",
       registrationAddress: form.address,
-      ip: "85.34.78.112", // Gerçekte headers üzerinden alınmalı
+      ip: "85.34.78.112", 
       city: form.city,
       country: "Turkey",
       zipCode: "34732"
@@ -75,11 +119,11 @@ export async function POST(request: Request) {
 
     const requestData = {
       locale: Iyzipay.LOCALE.TR,
-      conversationId: `MANASOR-${Date.now()}`,
+      conversationId: newOrder.orderNumber,
       price: price,
       paidPrice: price,
       currency: Iyzipay.CURRENCY.TRY,
-      basketId: `B-${Date.now()}`,
+      basketId: newOrder.id.toString(),
       paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
       callbackUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'}/api/iyzico-callback`,
       enabledInstallments: [2, 3, 6, 9],
