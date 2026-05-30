@@ -3,6 +3,7 @@
 import { X, Trash2, Plus, Minus, ShoppingBag, Truck } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FREE_SHIPPING_THRESHOLD = 1500;
@@ -149,9 +150,13 @@ export default function CartDrawer() {
               </span>
             </div>
             <p className="text-xs text-olive-500 mb-6 text-center">Kargo ve vergiler ödeme adımında hesaplanacaktır.</p>
-            <button className="w-full bg-gold-500 hover:bg-gold-600 text-white font-medium py-4 rounded-full transition-colors flex items-center justify-center space-x-2">
+            <Link 
+              href="/checkout" 
+              onClick={closeDrawer}
+              className="w-full bg-gold-500 hover:bg-gold-600 text-white font-medium py-4 rounded-full transition-colors flex items-center justify-center space-x-2"
+            >
               <span>Ödemeye Geç</span>
-            </button>
+            </Link>
           </div>
         )}
           </motion.div>

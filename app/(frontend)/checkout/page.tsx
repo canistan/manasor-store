@@ -163,21 +163,21 @@ export default function CheckoutPage() {
                   <h2 className="text-xl font-serif text-luxury-charcoal mb-6 border-b border-olive-50 pb-4">İletişim Bilgileri</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <input {...register('firstName')} type="text" placeholder="Adınız" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none" />
+                      <input {...register('firstName')} type="text" placeholder="Adınız" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
                       {errors.firstName && <span className="text-xs text-red-500 mt-1 block">{errors.firstName.message}</span>}
                     </div>
                     <div>
-                      <input {...register('lastName')} type="text" placeholder="Soyadınız" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none" />
+                      <input {...register('lastName')} type="text" placeholder="Soyadınız" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
                       {errors.lastName && <span className="text-xs text-red-500 mt-1 block">{errors.lastName.message}</span>}
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
-                      <input {...register('email')} type="email" placeholder="E-posta Adresiniz" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none" />
+                      <input {...register('email')} type="email" placeholder="E-posta Adresiniz" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
                       {errors.email && <span className="text-xs text-red-500 mt-1 block">{errors.email.message}</span>}
                     </div>
                     <div>
-                      <input {...register('phone')} type="tel" placeholder="Telefon Numarası (5XX...)" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none" />
+                      <input {...register('phone')} type="tel" placeholder="Telefon Numarası (5XX...)" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
                       {errors.phone && <span className="text-xs text-red-500 mt-1 block">{errors.phone.message}</span>}
                     </div>
                   </div>
@@ -190,17 +190,17 @@ export default function CheckoutPage() {
                   <div className="flex gap-6 mb-6">
                     <label className="flex items-center cursor-pointer">
                       <input type="radio" value="bireysel" {...register('invoiceType')} className="form-radio text-gold-500 focus:ring-gold-500" />
-                      <span className="ml-2">Bireysel</span>
+                      <span className="ml-2 text-olive-900">Bireysel</span>
                     </label>
                     <label className="flex items-center cursor-pointer">
                       <input type="radio" value="kurumsal" {...register('invoiceType')} className="form-radio text-gold-500 focus:ring-gold-500" />
-                      <span className="ml-2">Kurumsal</span>
+                      <span className="ml-2 text-olive-900">Kurumsal</span>
                     </label>
                   </div>
 
                   {invoiceType === 'bireysel' && (
                     <div className="mb-4">
-                      <input {...register('identityNumber')} type="text" placeholder="T.C. Kimlik No (Fatura kesimi için yasal zorunluluktur)" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none" />
+                      <input {...register('identityNumber')} type="text" placeholder="T.C. Kimlik No (Fatura kesimi için yasal zorunluluktur)" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
                       {errors.identityNumber && <span className="text-xs text-red-500 mt-1 block">{errors.identityNumber.message}</span>}
                     </div>
                   )}
@@ -208,15 +208,15 @@ export default function CheckoutPage() {
                   {invoiceType === 'kurumsal' && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                       <div className="md:col-span-3">
-                        <input {...register('companyName')} type="text" placeholder="Şirket Adı / Ünvanı" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none" />
+                        <input {...register('companyName')} type="text" placeholder="Şirket Adı / Ünvanı" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
                         {errors.companyName && <span className="text-xs text-red-500 mt-1 block">{errors.companyName.message}</span>}
                       </div>
                       <div className="md:col-span-1">
-                        <input {...register('taxOffice')} type="text" placeholder="Vergi Dairesi" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none" />
+                        <input {...register('taxOffice')} type="text" placeholder="Vergi Dairesi" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
                         {errors.taxOffice && <span className="text-xs text-red-500 mt-1 block">{errors.taxOffice.message}</span>}
                       </div>
                       <div className="md:col-span-2">
-                        <input {...register('taxNumber')} type="text" placeholder="Vergi No" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none" />
+                        <input {...register('taxNumber')} type="text" placeholder="Vergi No" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
                         {errors.taxNumber && <span className="text-xs text-red-500 mt-1 block">{errors.taxNumber.message}</span>}
                       </div>
                     </div>
@@ -224,7 +224,7 @@ export default function CheckoutPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <select {...register('city')} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none bg-white">
+                      <select {...register('city')} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white">
                         <option value="">İl Seçiniz</option>
                         <option value="Bursa">Bursa</option>
                         <option value="İstanbul">İstanbul</option>
@@ -234,7 +234,7 @@ export default function CheckoutPage() {
                       {errors.city && <span className="text-xs text-red-500 mt-1 block">{errors.city.message}</span>}
                     </div>
                     <div>
-                      <select {...register('district')} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none bg-white">
+                      <select {...register('district')} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white">
                         <option value="">İlçe Seçiniz</option>
                         <option value="Gemlik">Gemlik</option>
                         <option value="Kadıköy">Kadıköy</option>
@@ -245,7 +245,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <div>
-                    <textarea {...register('address')} placeholder="Açık Adres (Mahalle, sokak, no vb.)" rows={3} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none"></textarea>
+                    <textarea {...register('address')} placeholder="Açık Adres (Mahalle, sokak, no vb.)" rows={3} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white"></textarea>
                     {errors.address && <span className="text-xs text-red-500 mt-1 block">{errors.address.message}</span>}
                   </div>
 

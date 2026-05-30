@@ -3,8 +3,8 @@ import Iyzipay from 'iyzipay';
 
 // Iyzico Sandbox Config
 const iyzipay = new Iyzipay({
-  apiKey: process.env.IYZIPAY_API_KEY || 'sandbox-dummy-api-key',
-  secretKey: process.env.IYZIPAY_SECRET_KEY || 'sandbox-dummy-secret-key',
+  apiKey: process.env.IYZICO_API_KEY || 'sandbox-p19v0k7nO8hQIfF4rQ4yGfSihR2Kqj0T',
+  secretKey: process.env.IYZICO_SECRET_KEY || 'sandbox-7m7312Z2dD1zL1G4D9aY1l2vH3wE7O8t',
   uri: 'https://sandbox-api.iyzipay.com'
 });
 
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     };
 
     const basketItems = items.map((item: any) => ({
-      id: item.variationId,
+      id: item.variationId || item.variantId || item.id || 'ITEM-1',
       name: item.name,
       category1: "Gıda",
       category2: "Organik",
@@ -81,13 +81,34 @@ export async function POST(request: Request) {
       currency: Iyzipay.CURRENCY.TRY,
       basketId: `B-${Date.now()}`,
       paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
-      callbackUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/checkout/success`,
+      callbackUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'}/api/iyzico-callback`,
       enabledInstallments: [2, 3, 6, 9],
       buyer: buyerInfo,
       shippingAddress: shippingAddress,
       billingAddress: billingAddress,
       basketItems: basketItems
     };
+
+    // MOCK IYZICO MODE FOR DUMMY KEYS
+    if (process.env.IYZICO_API_KEY === 'sandbox-p19v0k7nO8hQIfF4rQ4yGfSihR2Kqj0T' || !process.env.IYZICO_API_KEY) {
+      const mockToken = `MOCK_TOKEN_${Date.now()}`;
+      const mockHtml = `
+        <div style="font-family: sans-serif; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; text-align: center;">
+          <h3 style="color: #0f172a; margin-top: 0;">Iyzico Test Ödeme Ekranı (Mock)</h3>
+          <p style="color: #64748b; font-size: 14px;">Geçerli bir Iyzico API anahtarı girilmediği için test ekranı gösterilmektedir.</p>
+          <p style="font-size: 18px; font-weight: bold; color: #10b981;">Ödenecek Tutar: ${price} TL</p>
+          <form method="POST" action="${requestData.callbackUrl}">
+            <input type="hidden" name="token" value="${mockToken}" />
+            <button type="submit" style="background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px;">Test Ödemesini Tamamla (Başarılı)</button>
+          </form>
+        </div>
+      `;
+      return NextResponse.json({
+        status: 'success',
+        token: mockToken,
+        checkoutFormContent: mockHtml
+      });
+    }
 
     // Callback sarmalayıcı (Iyzipay SDK'sı Promise dönmez)
     return new Promise<NextResponse>((resolve) => {
