@@ -1,9 +1,26 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin, Phone, CheckCircle } from 'lucide-react';
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    
+    // Simulating API call
+    setIsSubscribed(true);
+    setEmail('');
+    
+    // Hide popup after 3 seconds
+    setTimeout(() => {
+      setIsSubscribed(false);
+    }, 3000);
+  };
   return (
     <footer className="bg-olive-900 text-cream pt-16 pb-8 border-t border-olive-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -14,8 +31,15 @@ export default function Footer() {
               <h4 className="text-2xl font-serif text-gold-400 mb-2">E-Bültene Kayıt Olun</h4>
               <p className="text-olive-100 text-sm">Yeni hasat ürünlerimizden, özel kampanyalardan ve zeytinyağı kültürüne dair içeriklerden ilk siz haberdar olun.</p>
             </div>
-            <form className="w-full md:w-auto flex flex-col sm:flex-row gap-2">
-              <input type="email" placeholder="E-posta adresiniz" className="flex-1 sm:w-72 bg-olive-900/50 border border-olive-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400" required />
+            <form onSubmit={handleSubscribe} className="w-full md:w-auto flex flex-col sm:flex-row gap-2">
+              <input 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="E-posta adresiniz" 
+                className="flex-1 sm:w-72 bg-olive-900/50 border border-olive-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400" 
+                required 
+              />
               <button type="submit" className="bg-gold-500 hover:bg-gold-400 text-olive-900 font-medium px-6 py-3 rounded-lg transition-colors">Abone Ol</button>
             </form>
           </div>
@@ -118,6 +142,17 @@ export default function Footer() {
           </div>
         </div>
       </div>
+
+      {/* Subscription Toast Notification */}
+      {isSubscribed && (
+        <div className="fixed bottom-8 right-8 z-50 bg-olive-900 border border-gold-500 text-white px-6 py-4 rounded-xl shadow-2xl animate-fade-in-up flex items-center space-x-3">
+          <CheckCircle className="w-6 h-6 text-gold-500" />
+          <div>
+            <h4 className="font-serif font-medium text-lg">Aramıza Hoş Geldiniz!</h4>
+            <p className="text-sm text-olive-100">Bülten aboneliğiniz başarıyla gerçekleşti.</p>
+          </div>
+        </div>
+      )}
     </footer>
   );
 }
