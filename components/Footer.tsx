@@ -56,7 +56,7 @@ export default function Footer() {
             <h4 className="text-lg font-medium text-white mb-4">Hızlı Linkler</h4>
             <ul className="space-y-2 text-sm text-olive-100">
               <li><Link href="/" className="hover:text-gold-400 transition-colors">Ana Sayfa</Link></li>
-              <li><Link href="/#products" className="hover:text-gold-400 transition-colors">Ürünlerimiz</Link></li>
+              <li><Link href="/products" className="hover:text-gold-400 transition-colors">Ürünlerimiz</Link></li>
               <li><Link href="/about" className="hover:text-gold-400 transition-colors">Hakkımızda</Link></li>
               <li><Link href="/contact" className="hover:text-gold-400 transition-colors">İletişim</Link></li>
               <li><Link href="/faq" className="hover:text-gold-400 transition-colors">Sıkça Sorulan Sorular</Link></li>

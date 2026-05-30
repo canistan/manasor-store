@@ -135,13 +135,13 @@ export default async function Home() {
           </div>
           
           <div className="grid grid-cols-2 gap-8 justify-center max-w-3xl mx-auto">
-            <Link href="#products" className="group flex flex-col items-center text-center">
+            <Link href="/products" className="group flex flex-col items-center text-center">
               <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
                 <Image src="https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=500&q=80" alt="Ahşap masada dalıyla birlikte organik natürel sızma zeytinyağı" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
               </div>
               <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Zeytinyağları</h3>
             </Link>
-            <Link href="#products" className="group flex flex-col items-center text-center">
+            <Link href="/products" className="group flex flex-col items-center text-center">
               <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
                 <Image src="https://images.unsplash.com/photo-1591122523233-22037c1dec9f?w=500&q=80" alt="Doğal ahşap tabakta taze siyah ve yeşil zeytin çeşitleri" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
               </div>
