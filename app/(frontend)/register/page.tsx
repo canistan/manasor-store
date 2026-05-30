@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Mail, Lock, User as UserIcon, Apple, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -13,6 +13,18 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Already logged in check
+    fetch('/api/users/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.user) {
+          router.push('/dashboard');
+        }
+      })
+      .catch(() => {});
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

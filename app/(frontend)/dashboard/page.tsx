@@ -194,31 +194,24 @@ export default function DashboardPage() {
               <nav className="flex flex-col p-2">
                 <button
                   onClick={() => setActiveTab('orders')}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'orders' ? 'bg-gold-50 text-gold-700 font-medium' : 'text-olive-700 hover:bg-olive-50'}`}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'orders' ? 'bg-olive-900 text-white font-medium shadow-md' : 'text-olive-700 hover:bg-olive-50'}`}
                 >
                   <Package className="w-5 h-5" />
                   <span>Siparişlerim</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('profile')}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'profile' ? 'bg-gold-50 text-gold-700 font-medium' : 'text-olive-700 hover:bg-olive-50'}`}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'profile' ? 'bg-olive-900 text-white font-medium shadow-md' : 'text-olive-700 hover:bg-olive-50'}`}
                 >
                   <UserIcon className="w-5 h-5" />
                   <span>Profil Bilgileri</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('addresses')}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'addresses' ? 'bg-gold-50 text-gold-700 font-medium' : 'text-olive-700 hover:bg-olive-50'}`}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'addresses' ? 'bg-olive-900 text-white font-medium shadow-md' : 'text-olive-700 hover:bg-olive-50'}`}
                 >
                   <MapPin className="w-5 h-5" />
                   <span>Adreslerim</span>
-                </button>
-                <button
-                  className="flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors text-olive-700 hover:bg-olive-50"
-                  onClick={() => alert('Favoriler modülü henüz aktif değil.')}
-                >
-                  <Heart className="w-5 h-5" />
-                  <span>Favorilerim</span>
                 </button>
               </nav>
             </div>

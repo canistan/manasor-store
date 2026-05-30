@@ -9,20 +9,9 @@ export default function Navbar() {
   const { getCartCount, openDrawer } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    
-    // Check auth status
-    fetch('/api/users/me')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.user) {
-          setIsLoggedIn(true);
-        }
-      })
-      .catch(() => {});
   }, []);
 
   return (
@@ -47,7 +36,7 @@ export default function Navbar() {
 
           {/* Icons & Mobile menu button */}
           <div className="flex items-center space-x-2 md:space-x-4">
-            <Link href={isLoggedIn ? "/dashboard" : "/login"} className="p-2 text-olive-900 hover:text-gold-500 transition-colors hidden md:block" aria-label="Hesabım">
+            <Link href="/dashboard" className="p-2 text-olive-900 hover:text-gold-500 transition-colors hidden md:block" aria-label="Hesabım">
               <User className="w-5 h-5" />
             </Link>
             <button 
