@@ -145,7 +145,7 @@ export default function Footer() {
 
       {/* Subscription Toast Notification */}
       {isSubscribed && (
-        <div className="fixed bottom-8 right-8 z-50 bg-olive-900 border border-gold-500 text-white px-6 py-4 rounded-xl shadow-2xl animate-fade-in-up flex items-center space-x-3">
+        <div className="fixed bottom-8 right-8 z-[9999] bg-olive-900 border border-gold-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 transition-all duration-500 animate-in slide-in-from-bottom-5 fade-in">
           <CheckCircle className="w-6 h-6 text-gold-500" />
           <div>
             <h4 className="font-serif font-medium text-lg">Aramıza Hoş Geldiniz!</h4>
