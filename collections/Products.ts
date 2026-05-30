@@ -60,6 +60,8 @@ export const Products: CollectionConfig = {
       options: [
         { label: 'Zeytinyağları', value: 'Zeytinyağları' },
         { label: 'Zeytinler', value: 'Zeytinler' },
+        { label: 'Kişisel Bakım', value: 'Kişisel Bakım' },
+        { label: 'Gurme Paketler', value: 'Gurme Paketler' },
       ],
     },
     {
