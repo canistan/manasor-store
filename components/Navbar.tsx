@@ -36,12 +36,9 @@ export default function Navbar() {
 
           {/* Icons & Mobile menu button */}
           <div className="flex items-center space-x-2 md:space-x-4">
-            <button className="p-2 text-olive-900 hover:text-gold-500 transition-colors hidden md:block" aria-label="Ara">
-              <Search className="w-5 h-5" />
-            </button>
-            <button className="p-2 text-olive-900 hover:text-gold-500 transition-colors hidden md:block" aria-label="Hesabım">
+            <Link href="/login" className="p-2 text-olive-900 hover:text-gold-500 transition-colors hidden md:block" aria-label="Hesabım">
               <User className="w-5 h-5" />
-            </button>
+            </Link>
             <button 
               onClick={openDrawer}
               className="relative p-2 text-olive-900 hover:text-gold-500 transition-colors"
