@@ -102,7 +102,7 @@ export default function CheckoutPage() {
     setPaymentError(null);
 
     try {
-      const response = await fetch('/api/iyzico-init', {
+      const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
