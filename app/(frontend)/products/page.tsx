@@ -34,15 +34,6 @@ const dummyProducts = [
     secondaryImage: "https://images.unsplash.com/photo-1599839619722-39751411ea63?w=600&q=80",
     variations: [{ id: 'v3', size: '1Kg', packaging: 'Kavanoz', price: 290, stock: 30 }]
   },
-  {
-    id: "zeytinyagli-sabun",
-    name: "Geleneksel Zeytinyağlı Sabun",
-    shortDescription: "Saf zeytinyağından el yapımı, cildi besleyen doğal sabun.",
-    category: "Kişisel Bakım",
-    image: "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?w=600&q=80",
-    secondaryImage: "https://images.unsplash.com/photo-1600857062241-98e5dba7f214?w=600&q=80",
-    variations: [{ id: 'v4', size: 'Standart', packaging: 'Kutu', price: 120, stock: 200 }]
-  }
 ];
 
 export default function ProductsPage() {
@@ -54,7 +45,7 @@ export default function ProductsPage() {
       <div>
         <h3 className="font-medium text-olive-900 mb-4">Kategori</h3>
         <div className="space-y-3">
-          {['Tümü', 'Zeytinyağı', 'Zeytin', 'Gurme Paketler', 'Kişisel Bakım'].map((cat, i) => (
+          {['Tümü', 'Zeytinyağı', 'Zeytin'].map((cat, i) => (
             <label key={i} className="flex items-center space-x-3 cursor-pointer group">
               <input type="checkbox" className="form-checkbox h-5 w-5 text-gold-500 border-olive-300 rounded focus:ring-gold-500" defaultChecked={i===0} />
               <span className="text-olive-700 group-hover:text-gold-600 transition-colors">{cat}</span>
@@ -141,7 +132,7 @@ export default function ProductsPage() {
               </button>
 
               <p className="hidden sm:block text-sm text-olive-600">
-                <span className="font-bold text-luxury-charcoal">4</span> ürün listeleniyor
+                <span className="font-bold text-luxury-charcoal">3</span> ürün listeleniyor
               </p>
 
               <div className="flex items-center space-x-2 ml-auto">
