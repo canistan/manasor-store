@@ -50,15 +50,6 @@ export default async function Home() {
         image: { url: "https://images.unsplash.com/photo-1501959915551-4e8d30928317?w=600&q=80" },
         secondaryImage: "https://images.unsplash.com/photo-1599839619722-39751411ea63?w=600&q=80",
         variations: [{ variantId: 'v3', size: '1Kg', packaging: 'Kavanoz', price: 290, stock: 30 }]
-      },
-      {
-        slug: "zeytinyagli-sabun",
-        name: "Geleneksel Zeytinyağlı Sabun",
-        shortDescription: "Saf zeytinyağından el yapımı, cildi besleyen doğal sabun.",
-        category: "Kişisel Bakım",
-        image: { url: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=600&q=80" },
-        secondaryImage: "https://images.unsplash.com/photo-1600857062241-98e5dba7f214?w=600&q=80",
-        variations: [{ variantId: 'v4', size: 'Standart', packaging: 'Kutu', price: 120, stock: 200 }]
       }
     ];
   }
@@ -143,7 +134,7 @@ export default async function Home() {
             <div className="w-16 h-1 bg-gold-500 mx-auto mt-6 rounded-full"></div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 gap-8 justify-center max-w-3xl mx-auto">
             <Link href="#products" className="group flex flex-col items-center text-center">
               <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
                 <Image src="https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=500&q=80" alt="Ahşap masada dalıyla birlikte organik natürel sızma zeytinyağı" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -155,18 +146,6 @@ export default async function Home() {
                 <Image src="https://images.unsplash.com/photo-1591122523233-22037c1dec9f?w=500&q=80" alt="Doğal ahşap tabakta taze siyah ve yeşil zeytin çeşitleri" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
               </div>
               <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Zeytin Çeşitleri</h3>
-            </Link>
-            <Link href="#products" className="group flex flex-col items-center text-center">
-              <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
-                <Image src="https://images.unsplash.com/photo-1668094497457-29f4bd775c95?w=500&q=80" alt="Taze fesleğen ve domatesli gurme zeytinyağlı meze tabağı" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-              </div>
-              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Gurme Paketler</h3>
-            </Link>
-            <Link href="#products" className="group flex flex-col items-center text-center">
-              <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
-                <Image src="https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?w=500&q=80" alt="Doğal zeytinyağlı el yapımı kişisel bakım sabunları" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-              </div>
-              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Kişisel Bakım</h3>
             </Link>
           </div>
         </div>
