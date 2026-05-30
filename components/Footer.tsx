@@ -31,7 +31,7 @@ export default function Footer() {
               <h4 className="text-2xl font-serif text-gold-400 mb-2">E-Bültene Kayıt Olun</h4>
               <p className="text-olive-100 text-sm">Yeni hasat ürünlerimizden, özel kampanyalardan ve zeytinyağı kültürüne dair içeriklerden ilk siz haberdar olun.</p>
             </div>
-            <form onSubmit={handleSubscribe} className="w-full md:w-auto flex flex-col sm:flex-row gap-2">
+            <div className="w-full md:w-auto flex flex-col sm:flex-row gap-2">
               <input 
                 type="email" 
                 value={email}
@@ -40,8 +40,14 @@ export default function Footer() {
                 className="flex-1 sm:w-72 bg-olive-900/50 border border-olive-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400" 
                 required 
               />
-              <button type="submit" className="bg-gold-500 hover:bg-gold-400 text-olive-900 font-medium px-6 py-3 rounded-lg transition-colors">Abone Ol</button>
-            </form>
+              <button 
+                type="button" 
+                onClick={(e) => handleSubscribe(e as unknown as React.FormEvent)} 
+                className="bg-gold-500 hover:bg-gold-400 text-olive-900 font-medium px-6 py-3 rounded-lg transition-colors"
+              >
+                Abone Ol
+              </button>
+            </div>
           </div>
         </div>
 
