@@ -118,7 +118,7 @@ export default function CheckoutPage() {
       if (response.ok && result.checkoutFormContent) {
         setIyzicoContent(result.checkoutFormContent);
       } else {
-        setPaymentError(result.error || 'Ödeme sistemi başlatılırken bir hata oluştu.');
+        setPaymentError(result.error || `Ödeme sistemi başlatılırken bir hata oluştu. Sunucu Yanıtı: ${JSON.stringify(result)}`);
       }
     } catch (error: any) {
       console.error("Fetch Error:", error);
