@@ -102,7 +102,7 @@ export default function CheckoutPage() {
     setPaymentError(null);
 
     try {
-      const response = await fetch('/api/create-order', {
+      const response = await fetch('/api/iyzico-init', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -120,8 +120,9 @@ export default function CheckoutPage() {
       } else {
         setPaymentError(result.error || 'Ödeme sistemi başlatılırken bir hata oluştu.');
       }
-    } catch (error) {
-      setPaymentError('Sunucu bağlantı hatası.');
+    } catch (error: any) {
+      console.error("Fetch Error:", error);
+      setPaymentError(`Bağlantı hatası: ${error.message || 'Bilinmeyen hata'}. AdBlocker kullanıyorsanız lütfen geçici olarak kapatın.`);
     } finally {
       setIsSubmitting(false);
     }
