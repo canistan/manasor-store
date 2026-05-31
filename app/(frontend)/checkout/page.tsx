@@ -8,6 +8,7 @@ import { ShieldCheck, ChevronRight, Check, AlertCircle, Plus, MapPin, CheckCircl
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import citiesData from '@/lib/cities.json';
 
 // Zod Validation Schema
 const checkoutSchema = z.object({
@@ -62,6 +63,7 @@ export default function CheckoutPage() {
   
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isKvkkModalOpen, setIsKvkkModalOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
@@ -85,6 +87,9 @@ export default function CheckoutPage() {
   });
 
   const invoiceType = watch('invoiceType');
+  const watchCity = watch('city');
+  const selectedCityData = citiesData.find(c => c.name === watchCity);
+  const availableDistricts = selectedCityData ? selectedCityData.districts : [];
 
   // Kullanıcı giriş yaptıysa form bilgilerini otomatik doldur
   useEffect(() => {
@@ -93,6 +98,7 @@ export default function CheckoutPage() {
         const res = await fetch('/api/users/me');
         const data = await res.json();
         if (res.ok && data.user) {
+          setUser(data.user);
           const u = data.user;
           setValue('email', u.email);
           if (u.name) {
@@ -176,7 +182,9 @@ export default function CheckoutPage() {
           form: finalData,
           items: items,
           total: grandTotal,
-          shippingPrice: shipping
+          shippingPrice: shipping,
+          userId: user?.id,
+          saveAddress: showNewAddressForm || addresses.length === 0
         }),
       });
 
@@ -341,19 +349,18 @@ export default function CheckoutPage() {
                         <div>
                           <select {...register('city')} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white">
                             <option value="">İl Seçiniz</option>
-                            <option value="Bursa">Bursa</option>
-                            <option value="İstanbul">İstanbul</option>
-                            <option value="Ankara">Ankara</option>
-                            <option value="İzmir">İzmir</option>
+                            {citiesData.map((c) => (
+                              <option key={c.name} value={c.name}>{c.name}</option>
+                            ))}
                           </select>
                           {errors.city && <span className="text-xs text-red-500 mt-1 block">{errors.city.message}</span>}
                         </div>
                         <div>
-                          <select {...register('district')} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white">
+                          <select {...register('district')} disabled={!watchCity} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white disabled:bg-gray-50 disabled:text-gray-400">
                             <option value="">İlçe Seçiniz</option>
-                            <option value="Gemlik">Gemlik</option>
-                            <option value="Kadıköy">Kadıköy</option>
-                            <option value="Çankaya">Çankaya</option>
+                            {availableDistricts.map((d: string) => (
+                              <option key={d} value={d}>{d}</option>
+                            ))}
                           </select>
                           {errors.district && <span className="text-xs text-red-500 mt-1 block">{errors.district.message}</span>}
                         </div>

@@ -6,10 +6,13 @@ export const useCartStore = create(
     (set, get) => ({
       items: [],
       isDrawerOpen: false,
+      showToast: false,
+      lastAddedItem: null,
       
       openDrawer: () => set({ isDrawerOpen: true }),
       closeDrawer: () => set({ isDrawerOpen: false }),
       toggleDrawer: () => set((state) => ({ isDrawerOpen: !state.isDrawerOpen })),
+      hideToast: () => set({ showToast: false }),
 
       addItem: (item) => set((state) => {
         const existingItem = state.items.find(i => i.variationId === item.variationId);
@@ -20,12 +23,14 @@ export const useCartStore = create(
                 ? { ...i, quantity: i.quantity + item.quantity }
                 : i
             ),
-            isDrawerOpen: true
+            lastAddedItem: item,
+            showToast: true
           };
         }
         return { 
           items: [...state.items, item],
-          isDrawerOpen: true 
+          lastAddedItem: item,
+          showToast: true
         };
       }),
 

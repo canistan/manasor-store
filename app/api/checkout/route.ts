@@ -65,6 +65,42 @@ export async function POST(request: Request) {
       } catch (err) {}
     }
 
+    // 2.5 KULLANICI ADRESİNİ OTOMATİK KAYDETME
+    const { userId, saveAddress } = body;
+    if (userId && saveAddress) {
+      try {
+        const user = await payload.findByID({ collection: 'users', id: userId });
+        if (user) {
+          const currentAddresses = user.addresses || [];
+          const newAddress = {
+            id: Math.random().toString(36).substring(7),
+            title: 'Yeni Adres',
+            firstName: form.firstName,
+            lastName: form.lastName,
+            phone: form.phone,
+            city: form.city,
+            district: form.district,
+            address: form.address,
+            invoiceType: form.invoiceType as 'bireysel' | 'kurumsal',
+            identityNumber: form.identityNumber,
+            companyName: form.companyName,
+            taxOffice: form.taxOffice,
+            taxNumber: form.taxNumber
+          };
+          
+          await payload.update({
+            collection: 'users',
+            id: userId,
+            data: {
+              addresses: [...currentAddresses, newAddress]
+            }
+          });
+        }
+      } catch (err) {
+        console.error('Kullanıcı adresi kaydedilemedi:', err);
+      }
+    }
+
     // 3. IYZICO REQUEST HAZIRLIĞI
     const buyerInfo = {
       id: "BY789", 

@@ -78,12 +78,13 @@ export default function CartDrawer() {
             <div className="h-full flex flex-col items-center justify-center text-olive-500 space-y-4">
               <ShoppingBag className="w-16 h-16 opacity-20" />
               <p>Sepetiniz şu an boş.</p>
-              <button 
+              <Link 
+                href="/products"
                 onClick={closeDrawer}
-                className="px-6 py-2 bg-olive-900 text-cream rounded-full hover:bg-olive-700 transition-colors"
+                className="px-6 py-2 bg-olive-900 text-cream rounded-full hover:bg-olive-700 transition-colors inline-block text-center"
               >
                 Alışverişe Başla
-              </button>
+              </Link>
             </div>
           ) : (
             <div className="space-y-6">

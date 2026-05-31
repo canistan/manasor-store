@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { User as UserIcon, Package, MapPin, CreditCard, LogOut, Heart, ChevronDown, ChevronUp, CheckCircle, Truck, ClipboardList, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import citiesData from '@/lib/cities.json';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -324,8 +325,31 @@ export default function DashboardPage() {
                   <input required placeholder="Telefon" value={addressForm.phone || ''} onChange={e => setAddressForm({...addressForm, phone: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <input required placeholder="İl" value={addressForm.city || ''} onChange={e => setAddressForm({...addressForm, city: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" />
-                  <input required placeholder="İlçe" value={addressForm.district || ''} onChange={e => setAddressForm({...addressForm, district: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" />
+                  <div>
+                    <select 
+                      required 
+                      value={addressForm.city || ''} 
+                      onChange={e => setAddressForm({...addressForm, city: e.target.value, district: ''})} 
+                      className="w-full p-3 border border-olive-200 rounded-xl"
+                    >
+                      <option value="">İl Seçiniz</option>
+                      {citiesData.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <select 
+                      required 
+                      disabled={!addressForm.city}
+                      value={addressForm.district || ''} 
+                      onChange={e => setAddressForm({...addressForm, district: e.target.value})} 
+                      className="w-full p-3 border border-olive-200 rounded-xl disabled:bg-gray-50"
+                    >
+                      <option value="">İlçe Seçiniz</option>
+                      {addressForm.city && citiesData.find(c => c.name === addressForm.city)?.districts.map((d: string) => (
+                        <option key={d} value={d}>{d}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div>
                   <textarea required placeholder="Açık Adres" value={addressForm.address || ''} onChange={e => setAddressForm({...addressForm, address: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" rows={3}></textarea>

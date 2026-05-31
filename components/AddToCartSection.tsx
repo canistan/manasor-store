@@ -43,6 +43,8 @@ export default function AddToCartSection({ product }: AddToCartProps) {
     }
   };
 
+  const [isAdded, setIsAdded] = useState(false);
+
   const handleAddToCart = () => {
     if (!selectedVariant) return;
 
@@ -57,7 +59,11 @@ export default function AddToCartSection({ product }: AddToCartProps) {
       quantity: quantity
     });
     
-    openDrawer();
+    // openDrawer() çağrısını kaldırıyoruz
+    setIsAdded(true);
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 2000);
   };
 
   if (!selectedVariant) return <p className="text-red-500">Bu ürün şu an stokta yok.</p>;
@@ -142,10 +148,24 @@ export default function AddToCartSection({ product }: AddToCartProps) {
         
         <button 
           onClick={handleAddToCart}
-          className="flex-1 bg-olive-900 hover:bg-gold-500 text-white flex items-center justify-center space-x-2 h-14 rounded-lg font-medium tracking-wide uppercase transition-colors shadow-lg shadow-olive-900/20 group"
+          disabled={isAdded}
+          className={`flex-1 flex items-center justify-center space-x-2 h-14 rounded-lg font-medium tracking-wide uppercase transition-all duration-300 shadow-lg ${
+            isAdded 
+              ? 'bg-green-600 text-white shadow-green-900/20' 
+              : 'bg-olive-900 hover:bg-gold-500 text-white shadow-olive-900/20 group'
+          }`}
         >
-          <ShoppingBag className="w-5 h-5 group-hover:animate-bounce" />
-          <span>Sepete Ekle</span>
+          {isAdded ? (
+            <>
+              <ShieldCheck className="w-5 h-5" />
+              <span>Sepete Eklendi!</span>
+            </>
+          ) : (
+            <>
+              <ShoppingBag className="w-5 h-5 group-hover:animate-bounce" />
+              <span>Sepete Ekle</span>
+            </>
+          )}
         </button>
       </div>
 

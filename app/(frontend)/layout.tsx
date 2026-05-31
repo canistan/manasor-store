@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import CookieConsent from "@/components/CookieConsent";
+import CartToast from "@/components/CartToast";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -40,6 +41,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <CartDrawer />
+        <CartToast />
         <CookieConsent />
       </body>
     </html>

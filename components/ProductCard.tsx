@@ -2,8 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, ShieldCheck } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
+import { useState } from 'react';
 
 interface Variation {
   id: string;
@@ -28,6 +29,8 @@ export default function ProductCard({ product }: { product: Product }) {
   const startingPrice = Math.min(...product.variations.map(v => v.price));
   const oldPrice = startingPrice * 1.25; // Dummy %20 indirim gösterimi
 
+  const [isAdded, setIsAdded] = useState(false);
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent Link navigation if it's wrapped in one, though it's not here
     
@@ -43,6 +46,11 @@ export default function ProductCard({ product }: { product: Product }) {
       image: product.image,
       quantity: 1
     });
+
+    setIsAdded(true);
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 2000);
   };
 
   return (
@@ -93,10 +101,24 @@ export default function ProductCard({ product }: { product: Product }) {
           
           <button 
             onClick={handleAddToCart}
-            className="w-full flex items-center justify-center space-x-2 bg-olive-700 hover:bg-olive-900 text-white py-3 px-4 rounded-full transition-all duration-300 text-sm font-medium uppercase tracking-wider group-hover:bg-gold-500"
+            disabled={isAdded}
+            className={`w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-full transition-all duration-300 text-sm font-medium uppercase tracking-wider group ${
+              isAdded 
+                ? 'bg-green-600 text-white shadow-lg shadow-green-900/20' 
+                : 'bg-olive-700 hover:bg-gold-500 text-white shadow-lg'
+            }`}
           >
-            <ShoppingBag className="w-4 h-4" />
-            <span>Sepete Ekle</span>
+            {isAdded ? (
+              <>
+                <ShieldCheck className="w-4 h-4" />
+                <span>Sepete Eklendi</span>
+              </>
+            ) : (
+              <>
+                <ShoppingBag className="w-4 h-4 group-hover:animate-bounce" />
+                <span>Sepete Ekle</span>
+              </>
+            )}
           </button>
         </div>
       </div>
