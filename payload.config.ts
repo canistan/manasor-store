@@ -4,6 +4,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import sharp from 'sharp'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -22,12 +23,31 @@ export default buildConfig({
     meta: {
       titleSuffix: ' | Manasor Admin',
     },
+    components: {
+      graphics: {
+        Logo: '@/components/AdminLogo',
+        Icon: '@/components/AdminLogo',
+      },
+    },
     avatar: 'default',
   },
 
   collections: [Users, Media, Products, Orders, RmaRequests, Subscribers],
 
   globals: [HomePage],
+
+  email: nodemailerAdapter({
+    defaultFromAddress: 'info@manasor.com',
+    defaultFromName: 'Manasor Destek',
+    transportOptions: {
+      host: 'smtp.ethereal.email',
+      port: 587,
+      auth: {
+        user: 'ljvsmsdqhas2667j@ethereal.email',
+        pass: 'u3NwwQ59B7kkUBvbse',
+      },
+    },
+  }),
 
   db: postgresAdapter({
     pool: {

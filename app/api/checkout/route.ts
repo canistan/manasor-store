@@ -125,7 +125,7 @@ export async function POST(request: Request) {
       currency: Iyzipay.CURRENCY.TRY,
       basketId: newOrder.id.toString(),
       paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
-      callbackUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'}/api/iyzico-callback`,
+      callbackUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/iyzico-callback`,
       enabledInstallments: [2, 3, 6, 9],
       buyer: buyerInfo,
       shippingAddress: shippingAddress,
@@ -135,7 +135,7 @@ export async function POST(request: Request) {
 
     // MOCK IYZICO MODE FOR DUMMY KEYS
     if (process.env.IYZICO_API_KEY === 'sandbox-p19v0k7nO8hQIfF4rQ4yGfSihR2Kqj0T' || !process.env.IYZICO_API_KEY) {
-      const mockToken = `MOCK_TOKEN_${Date.now()}`;
+      const mockToken = `MOCK_TOKEN_${newOrder.id.toString()}`;
       const mockHtml = `
         <div style="font-family: sans-serif; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; text-align: center;">
           <h3 style="color: #0f172a; margin-top: 0;">Iyzico Test Ödeme Ekranı (Mock)</h3>

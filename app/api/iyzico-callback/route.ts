@@ -2,12 +2,17 @@ import { NextResponse } from 'next/server';
 import Iyzipay from 'iyzipay';
 import { getPayload } from 'payload';
 import configPromise from '@/payload.config';
+import { orderSuccessTemplate } from '@/lib/email-templates';
 
 const iyzipay = new Iyzipay({
   apiKey: process.env.IYZICO_API_KEY || 'sandbox-p19v0k7nO8hQIfF4rQ4yGfSihR2Kqj0T',
   secretKey: process.env.IYZICO_SECRET_KEY || 'sandbox-7m7312Z2dD1zL1G4D9aY1l2vH3wE7O8t',
   uri: 'https://sandbox-api.iyzipay.com'
 });
+
+export async function GET(request: Request) {
+  return NextResponse.redirect(new URL('/checkout', request.url), 303);
+}
 
 export async function POST(request: Request) {
   try {
@@ -19,23 +24,29 @@ export async function POST(request: Request) {
       return NextResponse.redirect(new URL('/checkout?error=no_token', request.url), 303);
     }
 
+    let result: any;
+
     // MOCK IYZICO CALLBACK HANDLING
     if (token.startsWith('MOCK_TOKEN_')) {
-      // Başarılı bir ödeme simülasyonu
-      const fakePaymentId = `PAY_${Date.now()}`;
-      return NextResponse.redirect(new URL(`/success?orderId=${fakePaymentId}`, request.url), 303);
-    }
-
-    // Token ile gerçek Iyzico sunucusundan işlem sonucunu sorgula
-    const result: any = await new Promise((resolve) => {
-      iyzipay.checkoutForm.retrieve({
-        locale: Iyzipay.LOCALE.TR,
-        conversationId: `MANASOR-RET-${Date.now()}`,
-        token: token
-      }, (err: any, res: any) => {
-        resolve(err || res);
+      const orderId = token.replace('MOCK_TOKEN_', '');
+      result = {
+        status: 'success',
+        paymentStatus: 'SUCCESS',
+        basketId: orderId,
+        paymentId: `PAY_MOCK_${Date.now()}`
+      };
+    } else {
+      // Token ile gerçek Iyzico sunucusundan işlem sonucunu sorgula
+      result = await new Promise((resolve) => {
+        iyzipay.checkoutForm.retrieve({
+          locale: Iyzipay.LOCALE.TR,
+          conversationId: `MANASOR-RET-${Date.now()}`,
+          token: token
+        }, (err: any, res: any) => {
+          resolve(err || res);
+        });
       });
-    });
+    }
 
     if (result.status === 'success' && result.paymentStatus === 'SUCCESS') {
       // Ödeme başarılı!
@@ -59,6 +70,17 @@ export async function POST(request: Request) {
               paymentReference: paymentId
             }
           });
+
+          // Başarılı sipariş e-postasını gönder
+          try {
+            await payload.sendEmail({
+              to: order.email,
+              subject: 'Siparişiniz Başarıyla Alındı!',
+              html: orderSuccessTemplate(order.orderNumber, order.totalPrice, order.firstName),
+            });
+          } catch (emailErr) {
+            console.error('Sipariş e-postası gönderilemedi:', emailErr);
+          }
 
           // Müşteri Kaydı (User tablosuna ekle/güncelle)
           const { docs: existingUsers } = await payload.find({
@@ -101,7 +123,7 @@ export async function POST(request: Request) {
         // gerçeğe alınırken burada bir alert/webhook tetiklenebilir.
       }
 
-      return NextResponse.redirect(new URL(`/success?orderId=${result.paymentId}`, request.url), 303);
+      return NextResponse.redirect(new URL(`/checkout/success?orderId=${result.paymentId}`, request.url), 303);
     } else {
       // Ödeme başarısız
       return NextResponse.redirect(new URL(`/checkout?error=${encodeURIComponent(result.errorMessage || 'Ödeme reddedildi')}`, request.url), 303);

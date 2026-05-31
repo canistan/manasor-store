@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
-import { ShieldCheck, ChevronRight, Check, AlertCircle } from 'lucide-react';
+import { ShieldCheck, ChevronRight, Check, AlertCircle, Plus, MapPin, CheckCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -62,6 +62,9 @@ export default function CheckoutPage() {
   
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isKvkkModalOpen, setIsKvkkModalOpen] = useState(false);
+  const [addresses, setAddresses] = useState<any[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [showNewAddressForm, setShowNewAddressForm] = useState(false);
 
   const total = getCartTotal();
   const shipping = total > 1500 || total === 0 ? 0 : 79.90;
@@ -71,6 +74,7 @@ export default function CheckoutPage() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
@@ -81,6 +85,51 @@ export default function CheckoutPage() {
   });
 
   const invoiceType = watch('invoiceType');
+
+  // Kullanıcı giriş yaptıysa form bilgilerini otomatik doldur
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/users/me');
+        const data = await res.json();
+        if (res.ok && data.user) {
+          const u = data.user;
+          setValue('email', u.email);
+          if (u.name) {
+            const nameParts = u.name.trim().split(' ');
+            if (nameParts.length > 1) {
+              setValue('lastName', nameParts.pop() || '');
+              setValue('firstName', nameParts.join(' '));
+            } else {
+              setValue('firstName', u.name);
+            }
+          }
+          if (u.phone_number) setValue('phone', u.phone_number);
+          
+          if (u.addresses && u.addresses.length > 0) {
+            setAddresses(u.addresses);
+            setSelectedAddressId(u.addresses[0].id);
+          } else {
+            // Eski yapı uyumluluğu
+            const addressToUse = u.billing_address || u.shipping_address;
+            if (addressToUse) {
+              if (addressToUse.city) setValue('city', addressToUse.city);
+              if (addressToUse.district) setValue('district', addressToUse.district);
+              if (addressToUse.address) setValue('address', addressToUse.address);
+            }
+            if (u.billing_address && u.billing_address.tax_number) {
+              setValue('invoiceType', 'kurumsal');
+              setValue('taxOffice', u.billing_address.tax_office || '');
+              setValue('taxNumber', u.billing_address.tax_number);
+            }
+          }
+        }
+      } catch (e) {
+        // Giriş yapılmamışsa sessizce geç
+      }
+    };
+    fetchUser();
+  }, [setValue]);
 
   // Next.js de Iyzico form içeriğini (script) render etmek için
   useEffect(() => {
@@ -101,12 +150,30 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
     setPaymentError(null);
 
+    let finalData = { ...data };
+    if (addresses.length > 0 && !showNewAddressForm && selectedAddressId) {
+      const selected = addresses.find(a => a.id === selectedAddressId);
+      if (selected) {
+        finalData = {
+          ...finalData,
+          invoiceType: selected.invoiceType || 'bireysel',
+          city: selected.city,
+          district: selected.district,
+          address: selected.address,
+          identityNumber: selected.identityNumber,
+          companyName: selected.companyName,
+          taxOffice: selected.taxOffice,
+          taxNumber: selected.taxNumber
+        };
+      }
+    }
+
     try {
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          form: data,
+          form: finalData,
           items: items,
           total: grandTotal,
           shippingPrice: shipping
@@ -186,74 +253,123 @@ export default function CheckoutPage() {
 
                 {/* Teslimat Adresi */}
                 <div>
-                  <h2 className="text-xl font-serif text-luxury-charcoal mb-6 border-b border-olive-50 pb-4">Teslimat Adresi</h2>
+                  <h2 className="text-xl font-serif text-luxury-charcoal mb-6 border-b border-olive-50 pb-4">Teslimat ve Fatura Adresi</h2>
                   
-                  <div className="flex gap-6 mb-6">
-                    <label className="flex items-center cursor-pointer">
-                      <input type="radio" value="bireysel" {...register('invoiceType')} className="form-radio text-gold-500 focus:ring-gold-500" />
-                      <span className="ml-2 text-olive-900">Bireysel</span>
-                    </label>
-                    <label className="flex items-center cursor-pointer">
-                      <input type="radio" value="kurumsal" {...register('invoiceType')} className="form-radio text-gold-500 focus:ring-gold-500" />
-                      <span className="ml-2 text-olive-900">Kurumsal</span>
-                    </label>
-                  </div>
+                  {addresses.length > 0 && !showNewAddressForm ? (
+                    <div className="space-y-4 mb-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {addresses.map((addr: any) => (
+                          <div 
+                            key={addr.id}
+                            onClick={() => setSelectedAddressId(addr.id)}
+                            className={`p-4 border rounded-xl cursor-pointer transition-all relative ${selectedAddressId === addr.id ? 'border-green-500 bg-green-50/20 ring-1 ring-green-500 shadow-sm' : 'border-olive-200 hover:border-olive-300 bg-white'}`}
+                          >
+                            {selectedAddressId === addr.id && (
+                              <div className="absolute top-4 right-4 text-green-500">
+                                <CheckCircle className="w-5 h-5" />
+                              </div>
+                            )}
+                            <h3 className="font-medium text-olive-900 mb-2 flex items-center">
+                              <MapPin className="w-4 h-4 mr-2 text-gold-500" />
+                              {addr.title}
+                            </h3>
+                            <p className="text-sm text-olive-600 mb-1">{addr.firstName} {addr.lastName} • {addr.phone}</p>
+                            <p className="text-sm text-olive-500 line-clamp-2">{addr.address}</p>
+                            <p className="text-sm text-olive-500">{addr.district} / {addr.city}</p>
+                            {addr.invoiceType === 'kurumsal' && (
+                              <p className="text-xs text-olive-400 mt-2 pt-2 border-t border-olive-100">Kurumsal Fatura: {addr.companyName}</p>
+                            )}
+                          </div>
+                        ))}
+                        <div 
+                          onClick={() => setShowNewAddressForm(true)}
+                          className="p-4 border border-dashed border-olive-300 rounded-xl cursor-pointer hover:bg-olive-50 transition-colors flex flex-col items-center justify-center text-olive-500 min-h-[140px]"
+                        >
+                          <Plus className="w-6 h-6 mb-2 text-gold-500" />
+                          <span className="font-medium">Yeni Adres Ekle</span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-white p-6 border border-olive-100 rounded-xl mb-6 relative shadow-sm">
+                      {addresses.length > 0 && (
+                        <button 
+                          type="button" 
+                          onClick={() => setShowNewAddressForm(false)}
+                          className="absolute top-4 right-4 text-sm font-medium text-olive-500 hover:text-gold-600 transition-colors"
+                        >
+                          İptal Et
+                        </button>
+                      )}
+                      
+                      <div className="flex gap-6 mb-6 mt-2">
+                        <label className="flex items-center cursor-pointer">
+                          <input type="radio" value="bireysel" {...register('invoiceType')} className="form-radio text-gold-500 focus:ring-gold-500" />
+                          <span className="ml-2 text-olive-900">Bireysel</span>
+                        </label>
+                        <label className="flex items-center cursor-pointer">
+                          <input type="radio" value="kurumsal" {...register('invoiceType')} className="form-radio text-gold-500 focus:ring-gold-500" />
+                          <span className="ml-2 text-olive-900">Kurumsal</span>
+                        </label>
+                      </div>
 
-                  {invoiceType === 'bireysel' && (
-                    <div className="mb-4">
-                      <input {...register('identityNumber')} type="text" placeholder="T.C. Kimlik No (Fatura kesimi için yasal zorunluluktur)" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
-                      {errors.identityNumber && <span className="text-xs text-red-500 mt-1 block">{errors.identityNumber.message}</span>}
+                      {invoiceType === 'bireysel' && (
+                        <div className="mb-4">
+                          <input {...register('identityNumber')} type="text" placeholder="T.C. Kimlik No (Fatura kesimi için yasal zorunluluktur)" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
+                          {errors.identityNumber && <span className="text-xs text-red-500 mt-1 block">{errors.identityNumber.message}</span>}
+                        </div>
+                      )}
+
+                      {invoiceType === 'kurumsal' && (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                          <div className="md:col-span-3">
+                            <input {...register('companyName')} type="text" placeholder="Şirket Adı / Ünvanı" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
+                            {errors.companyName && <span className="text-xs text-red-500 mt-1 block">{errors.companyName.message}</span>}
+                          </div>
+                          <div className="md:col-span-1">
+                            <input {...register('taxOffice')} type="text" placeholder="Vergi Dairesi" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
+                            {errors.taxOffice && <span className="text-xs text-red-500 mt-1 block">{errors.taxOffice.message}</span>}
+                          </div>
+                          <div className="md:col-span-2">
+                            <input {...register('taxNumber')} type="text" placeholder="Vergi No" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
+                            {errors.taxNumber && <span className="text-xs text-red-500 mt-1 block">{errors.taxNumber.message}</span>}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <select {...register('city')} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white">
+                            <option value="">İl Seçiniz</option>
+                            <option value="Bursa">Bursa</option>
+                            <option value="İstanbul">İstanbul</option>
+                            <option value="Ankara">Ankara</option>
+                            <option value="İzmir">İzmir</option>
+                          </select>
+                          {errors.city && <span className="text-xs text-red-500 mt-1 block">{errors.city.message}</span>}
+                        </div>
+                        <div>
+                          <select {...register('district')} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white">
+                            <option value="">İlçe Seçiniz</option>
+                            <option value="Gemlik">Gemlik</option>
+                            <option value="Kadıköy">Kadıköy</option>
+                            <option value="Çankaya">Çankaya</option>
+                          </select>
+                          {errors.district && <span className="text-xs text-red-500 mt-1 block">{errors.district.message}</span>}
+                        </div>
+                      </div>
+
+                      <div>
+                        <textarea {...register('address')} placeholder="Açık Adres (Mahalle, sokak, no vb.)" rows={3} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white"></textarea>
+                        {errors.address && <span className="text-xs text-red-500 mt-1 block">{errors.address.message}</span>}
+                      </div>
+
+                      <label className="flex items-center mt-4 cursor-pointer">
+                        <input {...register('isSameAddress')} type="checkbox" className="form-checkbox h-5 w-5 rounded border-olive-300 text-gold-500 focus:ring-gold-500" />
+                        <span className="ml-3 text-sm text-olive-700">Fatura adresim teslimat adresimle aynı</span>
+                      </label>
                     </div>
                   )}
-
-                  {invoiceType === 'kurumsal' && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                      <div className="md:col-span-3">
-                        <input {...register('companyName')} type="text" placeholder="Şirket Adı / Ünvanı" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
-                        {errors.companyName && <span className="text-xs text-red-500 mt-1 block">{errors.companyName.message}</span>}
-                      </div>
-                      <div className="md:col-span-1">
-                        <input {...register('taxOffice')} type="text" placeholder="Vergi Dairesi" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
-                        {errors.taxOffice && <span className="text-xs text-red-500 mt-1 block">{errors.taxOffice.message}</span>}
-                      </div>
-                      <div className="md:col-span-2">
-                        <input {...register('taxNumber')} type="text" placeholder="Vergi No" className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white" />
-                        {errors.taxNumber && <span className="text-xs text-red-500 mt-1 block">{errors.taxNumber.message}</span>}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <select {...register('city')} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white">
-                        <option value="">İl Seçiniz</option>
-                        <option value="Bursa">Bursa</option>
-                        <option value="İstanbul">İstanbul</option>
-                        <option value="Ankara">Ankara</option>
-                        <option value="İzmir">İzmir</option>
-                      </select>
-                      {errors.city && <span className="text-xs text-red-500 mt-1 block">{errors.city.message}</span>}
-                    </div>
-                    <div>
-                      <select {...register('district')} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white">
-                        <option value="">İlçe Seçiniz</option>
-                        <option value="Gemlik">Gemlik</option>
-                        <option value="Kadıköy">Kadıköy</option>
-                        <option value="Çankaya">Çankaya</option>
-                      </select>
-                      {errors.district && <span className="text-xs text-red-500 mt-1 block">{errors.district.message}</span>}
-                    </div>
-                  </div>
-
-                  <div>
-                    <textarea {...register('address')} placeholder="Açık Adres (Mahalle, sokak, no vb.)" rows={3} className="w-full p-4 border border-olive-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-olive-900 bg-white"></textarea>
-                    {errors.address && <span className="text-xs text-red-500 mt-1 block">{errors.address.message}</span>}
-                  </div>
-
-                  <label className="flex items-center mt-4 cursor-pointer">
-                    <input {...register('isSameAddress')} type="checkbox" className="form-checkbox h-5 w-5 rounded border-olive-300 text-gold-500 focus:ring-gold-500" />
-                    <span className="ml-3 text-sm text-olive-700">Fatura adresim teslimat adresimle aynı</span>
-                  </label>
                 </div>
 
                 {/* Hukuki Onaylar ve Ödeme Butonu */}
