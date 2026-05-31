@@ -5,7 +5,9 @@ export const Users: CollectionConfig = {
   slug: 'users',
   auth: {
     forgotPassword: {
-      generateEmailHTML: ({ token, user }) => {
+      generateEmailHTML: (args) => {
+        const token = args?.token;
+        const user = args?.user;
         // @ts-ignore
         const userName = user?.name || user?.email || 'Değerli Müşterimiz'
         const resetURL = `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/reset-password?token=${token}`
