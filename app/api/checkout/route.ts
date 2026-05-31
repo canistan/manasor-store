@@ -1,17 +1,18 @@
 import { NextResponse } from 'next/server';
-import Iyzipay from 'iyzipay';
 import { getPayload } from 'payload';
 import configPromise from '@/payload.config';
 
-// Iyzico Sandbox Config
-const iyzipay = new Iyzipay({
-  apiKey: process.env.IYZICO_API_KEY || 'sandbox-p19v0k7nO8hQIfF4rQ4yGfSihR2Kqj0T',
-  secretKey: process.env.IYZICO_SECRET_KEY || 'sandbox-7m7312Z2dD1zL1G4D9aY1l2vH3wE7O8t',
-  uri: 'https://sandbox-api.iyzipay.com'
-});
-
 export async function POST(request: Request) {
   try {
+    const Iyzipay = (await import('iyzipay')).default;
+    
+    // Iyzico Sandbox Config
+    const iyzipay = new Iyzipay({
+      apiKey: process.env.IYZICO_API_KEY || 'sandbox-p19v0k7nO8hQIfF4rQ4yGfSihR2Kqj0T',
+      secretKey: process.env.IYZICO_SECRET_KEY || 'sandbox-7m7312Z2dD1zL1G4D9aY1l2vH3wE7O8t',
+      uri: 'https://sandbox-api.iyzipay.com'
+    });
+
     const body = await request.json();
     const { form, items, total, shippingPrice } = body;
 
