@@ -115,6 +115,10 @@ export default function CheckoutPage() {
           if (u.addresses && u.addresses.length > 0) {
             setAddresses(u.addresses);
             setSelectedAddressId(u.addresses[0].id);
+            // Telefon profilde yoksa adresten al
+            if (!u.phone_number && u.addresses[0].phone) {
+              setValue('phone', u.addresses[0].phone);
+            }
           } else {
             // Eski yapı uyumluluğu
             const addressToUse = u.billing_address || u.shipping_address;
