@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
     ],
   },
   serverExternalPackages: ['iyzipay'],
+  outputFileTracingIncludes: {
+    '/api/**/*': ['./node_modules/iyzipay/**/*'],
+  },
 };
 
 export default withPayload(nextConfig);
