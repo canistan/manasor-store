@@ -115,9 +115,21 @@ export default function CheckoutPage() {
           if (u.addresses && u.addresses.length > 0) {
             setAddresses(u.addresses);
             setSelectedAddressId(u.addresses[0].id);
+            
+            // Seçili adresin bilgilerini form state'ine doldur (Zod validasyonunu geçmesi için)
+            const firstAddr = u.addresses[0];
+            if (firstAddr.city) setValue('city', firstAddr.city);
+            if (firstAddr.district) setValue('district', firstAddr.district);
+            if (firstAddr.address) setValue('address', firstAddr.address);
+            if (firstAddr.invoiceType) setValue('invoiceType', firstAddr.invoiceType);
+            if (firstAddr.identityNumber) setValue('identityNumber', firstAddr.identityNumber);
+            if (firstAddr.companyName) setValue('companyName', firstAddr.companyName);
+            if (firstAddr.taxOffice) setValue('taxOffice', firstAddr.taxOffice);
+            if (firstAddr.taxNumber) setValue('taxNumber', firstAddr.taxNumber);
+
             // Telefon profilde yoksa adresten al
-            if (!u.phone_number && u.addresses[0].phone) {
-              setValue('phone', u.addresses[0].phone);
+            if (!u.phone_number && firstAddr.phone) {
+              setValue('phone', firstAddr.phone);
             }
           } else {
             // Eski yapı uyumluluğu
@@ -140,6 +152,23 @@ export default function CheckoutPage() {
     };
     fetchUser();
   }, [setValue]);
+
+  // Seçili adres değiştiğinde form state'ini güncelle (Zod validasyonu için)
+  useEffect(() => {
+    if (selectedAddressId && addresses.length > 0 && !showNewAddressForm) {
+      const selected = addresses.find(a => a.id === selectedAddressId);
+      if (selected) {
+        if (selected.city) setValue('city', selected.city);
+        if (selected.district) setValue('district', selected.district);
+        if (selected.address) setValue('address', selected.address);
+        if (selected.invoiceType) setValue('invoiceType', selected.invoiceType);
+        if (selected.identityNumber) setValue('identityNumber', selected.identityNumber);
+        if (selected.companyName) setValue('companyName', selected.companyName);
+        if (selected.taxOffice) setValue('taxOffice', selected.taxOffice);
+        if (selected.taxNumber) setValue('taxNumber', selected.taxNumber);
+      }
+    }
+  }, [selectedAddressId, addresses, showNewAddressForm, setValue]);
 
   // Next.js de Iyzico form içeriğini (script) render etmek için
   useEffect(() => {
