@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     description: "Gemlik siyah zeytin ve soğuk sıkım natürel sızma zeytinyağı ile sofralarınıza eşsiz lezzetler katın. %100 doğal ve organik.",
     images: [
       {
-        url: `${getBaseUrl()}/images/og_image.png`,
+        url: `${getBaseUrl()}/images/og_image.jpg`,
         width: 1024,
         height: 1024,
         alt: "Manasor Premium Zeytin ve Zeytinyağı",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Manasor | Premium Zeytin ve Zeytinyağı",
     description: "Gemlik siyah zeytin ve soğuk sıkım natürel sızma zeytinyağı ile sofralarınıza eşsiz lezzetler katın.",
-    images: [`${getBaseUrl()}/images/og_image.png`],
+    images: [`${getBaseUrl()}/images/og_image.jpg`],
   },
   robots: {
     index: false,
