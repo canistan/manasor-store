@@ -19,8 +19,19 @@ const playfair = Playfair_Display({
   weight: ["400", "500", "600"],
 });
 
+const getBaseUrl = () => {
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL.startsWith('http') 
+      ? process.env.NEXT_PUBLIC_SITE_URL 
+      : `https://${process.env.NEXT_PUBLIC_SITE_URL}`;
+  }
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return 'http://localhost:3000';
+};
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://manasor.com'),
+  metadataBase: new URL(getBaseUrl()),
   title: {
     default: "Manasor | Premium Zeytin ve Zeytinyağı",
     template: "%s | Manasor"
