@@ -16,14 +16,14 @@ export async function POST(request: Request) {
     const token = formData.get('token') as string;
 
     if (!token) {
-      return NextResponse.redirect(new URL('/checkout?error=no_token', request.url));
+      return NextResponse.redirect(new URL('/checkout?error=no_token', request.url), 303);
     }
 
     // MOCK IYZICO CALLBACK HANDLING
     if (token.startsWith('MOCK_TOKEN_')) {
       // Başarılı bir ödeme simülasyonu
       const fakePaymentId = `PAY_${Date.now()}`;
-      return NextResponse.redirect(new URL(`/success?orderId=${fakePaymentId}`, request.url));
+      return NextResponse.redirect(new URL(`/success?orderId=${fakePaymentId}`, request.url), 303);
     }
 
     // Token ile gerçek Iyzico sunucusundan işlem sonucunu sorgula
@@ -101,14 +101,14 @@ export async function POST(request: Request) {
         // gerçeğe alınırken burada bir alert/webhook tetiklenebilir.
       }
 
-      return NextResponse.redirect(new URL(`/success?orderId=${result.paymentId}`, request.url));
+      return NextResponse.redirect(new URL(`/success?orderId=${result.paymentId}`, request.url), 303);
     } else {
       // Ödeme başarısız
-      return NextResponse.redirect(new URL(`/checkout?error=${encodeURIComponent(result.errorMessage || 'Ödeme reddedildi')}`, request.url));
+      return NextResponse.redirect(new URL(`/checkout?error=${encodeURIComponent(result.errorMessage || 'Ödeme reddedildi')}`, request.url), 303);
     }
 
   } catch (error) {
     console.error('Iyzico Callback Error:', error);
-    return NextResponse.redirect(new URL('/checkout?error=server_error', request.url));
+    return NextResponse.redirect(new URL('/checkout?error=server_error', request.url), 303);
   }
 }
