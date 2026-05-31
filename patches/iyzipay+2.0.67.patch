@@ -1,8 +1,8 @@
 diff --git a/node_modules/iyzipay/lib/Iyzipay.js b/node_modules/iyzipay/lib/Iyzipay.js
-index cd9e225..2319abb 100644
+index cd9e225..8b96b20 100644
 --- a/node_modules/iyzipay/lib/Iyzipay.js
 +++ b/node_modules/iyzipay/lib/Iyzipay.js
-@@ -42,12 +42,24 @@ function Iyzipay(config) {
+@@ -42,12 +42,12 @@ function Iyzipay(config) {
  Iyzipay.prototype._initResources = function () {
      var _self = this;
      var modelsPath = __dirname + '/resources';
@@ -13,19 +13,7 @@ index cd9e225..2319abb 100644
 -            _self[resourceName[0].toLowerCase() + resourceName.substring(1)] = new resource(_self._config);
 -        }
 +    var resources = [
-+        'ApiTest', 'Approval', 'Apm', 'BasicBkm', 'BasicBkmInitialize', 'BasicPayment', 
-+        'BasicPaymentPostAuth', 'BasicPaymentPreAuth', 'BasicThreedsInitialize', 
-+        'BasicThreedsInitializePreAuth', 'BasicThreedsPayment', 'BinNumber', 'Bkm', 
-+        'BkmInitialize', 'Cancel', 'CardList', 'CardManagementPageCard', 
-+        'CardManagementPageInitialize', 'CheckoutForm', 'CheckoutFormInitialize', 
-+        'CrossBookingFromSubMerchant', 'CrossBookingToSubMerchant', 'Disapproval', 
-+        'InstallmentInfo', 'IyziupForm', 'IyziupFormInitialize', 'Payment', 'PaymentItem', 
-+        'PaymentPostAuth', 'PaymentPreAuth', 'PeccoInitialize', 'PeccoPayment', 'Refund', 
-+        'RefundToBalance', 'SettlementToBalance', 'SubMerchant', 'Subscription', 
-+        'SubscriptionCardUpdate', 'SubscriptionCardUpdateWithSubscriptionReference', 
-+        'SubscriptionCheckoutForm', 'SubscriptionCheckoutFormInitialize', 'SubscriptionCustomer', 
-+        'SubscriptionPayment', 'SubscriptionPricingPlan', 'SubscriptionProduct', 'ThreedsInitialize', 
-+        'ThreedsInitializePreAuth', 'ThreedsPayment'
++        'ApiTest', 'Apm', 'Approval', 'BasicBkm', 'BasicBkmInitialize', 'BasicPayment', 'BasicPaymentPostAuth', 'BasicPaymentPreAuth', 'BasicThreedsInitialize', 'BasicThreedsInitializePreAuth', 'BasicThreedsPayment', 'BinNumber', 'Bkm', 'BkmInitialize', 'BouncedBankTransferList', 'Cancel', 'Card', 'CardList', 'CheckoutForm', 'CheckoutFormInitialize', 'CheckoutFormInitializePreAuth', 'CrossBookingFromSubMerchant', 'CrossBookingToSubMerchant', 'Disapproval', 'InstallmentHtml', 'InstallmentInfo', 'IyziLink', 'PayWithIyzico', 'Payment', 'PaymentItem', 'PaymentPostAuth', 'PaymentPreAuth', 'PayoutCompletedTransactionList', 'PeccoInitialize', 'PeccoPayment', 'Refund', 'RefundChargedFromMerchant', 'RefundToBalance', 'RefundV2', 'ReportingBouncedPayments', 'ReportingPayoutCompleted', 'ReportingScrollTransactions', 'ReportingTransactionDetails', 'ReportingTransactions', 'SettlementToBalance', 'SubMerchant', 'Subscription', 'SubscriptionCard', 'SubscriptionCheckoutForm', 'SubscriptionCustomer', 'SubscriptionExistingCustomer', 'SubscriptionPayment', 'SubscriptionPricingPlan', 'SubscriptionProduct', 'ThreedsInitialize', 'ThreedsInitializePreAuth', 'ThreedsPayment', 'ThreedsV2Payment', 'UniversalCardStorageInitialize'
 +    ];
 +    resources.forEach(function(resourceName) {
 +        var resource = require('./resources/' + resourceName + '.js');
