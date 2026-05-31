@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
+import Iyzipay from 'iyzipay';
 import { getPayload } from 'payload';
 import configPromise from '@/payload.config';
 
 export async function POST(request: Request) {
   try {
-    const Iyzipay = (await import('iyzipay')).default;
-    
     // Iyzico Sandbox Config
     const iyzipay = new Iyzipay({
       apiKey: process.env.IYZICO_API_KEY || 'sandbox-p19v0k7nO8hQIfF4rQ4yGfSihR2Kqj0T',
