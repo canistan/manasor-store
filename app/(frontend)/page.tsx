@@ -3,7 +3,7 @@ import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { Truck, Leaf, ShieldCheck } from "lucide-react";
+import { Truck, Leaf, ShieldCheck, Star } from "lucide-react";
 
 export default async function Home() {
   let products: any[] = [];
@@ -118,27 +118,44 @@ export default async function Home() {
       <section className="bg-olive-900 text-white py-8 border-t border-olive-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-olive-800">
-            <div className="p-4 flex flex-col items-center justify-center group">
-              <span className="text-gold-400 mb-3 group-hover:scale-110 transition-transform duration-300">
-                <Truck size={36} strokeWidth={1.5} />
-              </span>
-              <h3 className="font-semibold text-lg mb-1 tracking-wide">Hızlı & Güvenli Kargo</h3>
-              <p className="text-olive-300 text-sm">Özenle paketlenmiş, kırılmaya karşı garantili</p>
-            </div>
-            <div className="p-4 flex flex-col items-center justify-center group">
-              <span className="text-gold-400 mb-3 group-hover:scale-110 transition-transform duration-300">
-                <Leaf size={36} strokeWidth={1.5} />
-              </span>
-              <h3 className="font-semibold text-lg mb-1 tracking-wide">%100 Doğal Ürünler</h3>
-              <p className="text-olive-300 text-sm">Ege'nin bahçelerinden, katkısız ve koruyucusuz</p>
-            </div>
-            <div className="p-4 flex flex-col items-center justify-center group">
-              <span className="text-gold-400 mb-3 group-hover:scale-110 transition-transform duration-300">
-                <ShieldCheck size={36} strokeWidth={1.5} />
-              </span>
-              <h3 className="font-semibold text-lg mb-1 tracking-wide">Güvenli Ödeme</h3>
-              <p className="text-olive-300 text-sm">256-bit SSL ve Iyzico güvencesiyle</p>
-            </div>
+            {homePageData?.trustBadges?.length > 0 ? (
+              homePageData.trustBadges.map((badge: any, index: number) => {
+                const IconComponent = badge.icon === 'Truck' ? Truck : badge.icon === 'Leaf' ? Leaf : badge.icon === 'Star' ? Star : ShieldCheck;
+                return (
+                  <div key={index} className="p-4 flex flex-col items-center justify-center group">
+                    <span className="text-gold-400 mb-3 group-hover:scale-110 transition-transform duration-300">
+                      <IconComponent size={36} strokeWidth={1.5} />
+                    </span>
+                    <h3 className="font-semibold text-lg mb-1 tracking-wide">{badge.title}</h3>
+                    <p className="text-olive-300 text-sm">{badge.subtitle}</p>
+                  </div>
+                );
+              })
+            ) : (
+              <>
+                <div className="p-4 flex flex-col items-center justify-center group">
+                  <span className="text-gold-400 mb-3 group-hover:scale-110 transition-transform duration-300">
+                    <Truck size={36} strokeWidth={1.5} />
+                  </span>
+                  <h3 className="font-semibold text-lg mb-1 tracking-wide">Hızlı & Güvenli Kargo</h3>
+                  <p className="text-olive-300 text-sm">Özenle paketlenmiş, kırılmaya karşı garantili</p>
+                </div>
+                <div className="p-4 flex flex-col items-center justify-center group">
+                  <span className="text-gold-400 mb-3 group-hover:scale-110 transition-transform duration-300">
+                    <Leaf size={36} strokeWidth={1.5} />
+                  </span>
+                  <h3 className="font-semibold text-lg mb-1 tracking-wide">%100 Doğal Ürünler</h3>
+                  <p className="text-olive-300 text-sm">Ege'nin bahçelerinden, katkısız ve koruyucusuz</p>
+                </div>
+                <div className="p-4 flex flex-col items-center justify-center group">
+                  <span className="text-gold-400 mb-3 group-hover:scale-110 transition-transform duration-300">
+                    <ShieldCheck size={36} strokeWidth={1.5} />
+                  </span>
+                  <h3 className="font-semibold text-lg mb-1 tracking-wide">Güvenli Ödeme</h3>
+                  <p className="text-olive-300 text-sm">256-bit SSL ve Iyzico güvencesiyle</p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -151,19 +168,32 @@ export default async function Home() {
             <div className="w-16 h-1 bg-gold-500 mx-auto mt-6 rounded-full"></div>
           </div>
           
-          <div className="grid grid-cols-2 gap-8 justify-center max-w-3xl mx-auto">
-            <Link href="/products" className="group flex flex-col items-center text-center">
-              <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
-                <Image src="https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=500&q=80" alt="Ahşap masada dalıyla birlikte organik natürel sızma zeytinyağı" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-              </div>
-              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Zeytinyağları</h3>
-            </Link>
-            <Link href="/products" className="group flex flex-col items-center text-center">
-              <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
-                <Image src="https://images.unsplash.com/photo-1591122523233-22037c1dec9f?w=500&q=80" alt="Doğal ahşap tabakta taze siyah ve yeşil zeytin çeşitleri" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-              </div>
-              <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Zeytin Çeşitleri</h3>
-            </Link>
+          <div className="flex flex-wrap justify-center gap-8 max-w-4xl mx-auto">
+            {homePageData?.categories?.length > 0 ? (
+              homePageData.categories.map((cat: any, index: number) => (
+                <Link key={index} href={cat.link || "/products"} className="group flex flex-col items-center text-center">
+                  <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
+                    <Image src={cat.image?.url || "https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=500&q=80"} alt={cat.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                  </div>
+                  <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">{cat.title}</h3>
+                </Link>
+              ))
+            ) : (
+              <>
+                <Link href="/products" className="group flex flex-col items-center text-center">
+                  <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
+                    <Image src="https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=500&q=80" alt="Ahşap masada dalıyla birlikte organik natürel sızma zeytinyağı" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                  </div>
+                  <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Zeytinyağları</h3>
+                </Link>
+                <Link href="/products" className="group flex flex-col items-center text-center">
+                  <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
+                    <Image src="https://images.unsplash.com/photo-1591122523233-22037c1dec9f?w=500&q=80" alt="Doğal ahşap tabakta taze siyah ve yeşil zeytin çeşitleri" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                  </div>
+                  <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Zeytin Çeşitleri</h3>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </section>

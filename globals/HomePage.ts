@@ -47,6 +47,66 @@ export const HomePage: GlobalConfig = {
       ],
     },
     {
+      name: 'trustBadges',
+      label: 'Güven Rozetleri (Trust Badges)',
+      type: 'array',
+      maxRows: 3,
+      fields: [
+        {
+          name: 'icon',
+          label: 'İkon',
+          type: 'select',
+          required: true,
+          options: [
+            { label: 'Kamyon (Kargo)', value: 'Truck' },
+            { label: 'Yaprak (Doğal)', value: 'Leaf' },
+            { label: 'Kalkan (Güvenli)', value: 'ShieldCheck' },
+            { label: 'Yıldız (Kalite)', value: 'Star' },
+          ],
+          defaultValue: 'Truck',
+        },
+        {
+          name: 'title',
+          label: 'Başlık',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'subtitle',
+          label: 'Alt Başlık',
+          type: 'text',
+        },
+      ],
+    },
+    {
+      name: 'categories',
+      label: 'Anasayfa Kategorileri',
+      type: 'array',
+      maxRows: 4,
+      fields: [
+        {
+          name: 'image',
+          label: 'Kategori Görseli',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'title',
+          label: 'Kategori Adı',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'link',
+          label: 'Yönlendirilecek Link',
+          type: 'text',
+          required: true,
+          defaultValue: '/products',
+        },
+      ],
+    },
+    {
       name: 'featuredProducts',
       label: 'Öne Çıkan Ürünler',
       type: 'relationship',
