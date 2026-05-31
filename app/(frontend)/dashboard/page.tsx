@@ -287,7 +287,7 @@ export default function DashboardPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-olive-900 mb-1">Ad Soyad</label>
-                  <input type="text" defaultValue={user.name} className="w-full p-3 border border-olive-200 rounded-xl focus:ring-gold-500 focus:border-gold-500" />
+                  <input type="text" defaultValue={user.name} className="w-full p-3 border border-olive-200 rounded-xl focus:ring-gold-500 focus:border-gold-500 text-olive-900 placeholder:text-olive-400" />
                 </div>
               </div>
               <div>
@@ -297,7 +297,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-olive-900 mb-1">Telefon</label>
-                <input type="tel" defaultValue="0555 123 45 67" className="w-full p-3 border border-olive-200 rounded-xl focus:ring-gold-500 focus:border-gold-500" />
+                <input type="tel" defaultValue={user.phone_number || ''} placeholder="0555 123 45 67" className="w-full p-3 border border-olive-200 rounded-xl focus:ring-gold-500 focus:border-gold-500 text-olive-900 placeholder:text-olive-400" />
               </div>
               <button type="button" className="bg-olive-900 text-white px-6 py-3 rounded-xl font-medium hover:bg-gold-500 transition-colors">
                 Bilgileri Güncelle
@@ -315,14 +315,14 @@ export default function DashboardPage() {
               </div>
               <form onSubmit={handleSaveAddress} className="space-y-4 max-w-2xl">
                 <div>
-                  <input required placeholder="Adres Başlığı (Örn: Ev, İş)" value={addressForm.title || ''} onChange={e => setAddressForm({...addressForm, title: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" />
+                  <input required placeholder="Adres Başlığı (Örn: Ev, İş)" value={addressForm.title || ''} onChange={e => setAddressForm({...addressForm, title: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 placeholder:text-olive-400" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <input required placeholder="Ad" value={addressForm.firstName || ''} onChange={e => setAddressForm({...addressForm, firstName: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" />
-                  <input required placeholder="Soyad" value={addressForm.lastName || ''} onChange={e => setAddressForm({...addressForm, lastName: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" />
+                  <input required placeholder="Ad" value={addressForm.firstName || ''} onChange={e => setAddressForm({...addressForm, firstName: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 placeholder:text-olive-400" />
+                  <input required placeholder="Soyad" value={addressForm.lastName || ''} onChange={e => setAddressForm({...addressForm, lastName: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 placeholder:text-olive-400" />
                 </div>
                 <div>
-                  <input required placeholder="Telefon" value={addressForm.phone || ''} onChange={e => setAddressForm({...addressForm, phone: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" />
+                  <input required placeholder="Telefon" value={addressForm.phone || ''} onChange={e => setAddressForm({...addressForm, phone: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 placeholder:text-olive-400" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -367,15 +367,15 @@ export default function DashboardPage() {
                 </div>
 
                 {addressForm.invoiceType === 'bireysel' && (
-                  <input placeholder="T.C. Kimlik No" value={addressForm.identityNumber || ''} onChange={e => setAddressForm({...addressForm, identityNumber: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" />
+                  <input placeholder="T.C. Kimlik No" value={addressForm.identityNumber || ''} onChange={e => setAddressForm({...addressForm, identityNumber: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 placeholder:text-olive-400" />
                 )}
 
                 {addressForm.invoiceType === 'kurumsal' && (
                   <div className="space-y-4">
-                    <input placeholder="Firma Adı" value={addressForm.companyName || ''} onChange={e => setAddressForm({...addressForm, companyName: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" />
+                    <input placeholder="Firma Adı" value={addressForm.companyName || ''} onChange={e => setAddressForm({...addressForm, companyName: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 placeholder:text-olive-400" />
                     <div className="grid grid-cols-2 gap-4">
-                      <input placeholder="Vergi Dairesi" value={addressForm.taxOffice || ''} onChange={e => setAddressForm({...addressForm, taxOffice: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" />
-                      <input placeholder="Vergi No" value={addressForm.taxNumber || ''} onChange={e => setAddressForm({...addressForm, taxNumber: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" />
+                      <input placeholder="Vergi Dairesi" value={addressForm.taxOffice || ''} onChange={e => setAddressForm({...addressForm, taxOffice: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 placeholder:text-olive-400" />
+                      <input placeholder="Vergi No" value={addressForm.taxNumber || ''} onChange={e => setAddressForm({...addressForm, taxNumber: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 placeholder:text-olive-400" />
                     </div>
                   </div>
                 )}
