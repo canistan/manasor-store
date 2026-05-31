@@ -52,8 +52,8 @@ export const metadata: Metadata = {
     images: ["/images/hero_banner_1779729149147.png"],
   },
   robots: {
-    index: true,
-    follow: true,
+    index: false,
+    follow: false,
   }
 };
 
