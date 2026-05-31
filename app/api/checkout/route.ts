@@ -171,6 +171,6 @@ export async function POST(request: Request) {
 
   } catch (error: any) {
     console.error("Checkout API Error:", error);
-    return NextResponse.json({ error: 'Sunucu hatası oluştu.' }, { status: 500 });
+    return NextResponse.json({ error: `Sunucu hatası: ${error.message || 'Bilinmiyor'}` }, { status: 400 });
   }
 }
