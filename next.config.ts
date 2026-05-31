@@ -10,13 +10,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  serverExternalPackages: ['iyzipay'],
-  outputFileTracingIncludes: {
-    '/api/**/*': [
-      './node_modules/iyzipay/**/*',
-      './node_modules/postman-request/**/*'
-    ],
-  },
 };
 
 export default withPayload(nextConfig);
