@@ -9,9 +9,27 @@ export default function Navbar() {
   const { getCartCount, openDrawer } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    
+    // Check Auth Status
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/users/me');
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.user) {
+            setIsLoggedIn(true);
+          }
+        }
+      } catch (e) {
+        // ignore errors for navbar
+      }
+    };
+    
+    checkAuth();
   }, []);
 
   return (
@@ -36,8 +54,11 @@ export default function Navbar() {
 
           {/* Icons & Mobile menu button */}
           <div className="flex items-center space-x-2 md:space-x-4">
-            <Link href="/dashboard" className="p-2 text-olive-900 hover:text-gold-500 transition-colors hidden md:block" aria-label="Hesabım">
+            <Link href="/dashboard" className="flex items-center space-x-2 p-2 text-olive-900 hover:text-gold-500 transition-colors hidden md:flex" aria-label="Hesabım">
               <User className="w-5 h-5" />
+              <span className="text-sm font-medium">
+                {!mounted ? "Giriş Yap" : (isLoggedIn ? "Hesabım" : "Giriş Yap / Üye Ol")}
+              </span>
             </Link>
             <button 
               onClick={openDrawer}
