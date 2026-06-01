@@ -14,7 +14,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     // Already logged in check
-    fetch('/api/users/me')
+    fetch('/api/customers/me')
       .then(res => res.json())
       .then(data => {
         if (data && data.user) {
@@ -30,7 +30,7 @@ export default function LoginPage() {
     setError(null);
     
     try {
-      const res = await fetch('/api/users/login', {
+      const res = await fetch('/api/customers/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

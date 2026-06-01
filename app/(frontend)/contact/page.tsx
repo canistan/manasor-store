@@ -1,19 +1,33 @@
 import Image from "next/image";
 import { MapPin, Phone, Mail } from "lucide-react";
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 
 export const metadata = {
   title: "İletişim | Manasor",
   description: "ZeytinCo / Manasor ile iletişime geçin. Soru, görüş ve önerileriniz için buradayız.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  let pageData: any = null;
+  try {
+    const payload = await getPayload({ config: configPromise });
+    pageData = await payload.findGlobal({ slug: 'contact-page' });
+  } catch {
+    console.log('İletişim ayarları henüz kaydedilmemiş.');
+  }
+
+  const hero = pageData?.hero;
+  const info = pageData?.contactInfo;
+  const form = pageData?.formInfo;
+
   return (
     <div className="flex flex-col min-h-screen bg-[#FDFBF7] pt-24">
       {/* HERO ALANI */}
       <section className="relative w-full h-[50vh] min-h-[300px] flex items-center justify-center text-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=2000&auto=format&fit=crop"
+            src={hero?.backgroundImage?.url || "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=2000&auto=format&fit=crop"}
             alt="ZeytinCo İletişim"
             fill
             className="object-cover"
@@ -24,10 +38,10 @@ export default function ContactPage() {
         
         <div className="relative z-10 max-w-4xl mx-auto px-4 flex flex-col items-center animate-fade-in-up">
           <span className="text-gold-400 font-medium tracking-widest-plus uppercase text-sm md:text-base mb-4 drop-shadow-md">
-            Soru ve Önerileriniz İçin
+            {hero?.subtitle || 'Soru ve Önerileriniz İçin'}
           </span>
           <h1 className="text-4xl md:text-6xl font-serif text-white mb-6 leading-tight drop-shadow-lg">
-            İletişime Geçin
+            {hero?.title || 'İletişime Geçin'}
           </h1>
           <div className="w-24 h-1 bg-gold-500 mx-auto rounded-full"></div>
         </div>
@@ -41,9 +55,11 @@ export default function ContactPage() {
             {/* Sol Kolon - İletişim Bilgileri */}
             <div className="lg:w-5/12 space-y-12">
               <div>
-                <h2 className="text-3xl font-serif text-luxury-charcoal mb-4">Size Nasıl Yardımcı Olabiliriz?</h2>
+                <h2 className="text-3xl font-serif text-luxury-charcoal mb-4">
+                  {info?.title || 'Size Nasıl Yardımcı Olabiliriz?'}
+                </h2>
                 <p className="text-olive-700 font-light leading-relaxed">
-                  Ürünlerimiz, siparişleriniz veya markamız hakkında merak ettiğiniz her türlü soru için bize ulaşabilirsiniz. Müşteri temsilcilerimiz en kısa sürede size geri dönüş yapacaktır.
+                  {info?.description || 'Ürünlerimiz, siparişleriniz veya markamız hakkında merak ettiğiniz her türlü soru için bize ulaşabilirsiniz. Müşteri temsilcilerimiz en kısa sürede size geri dönüş yapacaktır.'}
                 </p>
               </div>
 
@@ -54,9 +70,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-luxury-charcoal mb-1">Adres</h3>
-                    <p className="text-olive-700 font-light">
-                      Umurbey Mahallesi, Zeytin Dalı Sokak No:12<br />
-                      Gemlik / Bursa
+                    <p className="text-olive-700 font-light whitespace-pre-line">
+                      {info?.address || 'Umurbey Mahallesi, Zeytin Dalı Sokak No:12\nGemlik / Bursa'}
                     </p>
                   </div>
                 </div>
@@ -68,7 +83,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-lg font-semibold text-luxury-charcoal mb-1">Telefon</h3>
                     <p className="text-olive-700 font-light">
-                      +90 (224) 513 00 00
+                      {info?.phone || '+90 (224) 513 00 00'}
                     </p>
                   </div>
                 </div>
@@ -80,11 +95,10 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-lg font-semibold text-luxury-charcoal mb-1">E-posta</h3>
                     <p className="text-olive-700 font-light">
-                      info@manasor.com
+                      {info?.email || 'info@manasor.com'}
                     </p>
                   </div>
                 </div>
-
 
               </div>
             </div>
@@ -92,7 +106,9 @@ export default function ContactPage() {
             {/* Sağ Kolon - İletişim Formu */}
             <div className="lg:w-7/12">
               <div className="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-olive-50">
-                <h3 className="text-2xl font-serif text-luxury-charcoal mb-8">Bize Mesaj Gönderin</h3>
+                <h3 className="text-2xl font-serif text-luxury-charcoal mb-8">
+                  {form?.title || 'Bize Mesaj Gönderin'}
+                </h3>
                 
                 <form className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -148,7 +164,7 @@ export default function ContactPage() {
                     type="button" 
                     className="w-full bg-olive-900 hover:bg-gold-500 text-white font-medium py-4 rounded-lg uppercase tracking-wider transition-colors duration-300"
                   >
-                    Mesajı Gönder
+                    {form?.buttonText || 'Mesajı Gönder'}
                   </button>
                 </form>
               </div>

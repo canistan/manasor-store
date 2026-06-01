@@ -9,6 +9,7 @@ export const Orders: CollectionConfig = {
   admin: {
     useAsTitle: 'orderNumber',
     defaultColumns: ['orderNumber', 'customerName', 'totalPrice', 'status', 'createdAt'],
+    group: 'Kullanıcı Bilgi Deposu',
   },
   access: {
     read: () => true,
@@ -17,6 +18,15 @@ export const Orders: CollectionConfig = {
     delete: ({ req: { user } }) => !!user, // Sadece admin silebilir
   },
   fields: [
+    {
+      name: 'customer',
+      type: 'relationship',
+      relationTo: 'customers',
+      label: 'Müşteri (Kayıtlı Üye)',
+      admin: {
+        position: 'sidebar',
+      }
+    },
     {
       name: 'orderNumber',
       type: 'text',

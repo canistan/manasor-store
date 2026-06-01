@@ -16,7 +16,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     // Already logged in check
-    fetch('/api/users/me')
+    fetch('/api/customers/me')
       .then(res => res.json())
       .then(data => {
         if (data && data.user) {
@@ -33,7 +33,7 @@ export default function RegisterPage() {
     
     try {
       // 1. Kayıt İşlemi
-      const res = await fetch('/api/users', {
+      const res = await fetch('/api/customers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -51,7 +51,7 @@ export default function RegisterPage() {
       }
 
       // 2. Otomatik Giriş İşlemi
-      const loginRes = await fetch('/api/users/login', {
+      const loginRes = await fetch('/api/customers/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

@@ -10,6 +10,7 @@ export const Products: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'category', 'updatedAt'],
     description: 'Manasor ürün kataloğu',
+    group: 'Yönetim',
   },
   access: {
     // Herkes ürünleri görebilir (frontend için gerekli)

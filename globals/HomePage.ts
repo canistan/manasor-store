@@ -3,6 +3,9 @@ import type { GlobalConfig } from 'payload'
 export const HomePage: GlobalConfig = {
   slug: 'home-page',
   label: 'Anasayfa Ayarları',
+  admin: {
+    group: 'Site',
+  },
   access: {
     read: () => true,
   },

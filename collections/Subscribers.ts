@@ -9,6 +9,7 @@ export const Subscribers: CollectionConfig = {
   admin: {
     useAsTitle: 'email',
     defaultColumns: ['email', 'source', 'createdAt'],
+    group: 'Yönetim',
   },
   access: {
     read: ({ req: { user } }) => !!user, // Sadece admin okuyabilir

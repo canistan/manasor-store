@@ -7,12 +7,15 @@ import { fileURLToPath } from 'url'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 
 import { Users } from './collections/Users'
+import { Customers } from './collections/Customers'
 import { Media } from './collections/Media'
 import { Products } from './collections/Products'
 import { Orders } from './collections/Orders'
 import { RmaRequests } from './collections/RmaRequests'
 import { Subscribers } from './collections/Subscribers'
 import { HomePage } from './globals/HomePage'
+import { AboutPage } from './globals/AboutPage'
+import { ContactPage } from './globals/ContactPage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -32,9 +35,9 @@ export default buildConfig({
     avatar: 'default',
   },
 
-  collections: [Users, Media, Products, Orders, RmaRequests, Subscribers],
+  collections: [Users, Customers, Media, Products, Orders, RmaRequests, Subscribers],
 
-  globals: [HomePage],
+  globals: [HomePage, AboutPage, ContactPage],
 
   email: nodemailerAdapter({
     defaultFromAddress: 'info@manasor.com',

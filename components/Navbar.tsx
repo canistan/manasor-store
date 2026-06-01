@@ -17,7 +17,7 @@ export default function Navbar() {
     // Check Auth Status
     const checkAuth = async () => {
       try {
-        const res = await fetch('/api/users/me');
+        const res = await fetch('/api/customers/me');
         if (res.ok) {
           const data = await res.json();
           if (data?.user) {

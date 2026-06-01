@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     });
 
     const body = await request.json();
-    const { form, items, total, shippingPrice } = body;
+    const { form, items, total, shippingPrice, userId } = body;
 
     // 1. MOCK STOK KONTROLÜ
     // Gerçekte Payload CMS'den güncel stok ve fiyat çekilmelidir.
@@ -29,6 +29,7 @@ export async function POST(request: Request) {
     const newOrder = await payload.create({
       collection: 'orders',
       data: {
+        customer: userId || undefined,
         orderNumber: `MANASOR-${Date.now()}`,
         status: 'pending',
         totalPrice: Number(price),
@@ -66,10 +67,10 @@ export async function POST(request: Request) {
     }
 
     // 2.5 KULLANICI ADRESİNİ OTOMATİK KAYDETME
-    const { userId, saveAddress } = body;
+    const { saveAddress } = body;
     if (userId && saveAddress) {
       try {
-        const user = await payload.findByID({ collection: 'users', id: userId });
+        const user = await payload.findByID({ collection: 'customers', id: userId });
         if (user) {
           const currentAddresses = user.addresses || [];
           const newAddress = {
@@ -89,7 +90,7 @@ export async function POST(request: Request) {
           };
           
           await payload.update({
-            collection: 'users',
+            collection: 'customers',
             id: userId,
             data: {
               addresses: [...currentAddresses, newAddress]
@@ -97,7 +98,7 @@ export async function POST(request: Request) {
           });
         }
       } catch (err) {
-        console.error('Kullanıcı adresi kaydedilemedi:', err);
+        console.error('Müşteri adresi kaydedilemedi:', err);
       }
     }
 

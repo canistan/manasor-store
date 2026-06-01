@@ -10,6 +10,7 @@ export const RmaRequests: CollectionConfig = {
     useAsTitle: 'id',
     defaultColumns: ['order', 'customer', 'request_type', 'admin_status', 'createdAt'],
     description: 'Kargoda hasar gören veya yanlış giden ürünlerin takibi',
+    group: 'Kullanıcı Bilgi Deposu',
   },
   access: {
     // Müşteriler sadece kendi taleplerini görebilir
@@ -40,7 +41,7 @@ export const RmaRequests: CollectionConfig = {
     {
       name: 'customer',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'customers',
       label: 'Müşteri',
       required: true,
       admin: {

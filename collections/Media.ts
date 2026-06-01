@@ -8,6 +8,7 @@ export const Media: CollectionConfig = {
   },
   admin: {
     description: 'Ürün görselleri ve diğer medya dosyaları',
+    group: 'Yönetim',
   },
   access: {
     // Herkes görselleri görebilir (frontend için gerekli)

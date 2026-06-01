@@ -95,7 +95,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('/api/users/me');
+        const res = await fetch('/api/customers/me');
         const data = await res.json();
         if (res.ok && data.user) {
           setUser(data.user);

@@ -21,7 +21,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await fetch('/api/users/me');
+        const res = await fetch('/api/customers/me');
         const data = await res.json();
         
         if (res.ok && data.user) {
@@ -53,7 +53,7 @@ export default function DashboardPage() {
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      await fetch('/api/users/logout', { method: 'POST' });
+      await fetch('/api/customers/logout', { method: 'POST' });
       router.push('/login');
       router.refresh();
     } catch (err) {
@@ -68,7 +68,7 @@ export default function DashboardPage() {
       const currentAddresses = user.addresses || [];
       const newAddress = { ...addressForm };
       
-      const res = await fetch(`/api/users/${user.id}`, {
+      const res = await fetch(`/api/customers/${user.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -90,7 +90,7 @@ export default function DashboardPage() {
     if (!confirm('Bu adresi silmek istediğinize emin misiniz?')) return;
     try {
       const newAddresses = user.addresses.filter((a: any) => a.id !== id);
-      const res = await fetch(`/api/users/${user.id}`, {
+      const res = await fetch(`/api/customers/${user.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ addresses: newAddresses })
