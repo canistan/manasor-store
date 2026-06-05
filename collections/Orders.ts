@@ -96,6 +96,24 @@ export const Orders: CollectionConfig = {
               }
             }
           }
+          
+          // Kargo Takip Numarası Eklendiğinde Otomatik Mail Tetikleyici (Simülasyon)
+          if (doc.trackingNumber && doc.trackingNumber !== previousDoc?.trackingNumber) {
+            req.payload.logger.info(`[MAIL SİMÜLASYONU] ${doc.email} adresine "Siparişiniz Kargoya Verildi" maili gönderildi. Takip No: ${doc.trackingNumber}`);
+            
+            // Eğer sipariş durumu henüz 'shipped' yapılmadıysa otomatik yapalım
+            if (doc.status !== 'shipped' && doc.status !== 'delivered') {
+               try {
+                 await req.payload.update({
+                   collection: 'orders',
+                   id: doc.id,
+                   data: { status: 'shipped' }
+                 });
+               } catch (err) {
+                 req.payload.logger.error(`Sipariş durumu shipped yapılamadı: ${err}`);
+               }
+            }
+          }
         }
       }
     ]
@@ -178,6 +196,24 @@ export const Orders: CollectionConfig = {
       type: 'number',
       label: 'Kargo Ücreti (TRY)',
       defaultValue: 0,
+    },
+    {
+      name: 'shippingCompany',
+      type: 'text',
+      label: 'Kargo Firması',
+      admin: { position: 'sidebar' }
+    },
+    {
+      name: 'trackingNumber',
+      type: 'text',
+      label: 'Kargo Takip Numarası',
+      admin: { position: 'sidebar' }
+    },
+    {
+      name: 'trackingUrl',
+      type: 'text',
+      label: 'Kargo Takip Linki',
+      admin: { position: 'sidebar' }
     },
     {
       type: 'tabs',

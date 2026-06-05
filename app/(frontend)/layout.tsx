@@ -73,12 +73,38 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${getBaseUrl()}/#organization`,
+        "name": "Manasor",
+        "url": getBaseUrl(),
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${getBaseUrl()}/images/og_image.jpg`
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${getBaseUrl()}/#website`,
+        "url": getBaseUrl(),
+        "name": "Manasor",
+        "publisher": {
+          "@id": `${getBaseUrl()}/#organization`
+        }
+      }
+    ]
+  };
+
   return (
     <html
       lang="tr"
       className={`${inter.variable} ${playfair.variable} h-full antialiased font-light`}
     >
       <body className="min-h-full flex flex-col font-sans">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <Navbar />
         <main className="flex-grow">
           {children}

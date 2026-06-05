@@ -39,6 +39,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${slug.replace(/-/g, ' ').toUpperCase()} | Manasor`,
     description: 'Manasor premium zeytin ve zeytinyağı.',
+    alternates: {
+      canonical: `/products/${slug}`,
+    }
   };
 }
 
@@ -140,8 +143,27 @@ export default async function ProductDetailPage({
     notFound();
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": productData.name,
+    "image": productData.image,
+    "description": productData.shortDescription,
+    "sku": productData.id,
+    "offers": {
+      "@type": "AggregateOffer",
+      "url": `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/products/${slug}`,
+      "priceCurrency": "TRY",
+      "lowPrice": Math.min(...productData.variations.map((v: any) => v.price)),
+      "highPrice": Math.max(...productData.variations.map((v: any) => v.price)),
+      "offerCount": productData.variations.length,
+      "availability": "https://schema.org/InStock"
+    }
+  };
+
   return (
     <div className="bg-cream min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       
       {/* Breadcrumb */}
       <div className="bg-[#FDFBF7] border-b border-olive-100">
