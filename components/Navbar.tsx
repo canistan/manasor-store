@@ -48,6 +48,7 @@ export default function Navbar() {
           <div className="hidden md:flex space-x-8 items-center">
             <Link href="/" className="text-olive-700 hover:text-gold-500 transition-colors font-medium">Ana Sayfa</Link>
             <Link href="/products" className="text-olive-700 hover:text-gold-500 transition-colors font-medium">Ürünlerimiz</Link>
+            <Link href="/track" className="text-olive-700 hover:text-gold-500 transition-colors font-medium">Kargo Takip</Link>
             <Link href="/about" className="text-olive-700 hover:text-gold-500 transition-colors font-medium">Hakkımızda</Link>
             <Link href="/contact" className="text-olive-700 hover:text-gold-500 transition-colors font-medium">İletişim</Link>
           </div>
@@ -102,6 +103,13 @@ export default function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Ürünlerimiz
+            </Link>
+            <Link 
+              href="/track" 
+              className="block px-3 py-2 text-olive-700 hover:text-gold-500 hover:bg-olive-50 rounded-md font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Kargo Takip
             </Link>
             <Link 
               href="/about" 
