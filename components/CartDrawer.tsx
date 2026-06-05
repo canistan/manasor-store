@@ -5,19 +5,50 @@ import { useCartStore } from '@/store/useCartStore';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function CartDrawer() {
-  const { isDrawerOpen, closeDrawer, items, updateQuantity, removeItem, getCartTotal, shippingSettings, fetchShippingSettings } = useCartStore();
+  const { isDrawerOpen, closeDrawer, items, updateQuantity, removeItem, getCartTotal, shippingSettings, fetchShippingSettings, appliedCoupon, applyCoupon, removeCoupon, getDiscountedTotal, getDiscountAmount } = useCartStore();
   const FREE_SHIPPING_THRESHOLD = shippingSettings?.freeShippingThreshold || 1500;
   
+  const [couponInput, setCouponInput] = useState('');
+  const [couponError, setCouponError] = useState('');
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+
   useEffect(() => {
     fetchShippingSettings();
   }, [fetchShippingSettings]);
   
-  const currentTotal = getCartTotal();
+  const currentTotal = getDiscountedTotal();
   const remaining = FREE_SHIPPING_THRESHOLD - currentTotal;
   const progress = Math.min((currentTotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
+
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    setIsApplyingCoupon(true);
+    setCouponError('');
+    
+    try {
+      const res = await fetch('/api/coupons/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: couponInput, cartTotal: getCartTotal() })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        applyCoupon(data.coupon);
+        setCouponInput('');
+      } else {
+        setCouponError(data.error || 'Kupon geçersiz.');
+      }
+    } catch (err) {
+      setCouponError('Bağlantı hatası.');
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -149,12 +180,62 @@ export default function CartDrawer() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-olive-100 p-6 bg-olive-50/50">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-olive-700 font-medium">Ara Toplam</span>
-              <span className="text-xl font-serif text-olive-900">
+            {/* Kupon Alanı */}
+            <div className="mb-4">
+              {!appliedCoupon ? (
+                <div>
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      placeholder="İndirim Kodu" 
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value)}
+                      className="flex-1 p-2 text-sm border border-olive-200 rounded-lg outline-none focus:ring-1 focus:ring-gold-500 uppercase"
+                    />
+                    <button 
+                      onClick={handleApplyCoupon}
+                      disabled={isApplyingCoupon || !couponInput.trim()}
+                      className="bg-olive-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-olive-900 disabled:opacity-50 transition-colors"
+                    >
+                      {isApplyingCoupon ? '...' : 'Uygula'}
+                    </button>
+                  </div>
+                  {couponError && <p className="text-red-500 text-xs mt-1">{couponError}</p>}
+                </div>
+              ) : (
+                <div className="flex items-center justify-between bg-green-50 text-green-700 p-2 rounded-lg text-sm border border-green-200">
+                  <div className="flex items-center">
+                    <span className="font-medium mr-2">{appliedCoupon.code}</span> 
+                    <span>uygulandı!</span>
+                  </div>
+                  <button onClick={removeCoupon} className="text-red-500 hover:text-red-700 font-medium text-xs">Kaldır</button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-olive-700">Ara Toplam</span>
+              <span className="font-serif text-olive-900">
                 {getCartTotal().toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
               </span>
             </div>
+
+            {appliedCoupon && (
+              <div className="flex items-center justify-between mb-2 text-green-600">
+                <span>İndirim ({appliedCoupon.code})</span>
+                <span className="font-medium">
+                  -{getDiscountAmount().toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+                </span>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between mb-4 pt-2 border-t border-olive-200">
+              <span className="text-olive-900 font-medium">Toplam</span>
+              <span className="text-xl font-serif text-luxury-charcoal">
+                {getDiscountedTotal().toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+              </span>
+            </div>
+            
             <p className="text-xs text-olive-500 mb-6 text-center">Kargo ve vergiler ödeme adımında hesaplanacaktır.</p>
             <Link 
               href="/checkout" 

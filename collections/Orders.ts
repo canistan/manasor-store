@@ -66,6 +66,27 @@ export const Orders: CollectionConfig = {
                 }
               }
             }
+
+            // Kupon Kullanım Sayısını (usedCount) Artırma
+            if (doc.couponCode) {
+              try {
+                const coupons = await req.payload.find({
+                  collection: 'coupons',
+                  where: { code: { equals: doc.couponCode } },
+                  limit: 1
+                });
+                if (coupons.docs.length > 0) {
+                  const coupon = coupons.docs[0];
+                  await req.payload.update({
+                    collection: 'coupons',
+                    id: coupon.id,
+                    data: { usedCount: (coupon.usedCount || 0) + 1 }
+                  });
+                }
+              } catch (err) {
+                req.payload.logger.error(`Kupon usedCount artırma hatası: ${err}`);
+              }
+            }
           }
           // Stok İade (Restock) - Ödenmiş sipariş iptal edilirse
           if (doc.status === 'cancelled' && previousDoc?.status === 'paid') {
@@ -196,6 +217,19 @@ export const Orders: CollectionConfig = {
       type: 'number',
       label: 'Kargo Ücreti (TRY)',
       defaultValue: 0,
+    },
+    {
+      name: 'couponCode',
+      type: 'text',
+      label: 'Kullanılan Kupon Kodu',
+      admin: { position: 'sidebar' }
+    },
+    {
+      name: 'discountAmount',
+      type: 'number',
+      label: 'İndirim Tutarı (TRY)',
+      defaultValue: 0,
+      admin: { position: 'sidebar' }
     },
     {
       name: 'shippingCompany',

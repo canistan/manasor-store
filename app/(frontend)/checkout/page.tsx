@@ -56,7 +56,7 @@ const checkoutSchema = z.object({
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
-  const { items, getCartTotal, getShippingTotal, fetchShippingSettings } = useCartStore();
+  const { items, getCartTotal, getShippingTotal, fetchShippingSettings, appliedCoupon, getDiscountedTotal, getDiscountAmount } = useCartStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [iyzicoContent, setIyzicoContent] = useState<string | null>(null);
   const [paymentError, setPaymentError] = useState<string | null>(null);
@@ -69,8 +69,9 @@ export default function CheckoutPage() {
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
 
   const total = getCartTotal();
-  const shipping = total === 0 ? 0 : getShippingTotal();
-  const grandTotal = total + shipping;
+  const discountedTotal = getDiscountedTotal();
+  const shipping = discountedTotal === 0 && total === 0 ? 0 : getShippingTotal();
+  const grandTotal = discountedTotal + shipping;
 
   // Ayarları getir
   useEffect(() => {
@@ -222,6 +223,7 @@ export default function CheckoutPage() {
           total: grandTotal,
           shippingPrice: shipping,
           userId: user?.id,
+          couponCode: appliedCoupon?.code,
           saveAddress: showNewAddressForm || addresses.length === 0
         }),
       });
@@ -505,6 +507,12 @@ export default function CheckoutPage() {
                   <span>Ara Toplam</span>
                   <span>{total.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
                 </div>
+                {appliedCoupon && (
+                  <div className="flex justify-between text-green-600">
+                    <span>İndirim ({appliedCoupon.code})</span>
+                    <span>-{getDiscountAmount().toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-olive-600">
                   <span>Kargo Ücreti</span>
                   {shipping === 0 ? (

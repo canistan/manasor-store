@@ -14,6 +14,7 @@ import { Orders } from './collections/Orders'
 import { RmaRequests } from './collections/RmaRequests'
 import { Subscribers } from './collections/Subscribers'
 import { AuditLogs } from './collections/AuditLogs'
+import { Coupons } from './collections/Coupons'
 import { HomePage } from './globals/HomePage'
 import { AboutPage } from './globals/AboutPage'
 import { ContactPage } from './globals/ContactPage'
@@ -37,7 +38,7 @@ export default buildConfig({
     avatar: 'default',
   },
 
-  collections: [Users, Customers, Media, Products, Orders, RmaRequests, Subscribers, AuditLogs],
+  collections: [Users, Customers, Media, Products, Orders, RmaRequests, Subscribers, AuditLogs, Coupons],
 
   globals: [HomePage, AboutPage, ContactPage, Settings],
 

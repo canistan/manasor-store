@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     });
 
     const body = await request.json();
-    const { form, items, shippingPrice: clientShippingPrice, userId } = body;
+    const { form, items, shippingPrice: clientShippingPrice, userId, couponCode } = body;
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'Sepetiniz boş' }, { status: 400 });
@@ -53,9 +53,43 @@ export async function POST(request: Request) {
       });
     }
 
-    // Kargo hesaplaması 
-    const serverShippingPrice = Number(clientShippingPrice) || 0;
-    const finalPrice = (serverCalculatedTotal + serverShippingPrice).toFixed(2);
+    // Kargo hesaplaması (Henüz indirim uygulanmadan önceki brüt tutar ile doğrulanabilir, şu an frontend'in gönderdiğine güveniyoruz ama ek kontrol eklenebilir)
+    let serverShippingPrice = Number(clientShippingPrice) || 0;
+    
+    // KUPON KONTROLÜ VE İNDİRİM UYGULANMASI
+    let discountAmount = 0;
+    let appliedCouponCode = '';
+
+    if (couponCode) {
+      const coupons = await payload.find({
+        collection: 'coupons',
+        where: { code: { equals: couponCode.toUpperCase().trim() } },
+        limit: 1,
+      });
+
+      if (coupons.docs.length > 0) {
+        const coupon = coupons.docs[0];
+        const now = new Date();
+        const isValidDate = (!coupon.validFrom || new Date(coupon.validFrom) <= now) && (!coupon.validUntil || new Date(coupon.validUntil) >= now);
+        const isValidLimit = !coupon.maxUses || (coupon.usedCount || 0) < coupon.maxUses;
+        const isValidAmount = !coupon.minCartAmount || serverCalculatedTotal >= coupon.minCartAmount;
+
+        if (coupon.active && isValidDate && isValidLimit && isValidAmount) {
+          appliedCouponCode = coupon.code;
+          if (coupon.discountType === 'percentage') {
+            discountAmount = serverCalculatedTotal * (coupon.discountValue / 100);
+          } else if (coupon.discountType === 'fixed_amount') {
+            discountAmount = coupon.discountValue;
+          } else if (coupon.discountType === 'free_shipping') {
+            serverShippingPrice = 0; // Kargo bedava
+          }
+        }
+      }
+    }
+
+    // Toplam tutar (İndirimden sonra)
+    const discountedTotal = Math.max(0, serverCalculatedTotal - discountAmount);
+    const finalPrice = (discountedTotal + serverShippingPrice).toFixed(2);
 
     // 2. IDEMPOTENCY VE YASAL KANIT TESPİTİ
     const ipAddress = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
@@ -89,7 +123,9 @@ export async function POST(request: Request) {
         idempotencyKey: idempotencyKey,
         ipAddress: ipAddress,
         termsVersion: termsVersion,
-        items: validatedItems
+        items: validatedItems,
+        couponCode: appliedCouponCode || undefined,
+        discountAmount: discountAmount || 0,
       }
     });
 
@@ -178,6 +214,20 @@ export async function POST(request: Request) {
       price: (item.price * item.quantity).toFixed(2)
     }));
 
+    if (discountAmount > 0) {
+      basketItems.push({
+        id: "KUPON",
+        name: `İndirim Kuponu (${appliedCouponCode})`,
+        category1: "İndirim",
+        category2: "Kupon",
+        itemType: Iyzipay.BASKET_ITEM_TYPE.PHYSICAL,
+        price: `-${discountAmount.toFixed(2)}` // Iyzico eksi değeri desteklemezse sorun olabilir.
+      });
+      // NOT: Iyzico eksi tutarlı basket item desteklemediğinden genel tutardan (price) düşmek daha güvenlidir. 
+      // Ancak bazı durumlarda basketItems toplamı price ile eşleşmek zorundadır.
+      // Eşleşmeyi sağlamak için indirim tutarını orantısal olarak sepetteki ürünlerden düşmek en güvenlisidir.
+    }
+
     if (serverShippingPrice > 0) {
       basketItems.push({
         id: "KARGO",
@@ -187,6 +237,30 @@ export async function POST(request: Request) {
         itemType: Iyzipay.BASKET_ITEM_TYPE.PHYSICAL,
         price: serverShippingPrice.toFixed(2)
       });
+    }
+
+    // Iyzico için sepet item toplamı ile price eşit olmalıdır. İndirimi oranlamak gerekiyor.
+    if (discountAmount > 0) {
+      // Önce sepetten KUPON satırını çıkar (hata vermesin diye)
+      const kuponIndex = basketItems.findIndex((item: any) => item.id === "KUPON");
+      if(kuponIndex > -1) basketItems.splice(kuponIndex, 1);
+      
+      let remainingDiscount = discountAmount;
+      for (let i = 0; i < basketItems.length; i++) {
+        if (basketItems[i].id === "KARGO") continue; // Kargodan düşme
+        
+        let itemPrice = parseFloat(basketItems[i].price);
+        if (itemPrice > remainingDiscount) {
+          basketItems[i].price = (itemPrice - remainingDiscount).toFixed(2);
+          remainingDiscount = 0;
+          break;
+        } else {
+          // Eğer indirim üründen daha büyükse ürünü ücretsiz yap (en fazla 0.01 kalmalı iyzico kuralları gereği ama 0 da olabilir)
+          // Iyzico 0 fiyatlı ürüne hata verebilir, o yüzden 0.01 yapıp kalanı devam ettir
+          basketItems[i].price = "0.01";
+          remainingDiscount -= (itemPrice - 0.01);
+        }
+      }
     }
 
     const requestData = {
