@@ -17,6 +17,72 @@ export const Orders: CollectionConfig = {
     update: ({ req: { user } }) => !!user, // Sadece admin güncelleyebilir
     delete: ({ req: { user } }) => !!user, // Sadece admin silebilir
   },
+  hooks: {
+    afterChange: [
+      async ({ doc, previousDoc, operation, req }) => {
+        if (operation === 'update') {
+          // Stok Düşüm (Rezervasyon) - Sipariş onaylandığında
+          if (doc.status === 'paid' && previousDoc?.status !== 'paid') {
+            if (doc.items && Array.isArray(doc.items)) {
+              for (const item of doc.items) {
+                if (!item.productId || !item.variationId) continue;
+                try {
+                  const product = await req.payload.findByID({
+                    collection: 'products',
+                    id: item.productId,
+                  });
+                  if (product && product.variations) {
+                    const newVariations = product.variations.map((v: any) => {
+                      if (v.variantId === item.variationId) {
+                        return { ...v, stock: Math.max(0, v.stock - item.quantity) };
+                      }
+                      return v;
+                    });
+                    await req.payload.update({
+                      collection: 'products',
+                      id: product.id,
+                      data: { variations: newVariations },
+                    });
+                  }
+                } catch (err) {
+                  req.payload.logger.error(`Stok düşme hatası (Ürün: ${item.productId}): ${err}`);
+                }
+              }
+            }
+          }
+          // Stok İade (Restock) - Ödenmiş sipariş iptal edilirse
+          if (doc.status === 'cancelled' && previousDoc?.status === 'paid') {
+            if (doc.items && Array.isArray(doc.items)) {
+              for (const item of doc.items) {
+                if (!item.productId || !item.variationId) continue;
+                try {
+                  const product = await req.payload.findByID({
+                    collection: 'products',
+                    id: item.productId,
+                  });
+                  if (product && product.variations) {
+                    const newVariations = product.variations.map((v: any) => {
+                      if (v.variantId === item.variationId) {
+                        return { ...v, stock: v.stock + item.quantity };
+                      }
+                      return v;
+                    });
+                    await req.payload.update({
+                      collection: 'products',
+                      id: product.id,
+                      data: { variations: newVariations },
+                    });
+                  }
+                } catch (err) {
+                  req.payload.logger.error(`Stok iade hatası (Ürün: ${item.productId}): ${err}`);
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
   fields: [
     {
       name: 'customer',
@@ -55,6 +121,34 @@ export const Orders: CollectionConfig = {
       name: 'paymentReference',
       type: 'text',
       label: 'Iyzico Payment ID',
+    },
+    {
+      name: 'idempotencyKey',
+      type: 'text',
+      label: 'Idempotency Key (Çift Çekim Koruması)',
+      unique: true,
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+      }
+    },
+    {
+      name: 'ipAddress',
+      type: 'text',
+      label: 'IP Adresi',
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+      }
+    },
+    {
+      name: 'termsVersion',
+      type: 'text',
+      label: 'Onaylanan Sözleşme Versiyonu',
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+      }
     },
     {
       name: 'totalPrice',
