@@ -27,9 +27,16 @@ export async function POST(request: Request) {
     const validatedItems = [];
 
     for (const item of items) {
-      const product = await payload.findByID({ collection: 'products', id: item.id || item.productId });
+      let product;
+      try {
+        product = await payload.findByID({ collection: 'products', id: item.id || item.productId });
+      } catch (err) {
+        // findByID throws NotFound if it doesn't exist
+        product = null;
+      }
+
       if (!product) {
-        return NextResponse.json({ error: `${item.name} adlı ürün sistemde bulunamadı.` }, { status: 400 });
+        return NextResponse.json({ error: `${item.name} adlı ürün sistemde bulunamadı. Lütfen sepetinizden çıkarın.` }, { status: 400 });
       }
 
       const variant = product.variations?.find((v: any) => v.variantId === item.variationId);
