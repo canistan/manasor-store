@@ -32,7 +32,7 @@ export const Orders: CollectionConfig = {
                    collectionName: 'orders',
                    documentId: doc.id.toString(),
                    details: { prev: previousDoc?.status, new: doc.status },
-                   ipAddress: req.headers ? req.headers['x-forwarded-for'] || 'unknown' : 'system'
+                   ipAddress: req.headers && typeof req.headers.get === 'function' ? req.headers.get('x-forwarded-for') || 'unknown' : 'system'
                  }
                });
             } catch (err) { console.error('AuditLog error:', err); }

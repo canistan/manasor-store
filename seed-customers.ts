@@ -57,7 +57,7 @@ const PRODUCTS = [
 
 const ORDER_STATUSES = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'] as const
 
-function rand<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)] }
+function rand<T>(arr: readonly T[]): T { return arr[Math.floor(Math.random() * arr.length)] }
 function randInt(min: number, max: number): number { return Math.floor(Math.random() * (max - min + 1)) + min }
 function generateTC(): string {
   let digits = ''

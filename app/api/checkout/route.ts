@@ -183,6 +183,7 @@ export async function POST(request: Request) {
         id: "KARGO",
         name: "Kargo Ücreti",
         category1: "Hizmet",
+        category2: "Teslimat",
         itemType: Iyzipay.BASKET_ITEM_TYPE.PHYSICAL,
         price: serverShippingPrice.toFixed(2)
       });
