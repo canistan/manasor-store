@@ -40,11 +40,12 @@ export const Users: CollectionConfig = {
     ],
   },
   access: {
-    // Sadece giriş yapmış kullanıcılar admin paneline erişebilir
-    read: ({ req: { user } }) => !!user,
-    create: () => true, // Ziyaretçilerin kayıt olabilmesi için
-    update: ({ req: { user } }) => !!user,
-    delete: ({ req: { user } }) => !!user,
+    // Sadece admin (users) koleksiyonundakiler paneli görebilir
+    read: ({ req: { user } }) => !!user && user.collection === 'users',
+    // Ziyaretçiler Users değil Customers tablosuna kaydolmalı, burayı kilitliyoruz.
+    create: ({ req: { user } }) => !!user && user.collection === 'users' && user.role === 'admin', 
+    update: ({ req: { user }, id }) => !!user && user.collection === 'users' && (user.role === 'admin' || user.id === id),
+    delete: ({ req: { user } }) => !!user && user.collection === 'users' && user.role === 'admin',
   },
   fields: [
     {

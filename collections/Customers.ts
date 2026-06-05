@@ -44,10 +44,22 @@ export const Customers: CollectionConfig = {
     ],
   },
   access: {
-    read: ({ req: { user } }) => !!user, // Admins or the customer themselves
+    read: ({ req: { user }, id }) => {
+      if (!user) return false;
+      if (user.collection === 'users') return true; // Admins can read all
+      return user.id === id; // Customers can read themselves
+    },
     create: () => true, // Ziyaretçilerin kayıt olabilmesi için açık
-    update: ({ req: { user } }) => !!user,
-    delete: ({ req: { user } }) => !!user,
+    update: ({ req: { user }, id }) => {
+      if (!user) return false;
+      if (user.collection === 'users') return true; // Admins can update all
+      return user.id === id; // Customers can update themselves
+    },
+    delete: ({ req: { user }, id }) => {
+      if (!user) return false;
+      if (user.collection === 'users') return true; // Admins can delete
+      return user.id === id; // Customers can delete themselves
+    },
   },
   fields: [
     {

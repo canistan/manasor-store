@@ -14,13 +14,30 @@ export const Orders: CollectionConfig = {
   access: {
     read: () => true,
     create: () => true, // Frontend API üzerinden oluşturulabilmesi için
-    update: ({ req: { user } }) => !!user, // Sadece admin güncelleyebilir
-    delete: ({ req: { user } }) => !!user, // Sadece admin silebilir
+    update: ({ req: { user } }) => !!user && user.collection === 'users', 
+    delete: ({ req: { user } }) => !!user && user.collection === 'users', 
   },
   hooks: {
     afterChange: [
       async ({ doc, previousDoc, operation, req }) => {
         if (operation === 'update') {
+          // AUDIT LOG
+          if (doc.status !== previousDoc?.status) {
+            try {
+               await req.payload.create({
+                 collection: 'audit_logs',
+                 data: {
+                   action: `Sipariş durumu güncellendi: ${previousDoc?.status} -> ${doc.status}`,
+                   performedBy: req.user ? req.user.email : 'Sistem/Webhook',
+                   collectionName: 'orders',
+                   documentId: doc.id.toString(),
+                   details: { prev: previousDoc?.status, new: doc.status },
+                   ipAddress: req.headers ? req.headers['x-forwarded-for'] || 'unknown' : 'system'
+                 }
+               });
+            } catch (err) { console.error('AuditLog error:', err); }
+          }
+
           // Stok Düşüm (Rezervasyon) - Sipariş onaylandığında
           if (doc.status === 'paid' && previousDoc?.status !== 'paid') {
             if (doc.items && Array.isArray(doc.items)) {

@@ -15,10 +15,56 @@ export const Products: CollectionConfig = {
   access: {
     // Herkes ürünleri görebilir (frontend için gerekli)
     read: () => true,
-    // Sadece giriş yapmış kullanıcılar ürün yönetebilir
-    create: ({ req: { user } }) => !!user,
-    update: ({ req: { user } }) => !!user,
-    delete: ({ req: { user } }) => !!user,
+    // Sadece giriş yapmış adminler ürün yönetebilir
+    create: ({ req: { user } }) => !!user && user.collection === 'users',
+    update: ({ req: { user } }) => !!user && user.collection === 'users',
+    delete: ({ req: { user } }) => !!user && user.collection === 'users',
+  },
+  hooks: {
+    afterChange: [
+      async ({ doc, previousDoc, operation, req }) => {
+        if (operation === 'update' && previousDoc) {
+          // Fiyat veya Stok Değişikliğini tespit et
+          let logAction = '';
+          const details: any = { prev: {}, new: {} };
+
+          // Varyasyon fiyat veya stok kıyaslaması (basitleştirilmiş)
+          const prevVars = previousDoc.variations || [];
+          const newVars = doc.variations || [];
+          let changed = false;
+
+          for (let i = 0; i < Math.max(prevVars.length, newVars.length); i++) {
+            const pV = prevVars[i] || {};
+            const nV = newVars[i] || {};
+            if (pV.price !== nV.price) {
+              logAction += `Fiyat değişti (${pV.price} -> ${nV.price}). `;
+              changed = true;
+            }
+            if (pV.stock !== nV.stock) {
+              // Sadece manuel loglamak istiyorsak bunu aktif ederiz, 
+              // ancak siparişler de stoku değiştirdiği için çok fazla log üretebilir.
+              // Şimdilik sadece fiyata odaklanalım veya admin işlem yaptıysa loglayalım.
+            }
+          }
+
+          if (changed && req.user) {
+             try {
+               await req.payload.create({
+                 collection: 'audit_logs',
+                 data: {
+                   action: `Ürün varyasyon fiyatı güncellendi: ${doc.name}`,
+                   performedBy: req.user.email,
+                   collectionName: 'products',
+                   documentId: doc.id.toString(),
+                   details: { logAction },
+                   ipAddress: req.headers ? req.headers['x-forwarded-for'] || 'unknown' : 'system'
+                 }
+               });
+            } catch (err) { console.error('AuditLog error:', err); }
+          }
+        }
+      }
+    ]
   },
   fields: [
     {
