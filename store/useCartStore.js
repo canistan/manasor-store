@@ -8,7 +8,20 @@ export const useCartStore = create(
       isDrawerOpen: false,
       showToast: false,
       lastAddedItem: null,
+      shippingSettings: null,
       
+      fetchShippingSettings: async () => {
+        try {
+          const res = await fetch('/api/settings');
+          if (res.ok) {
+            const data = await res.json();
+            set({ shippingSettings: data });
+          }
+        } catch (err) {
+          console.error("Kargo ayarları çekilemedi:", err);
+        }
+      },
+
       openDrawer: () => set({ isDrawerOpen: true }),
       closeDrawer: () => set({ isDrawerOpen: false }),
       toggleDrawer: () => set((state) => ({ isDrawerOpen: !state.isDrawerOpen })),
@@ -49,6 +62,35 @@ export const useCartStore = create(
       getCartTotal: () => {
         const state = get();
         return state.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+      },
+      
+      getCartWeight: () => {
+        const state = get();
+        return state.items.reduce((total, item) => total + ((item.weight_kg || 0) * item.quantity), 0);
+      },
+
+      getShippingTotal: () => {
+        const state = get();
+        const total = state.getCartTotal();
+        const weight = state.getCartWeight();
+        const settings = state.shippingSettings || {
+          freeShippingThreshold: 1500,
+          shippingRules: [
+            { minWeight: 0, maxWeight: 5, price: 79.90 },
+            { minWeight: 5, maxWeight: 15, price: 119.90 },
+            { minWeight: 15, maxWeight: 999, price: 159.90 }
+          ]
+        };
+
+        if (total >= settings.freeShippingThreshold) {
+          return 0;
+        }
+
+        const rule = settings.shippingRules.find(
+          r => weight >= r.minWeight && weight < r.maxWeight
+        );
+
+        return rule ? rule.price : 159.90; // Kural bulunamazsa varsayılan
       },
       
       getCartCount: () => {

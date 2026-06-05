@@ -225,6 +225,24 @@ export const Products: CollectionConfig = {
           label: 'Son Kullanma Tarihi (SKT)',
           required: true,
         },
+        {
+          name: 'acidity_level',
+          type: 'number',
+          label: 'Asit Oranı (%)',
+          admin: {
+            description: 'Zeytinyağları için asitlik derecesi (Örn: 0.3)',
+            step: 0.1,
+          }
+        },
+        {
+          name: 'analysis_report',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Analiz Raporu (PDF)',
+          admin: {
+            description: 'Laboratuvar analiz sonuç belgesi',
+          }
+        },
       ],
     },
   ],

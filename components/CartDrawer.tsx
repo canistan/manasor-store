@@ -5,11 +5,16 @@ import { useCartStore } from '@/store/useCartStore';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const FREE_SHIPPING_THRESHOLD = 1500;
+import { useEffect } from 'react';
 
 export default function CartDrawer() {
-  const { isDrawerOpen, closeDrawer, items, updateQuantity, removeItem, getCartTotal } = useCartStore();
+  const { isDrawerOpen, closeDrawer, items, updateQuantity, removeItem, getCartTotal, shippingSettings, fetchShippingSettings } = useCartStore();
+  const FREE_SHIPPING_THRESHOLD = shippingSettings?.freeShippingThreshold || 1500;
+  
+  useEffect(() => {
+    fetchShippingSettings();
+  }, [fetchShippingSettings]);
+  
   const currentTotal = getCartTotal();
   const remaining = FREE_SHIPPING_THRESHOLD - currentTotal;
   const progress = Math.min((currentTotal / FREE_SHIPPING_THRESHOLD) * 100, 100);

@@ -17,6 +17,7 @@ import { AuditLogs } from './collections/AuditLogs'
 import { HomePage } from './globals/HomePage'
 import { AboutPage } from './globals/AboutPage'
 import { ContactPage } from './globals/ContactPage'
+import { Settings } from './globals/Settings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -38,7 +39,7 @@ export default buildConfig({
 
   collections: [Users, Customers, Media, Products, Orders, RmaRequests, Subscribers, AuditLogs],
 
-  globals: [HomePage, AboutPage, ContactPage],
+  globals: [HomePage, AboutPage, ContactPage, Settings],
 
   email: nodemailerAdapter({
     defaultFromAddress: 'info@manasor.com',

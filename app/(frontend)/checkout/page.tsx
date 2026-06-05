@@ -56,7 +56,7 @@ const checkoutSchema = z.object({
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
-  const { items, getCartTotal } = useCartStore();
+  const { items, getCartTotal, getShippingTotal, fetchShippingSettings } = useCartStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [iyzicoContent, setIyzicoContent] = useState<string | null>(null);
   const [paymentError, setPaymentError] = useState<string | null>(null);
@@ -69,8 +69,13 @@ export default function CheckoutPage() {
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
 
   const total = getCartTotal();
-  const shipping = total > 1500 || total === 0 ? 0 : 79.90;
+  const shipping = total === 0 ? 0 : getShippingTotal();
   const grandTotal = total + shipping;
+
+  // Ayarları getir
+  useEffect(() => {
+    fetchShippingSettings();
+  }, [fetchShippingSettings]);
 
   const {
     register,

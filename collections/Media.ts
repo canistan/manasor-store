@@ -20,7 +20,7 @@ export const Media: CollectionConfig = {
   },
   upload: {
     staticDir: 'public/media',
-    mimeTypes: ['image/*'],
+    mimeTypes: ['image/*', 'application/pdf'],
     formatOptions: {
       format: 'webp',
       options: { quality: 85 }

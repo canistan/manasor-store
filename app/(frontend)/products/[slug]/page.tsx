@@ -51,7 +51,7 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params;
-  let productData = null;
+  let productData: any = null;
 
   try {
     const payload = await getPayload({ config: configPromise });
@@ -72,6 +72,7 @@ export default async function ProductDetailPage({
         category: p.category,
         image: imageUrl,
         secondaryImage: p.secondaryImage,
+        traceability: p.traceability,
         variations: (p.variations || []).map((v: any) => ({
           id: v.variantId,
           size: v.size,
@@ -245,6 +246,57 @@ export default async function ProductDetailPage({
                   </li>
                 </ul>
               </div>
+
+              {/* Kalite ve İzlenebilirlik */}
+              {productData.traceability && (
+                <div className="mt-8">
+                  <h3 className="text-xl font-serif text-luxury-charcoal mb-4 border-b border-olive-100 pb-2">Kalite ve İzlenebilirlik</h3>
+                  <div className="bg-[#FDFBF7] p-5 rounded-xl border border-olive-100 grid grid-cols-2 gap-4 text-sm">
+                    {productData.traceability.batch_number && (
+                      <div>
+                        <span className="block text-olive-500 font-medium text-xs uppercase tracking-wider mb-1">Parti No</span>
+                        <span className="text-olive-900">{productData.traceability.batch_number}</span>
+                      </div>
+                    )}
+                    {productData.traceability.harvest_year && (
+                      <div>
+                        <span className="block text-olive-500 font-medium text-xs uppercase tracking-wider mb-1">Hasat Yılı</span>
+                        <span className="text-olive-900">{productData.traceability.harvest_year}</span>
+                      </div>
+                    )}
+                    {productData.traceability.expiry_date && (
+                      <div>
+                        <span className="block text-olive-500 font-medium text-xs uppercase tracking-wider mb-1">SKT</span>
+                        <span className="text-olive-900">
+                          {new Date(productData.traceability.expiry_date).toLocaleDateString('tr-TR')}
+                        </span>
+                      </div>
+                    )}
+                    {productData.traceability.acidity_level && (
+                      <div>
+                        <span className="block text-olive-500 font-medium text-xs uppercase tracking-wider mb-1">Asit Oranı</span>
+                        <span className="text-olive-900">% {productData.traceability.acidity_level}</span>
+                      </div>
+                    )}
+                    
+                    {productData.traceability.analysis_report && (
+                      <div className="col-span-2 mt-2 pt-4 border-t border-olive-100">
+                        <a 
+                          href={typeof productData.traceability.analysis_report === 'object' ? productData.traceability.analysis_report.url : productData.traceability.analysis_report} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-sm font-medium text-gold-600 hover:text-gold-700 transition-colors"
+                        >
+                          <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          Laboratuvar Analiz Raporunu İndir (PDF)
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
