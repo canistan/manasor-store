@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import Iyzipay from 'iyzipay';
 import { getPayload } from 'payload';
 import configPromise from '@/payload.config';
+import crypto from 'crypto';
 
 export async function POST(request: Request) {
   try {
@@ -13,27 +14,66 @@ export async function POST(request: Request) {
     });
 
     const body = await request.json();
-    const { form, items, total, shippingPrice, userId } = body;
+    const { form, items, shippingPrice: clientShippingPrice, userId } = body;
 
-    // 1. MOCK STOK KONTROLÜ
-    // Gerçekte Payload CMS'den güncel stok ve fiyat çekilmelidir.
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'Sepetiniz boş' }, { status: 400 });
     }
 
-    const price = total.toFixed(2);
-    
-    // 2. PAYLOAD CMS SİPARİŞ OLUŞTURMA (PENDING)
     const payload = await getPayload({ config: configPromise });
+
+    // 1. SUNUCU TARAFLI FİYAT VE STOK KONTROLÜ (GÜVENLİK)
+    let serverCalculatedTotal = 0;
+    const validatedItems = [];
+
+    for (const item of items) {
+      const product = await payload.findByID({ collection: 'products', id: item.id || item.productId });
+      if (!product) {
+        return NextResponse.json({ error: `${item.name} adlı ürün sistemde bulunamadı.` }, { status: 400 });
+      }
+
+      const variant = product.variations?.find((v: any) => v.variantId === item.variationId);
+      if (!variant) {
+        return NextResponse.json({ error: `${product.name} için seçilen gramaj/varyasyon bulunamadı.` }, { status: 400 });
+      }
+
+      if (variant.stock < item.quantity) {
+        return NextResponse.json({ error: `Maalesef ${product.name} için yeterli stok yok. (Kalan stok: ${variant.stock})` }, { status: 400 });
+      }
+
+      serverCalculatedTotal += variant.price * item.quantity;
+      validatedItems.push({
+        productId: product.id,
+        name: product.name,
+        variationId: variant.variantId,
+        size: variant.size,
+        packaging: variant.packaging,
+        price: variant.price, // Veritabanından gelen ONAYLI fiyat
+        quantity: item.quantity
+      });
+    }
+
+    // Kargo hesaplaması 
+    const serverShippingPrice = Number(clientShippingPrice) || 0;
+    const finalPrice = (serverCalculatedTotal + serverShippingPrice).toFixed(2);
+
+    // 2. IDEMPOTENCY VE YASAL KANIT TESPİTİ
+    const ipAddress = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
     
+    // Müşterinin double-click yapmasını önlemek için benzersiz anahtar
+    const idempotencyStr = `${form.email}-${JSON.stringify(validatedItems)}`;
+    const idempotencyKey = crypto.createHash('sha256').update(idempotencyStr).digest('hex').substring(0, 16) + '-' + Date.now();
+    const termsVersion = 'v1.0'; // KVKK ve Mesafeli Satış metin versiyonu
+
+    // 3. PAYLOAD CMS SİPARİŞ OLUŞTURMA (PENDING)
     const newOrder = await payload.create({
       collection: 'orders',
       data: {
         customer: userId || undefined,
         orderNumber: `MANASOR-${Date.now()}`,
         status: 'pending',
-        totalPrice: Number(price),
-        shippingPrice: Number(shippingPrice),
+        totalPrice: Number(finalPrice),
+        shippingPrice: serverShippingPrice,
         firstName: form.firstName,
         lastName: form.lastName,
         email: form.email,
@@ -46,14 +86,10 @@ export async function POST(request: Request) {
         city: form.city,
         district: form.district,
         address: form.address,
-        items: items.map((item: any) => ({
-          productId: item.id || '',
-          name: item.name,
-          variationId: item.variationId || '',
-          size: item.size || '',
-          price: item.price,
-          quantity: item.quantity
-        }))
+        idempotencyKey: idempotencyKey,
+        ipAddress: ipAddress,
+        termsVersion: termsVersion,
+        items: validatedItems
       }
     });
 
@@ -66,7 +102,7 @@ export async function POST(request: Request) {
       } catch (err) {}
     }
 
-    // 2.5 KULLANICI ADRESİNİ OTOMATİK KAYDETME
+    // 3.5 KULLANICI ADRESİNİ OTOMATİK KAYDETME
     const { saveAddress } = body;
     if (userId && saveAddress) {
       try {
@@ -92,9 +128,7 @@ export async function POST(request: Request) {
           await payload.update({
             collection: 'customers',
             id: userId,
-            data: {
-              addresses: [...currentAddresses, newAddress]
-            }
+            data: { addresses: [...currentAddresses, newAddress] }
           });
         }
       } catch (err) {
@@ -102,9 +136,9 @@ export async function POST(request: Request) {
       }
     }
 
-    // 3. IYZICO REQUEST HAZIRLIĞI
+    // 4. IYZICO REQUEST HAZIRLIĞI
     const buyerInfo = {
-      id: "BY789", 
+      id: userId || "BY789", 
       name: form.firstName,
       surname: form.lastName,
       gsmNumber: form.phone,
@@ -113,7 +147,7 @@ export async function POST(request: Request) {
       lastLoginDate: "2023-10-10 10:10:10",
       registrationDate: "2023-10-10 10:10:10",
       registrationAddress: form.address,
-      ip: "85.34.78.112", 
+      ip: ipAddress, 
       city: form.city,
       country: "Turkey",
       zipCode: "34732"
@@ -135,8 +169,8 @@ export async function POST(request: Request) {
       zipCode: "34732"
     };
 
-    const basketItems = items.map((item: any) => ({
-      id: item.variationId || item.variantId || item.id || 'ITEM-1',
+    const basketItems = validatedItems.map((item: any) => ({
+      id: item.variationId || item.productId || 'ITEM-1',
       name: item.name,
       category1: "Gıda",
       category2: "Organik",
@@ -144,21 +178,21 @@ export async function POST(request: Request) {
       price: (item.price * item.quantity).toFixed(2)
     }));
 
-    if (shippingPrice > 0) {
+    if (serverShippingPrice > 0) {
       basketItems.push({
         id: "KARGO",
         name: "Kargo Ücreti",
         category1: "Hizmet",
         itemType: Iyzipay.BASKET_ITEM_TYPE.PHYSICAL,
-        price: shippingPrice.toFixed(2)
+        price: serverShippingPrice.toFixed(2)
       });
     }
 
     const requestData = {
       locale: Iyzipay.LOCALE.TR,
       conversationId: newOrder.orderNumber,
-      price: price,
-      paidPrice: price,
+      price: finalPrice,
+      paidPrice: finalPrice,
       currency: Iyzipay.CURRENCY.TRY,
       basketId: newOrder.id.toString(),
       paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
@@ -177,7 +211,7 @@ export async function POST(request: Request) {
         <div style="font-family: sans-serif; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; text-align: center;">
           <h3 style="color: #0f172a; margin-top: 0;">Iyzico Test Ödeme Ekranı (Mock)</h3>
           <p style="color: #64748b; font-size: 14px;">Geçerli bir Iyzico API anahtarı girilmediği için test ekranı gösterilmektedir.</p>
-          <p style="font-size: 18px; font-weight: bold; color: #10b981;">Ödenecek Tutar: ${price} TL</p>
+          <p style="font-size: 18px; font-weight: bold; color: #10b981;">Ödenecek Tutar: ${finalPrice} TL</p>
           <form method="POST" action="${requestData.callbackUrl}">
             <input type="hidden" name="token" value="${mockToken}" />
             <button type="submit" style="background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px;">Test Ödemesini Tamamla (Başarılı)</button>
@@ -191,12 +225,11 @@ export async function POST(request: Request) {
       });
     }
 
-    // Callback sarmalayıcı (Iyzipay SDK'sı Promise dönmez)
     return new Promise<NextResponse>((resolve) => {
       iyzipay.checkoutFormInitialize.create(requestData as any, function (err: any, result: any) {
         if (err || result.status === 'failure') {
           console.error("Iyzico Error:", err || result);
-          resolve(NextResponse.json({ error: result?.errorMessage || 'Ödeme altyapısına bağlanılamadı. Lütfen geçerli Iyzico anahtarlarını girdiğinizden emin olun.' }, { status: 400 }));
+          resolve(NextResponse.json({ error: result?.errorMessage || 'Ödeme altyapısına bağlanılamadı.' }, { status: 400 }));
         } else {
           resolve(NextResponse.json({ 
             token: result.token,
