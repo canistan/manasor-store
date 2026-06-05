@@ -190,12 +190,12 @@ export default function CartDrawer() {
                       placeholder="İndirim Kodu" 
                       value={couponInput}
                       onChange={(e) => setCouponInput(e.target.value)}
-                      className="flex-1 p-2 text-sm border border-olive-200 rounded-lg outline-none focus:ring-1 focus:ring-gold-500 uppercase"
+                      className="flex-1 p-3 text-sm bg-white text-olive-900 placeholder-olive-400 border border-olive-200 rounded-lg outline-none focus:ring-1 focus:ring-gold-500 focus:border-gold-500 uppercase transition-all shadow-sm"
                     />
                     <button 
                       onClick={handleApplyCoupon}
                       disabled={isApplyingCoupon || !couponInput.trim()}
-                      className="bg-olive-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-olive-900 disabled:opacity-50 transition-colors"
+                      className="bg-olive-800 text-white px-5 py-3 rounded-lg text-sm font-medium hover:bg-olive-900 disabled:opacity-50 transition-colors shadow-sm"
                     >
                       {isApplyingCoupon ? '...' : 'Uygula'}
                     </button>
