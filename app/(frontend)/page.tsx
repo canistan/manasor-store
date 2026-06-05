@@ -5,6 +5,8 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { Truck, Leaf, ShieldCheck, Star } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   let products: any[] = [];
   let homePageData: any = null;
@@ -35,39 +37,6 @@ export default async function Home() {
   } catch {
     // Veritabanı henüz bağlı değilse veya hata varsa boş array
     products = [];
-  }
-
-  // EĞER ÜRÜN YOKSA DUMMY DATA KULLAN (Test ve UI/UX gösterimi için)
-  if (products.length === 0) {
-    products = [
-      {
-        slug: "soguk-sikim-zeytinyagi",
-        name: "Erken Hasat Soğuk Sıkım Natürel Sızma Zeytinyağı",
-        shortDescription: "0.3 asit oranına sahip, taş baskı yöntemiyle üretilmiş ödüllü zeytinyağımız.",
-        category: "Zeytinyağı",
-        image: { url: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&q=80" },
-        secondaryImage: "https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=600&q=80",
-        variations: [{ variantId: 'v1', size: '500ml', packaging: 'Cam Şişe', price: 450, stock: 50 }]
-      },
-      {
-        slug: "gemlik-siyah-zeytin",
-        name: "Gemlik Lüks Siyah Zeytin (XL Boy)",
-        shortDescription: "İnce kabuklu, küçük çekirdekli ve etli Gemlik tipi siyah zeytin.",
-        category: "Zeytin",
-        image: { url: "https://images.unsplash.com/photo-1591122523233-22037c1dec9f?w=600&q=80" },
-        secondaryImage: "/images/black_olives_hover.png",
-        variations: [{ variantId: 'v2', size: '1Kg', packaging: 'Vakum', price: 320, stock: 100 }]
-      },
-      {
-        slug: "cizik-yesil-zeytin",
-        name: "Edremit Çizik Yeşil Zeytin",
-        shortDescription: "Sadece su ve tuz ile fermente edilmiş doğal yeşil zeytin.",
-        category: "Zeytin",
-        image: { url: "https://images.unsplash.com/photo-1501959915551-4e8d30928317?w=600&q=80" },
-        secondaryImage: "/images/green_olives_hover.png",
-        variations: [{ variantId: 'v3', size: '1Kg', packaging: 'Kavanoz', price: 290, stock: 30 }]
-      }
-    ];
   }
 
   // Ürün görseli URL'sini belirle
