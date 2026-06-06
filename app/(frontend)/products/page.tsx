@@ -10,6 +10,7 @@ export default async function ProductsPage() {
   const result = await payload.find({
     collection: 'products',
     limit: 100,
+    depth: 1,
     sort: '-createdAt',
   });
 

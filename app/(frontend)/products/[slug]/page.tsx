@@ -59,6 +59,7 @@ export default async function ProductDetailPage({
       collection: 'products',
       where: { slug: { equals: slug } },
       limit: 1,
+      depth: 1,
     });
     
     if (result.docs.length > 0) {

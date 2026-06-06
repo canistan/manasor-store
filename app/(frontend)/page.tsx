@@ -16,7 +16,7 @@ export default async function Home() {
     
     // 1. CMS'ten Anasayfa Verilerini Çek
     try {
-      homePageData = await payload.findGlobal({ slug: 'home-page' });
+      homePageData = await payload.findGlobal({ slug: 'home-page', depth: 2 });
     } catch {
       console.log('HomePage global ayarları henüz kaydedilmemiş.');
     }
@@ -30,6 +30,7 @@ export default async function Home() {
       const result = await payload.find({
         collection: 'products',
         limit: 10,
+        depth: 1,
         sort: '-createdAt',
       });
       products = result.docs;
