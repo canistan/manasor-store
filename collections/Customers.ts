@@ -130,6 +130,23 @@ export const Customers: CollectionConfig = {
       label: 'Müşterinin Siparişleri',
     },
     {
+      name: 'cart',
+      type: 'array',
+      label: 'Kayıtlı Sepet (Hesap Sepeti)',
+      fields: [
+        { name: 'product', type: 'relationship', relationTo: 'products', required: true },
+        { name: 'variationId', type: 'text', required: true },
+        { name: 'quantity', type: 'number', required: true },
+        { name: 'price', type: 'number', required: true },
+        { name: 'name', type: 'text', required: true },
+        { name: 'image', type: 'text' },
+        { name: 'weight_kg', type: 'number' },
+      ],
+      admin: {
+        description: 'Müşterinin terk ettiği veya kaydettiği sepet içeriği',
+      }
+    },
+    {
       name: 'accountStatus',
       type: 'select',
       label: 'Hesap Durumu',

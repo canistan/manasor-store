@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Mail, Lock, User as UserIcon, Apple, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useCartStore } from '@/store/useCartStore';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { items, setCart } = useCartStore();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -58,6 +60,23 @@ export default function RegisterPage() {
       });
 
       if (loginRes.ok) {
+        // Sepet Birleştirme (Kasa Uyumu)
+        try {
+          const syncRes = await fetch('/api/customers/cart/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cart: items })
+          });
+          if (syncRes.ok) {
+            const syncData = await syncRes.json();
+            if (syncData.cart) {
+              setCart(syncData.cart);
+            }
+          }
+        } catch (syncErr) {
+          console.error('Sepet birleştirme hatası:', syncErr);
+        }
+
         router.push('/dashboard');
         router.refresh();
       } else {

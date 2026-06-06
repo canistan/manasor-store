@@ -30,35 +30,62 @@ export const useCartStore = create(
 
       addItem: (item) => set((state) => {
         const existingItem = state.items.find(i => i.variationId === item.variationId);
+        let newItems;
         if (existingItem) {
-          return {
-            items: state.items.map(i => 
-              i.variationId === item.variationId 
-                ? { ...i, quantity: i.quantity + item.quantity }
-                : i
-            ),
-            lastAddedItem: item,
-            showToast: true
-          };
+          newItems = state.items.map(i => 
+            i.variationId === item.variationId 
+              ? { ...i, quantity: i.quantity + item.quantity }
+              : i
+          );
+        } else {
+          newItems = [...state.items, item];
         }
+        
+        get().syncToServer(newItems);
+
         return { 
-          items: [...state.items, item],
+          items: newItems,
           lastAddedItem: item,
           showToast: true
         };
       }),
 
-      removeItem: (variationId) => set((state) => ({
-        items: state.items.filter(i => i.variationId !== variationId)
-      })),
+      removeItem: (variationId) => set((state) => {
+        const newItems = state.items.filter(i => i.variationId !== variationId);
+        get().syncToServer(newItems);
+        return { items: newItems };
+      }),
 
-      updateQuantity: (variationId, quantity) => set((state) => ({
-        items: state.items.map(i => 
+      updateQuantity: (variationId, quantity) => set((state) => {
+        const newItems = state.items.map(i => 
           i.variationId === variationId ? { ...i, quantity } : i
-        )
-      })),
+        );
+        get().syncToServer(newItems);
+        return { items: newItems };
+      }),
 
-      clearCart: () => set({ items: [] }),
+      clearCart: () => {
+        set({ items: [] });
+        get().syncToServer([]);
+      },
+
+      setCart: (items) => {
+        set({ items });
+      },
+
+      syncToServer: async (itemsToSync) => {
+        // Sepette değişiklik olduğunda DB ile senkronize etmek için fire-and-forget çağrı yaparız.
+        // Sadece kullanıcı giriş yapmışsa başarılı olur, yapmamışsa 401 döner, sorun değil.
+        try {
+          await fetch('/api/customers/cart/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cart: itemsToSync }),
+          });
+        } catch (e) {
+          // ignore error
+        }
+      },
 
       getCartTotal: () => {
         const state = get();
