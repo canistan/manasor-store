@@ -480,11 +480,11 @@ export default function DashboardPage() {
                 </div>
                 
                 <div className="flex gap-6 mt-4">
-                  <label className="flex items-center cursor-pointer">
+                  <label className="flex items-center cursor-pointer text-olive-900">
                     <input type="radio" checked={addressForm.invoiceType === 'bireysel'} onChange={() => setAddressForm({...addressForm, invoiceType: 'bireysel'})} className="form-radio text-gold-500" />
                     <span className="ml-2">Bireysel</span>
                   </label>
-                  <label className="flex items-center cursor-pointer">
+                  <label className="flex items-center cursor-pointer text-olive-900">
                     <input type="radio" checked={addressForm.invoiceType === 'kurumsal'} onChange={() => setAddressForm({...addressForm, invoiceType: 'kurumsal'})} className="form-radio text-gold-500" />
                     <span className="ml-2">Kurumsal</span>
                   </label>
