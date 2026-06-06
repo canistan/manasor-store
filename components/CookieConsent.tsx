@@ -3,6 +3,12 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
+}
+
 export default function CookieConsent() {
   const [show, setShow] = useState(false);
 
@@ -11,6 +17,16 @@ export default function CookieConsent() {
     const consent = localStorage.getItem('cookieConsent');
     if (!consent) {
       setShow(true);
+    } else if (consent === 'accepted') {
+      // Daha önceden kabul edilmişse, consent'i update et
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('consent', 'update', {
+          'ad_storage': 'granted',
+          'ad_user_data': 'granted',
+          'ad_personalization': 'granted',
+          'analytics_storage': 'granted'
+        });
+      }
     }
 
     // Footer'dan gelen eventi dinle
@@ -22,6 +38,14 @@ export default function CookieConsent() {
 
   const handleAccept = () => {
     localStorage.setItem('cookieConsent', 'accepted');
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('consent', 'update', {
+        'ad_storage': 'granted',
+        'ad_user_data': 'granted',
+        'ad_personalization': 'granted',
+        'analytics_storage': 'granted'
+      });
+    }
     setShow(false);
   };
 
