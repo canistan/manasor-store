@@ -110,3 +110,33 @@ export const orderSuccessTemplate = (orderId: string, totalAmount: number, userN
     </div>
   `)
 }
+
+export const adminNewOrderTemplate = (orderId: string, totalAmount: number, customerName: string) => {
+  return baseEmailLayout(`
+    <h2>Yeni Bir Sipariş Alındı! 🎉</h2>
+    <p>Sisteme yeni bir sipariş düştü. Sipariş detaylarını yönetici panelinden inceleyebilirsiniz.</p>
+    <ul>
+      <li><strong>Sipariş No:</strong> #${orderId}</li>
+      <li><strong>Müşteri:</strong> ${customerName}</li>
+      <li><strong>Tutar:</strong> ${totalAmount} ₺</li>
+    </ul>
+    <div style="text-align: center;">
+      <a href="${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/collections/orders" class="btn">Panele Git</a>
+    </div>
+  `)
+}
+
+export const adminLowStockTemplate = (productName: string, variantName: string, remainingStock: number) => {
+  return baseEmailLayout(`
+    <h2>⚠️ Kritik Stok Uyarısı</h2>
+    <p>Bir ürünün stoğu kritik seviyeye (${remainingStock} adet) düştü. Lütfen stokları kontrol edin.</p>
+    <ul>
+      <li><strong>Ürün Adı:</strong> ${productName}</li>
+      <li><strong>Varyasyon:</strong> ${variantName || 'Standart'}</li>
+      <li><strong>Kalan Stok:</strong> <span style="color: red; font-weight: bold;">${remainingStock}</span></li>
+    </ul>
+    <div style="text-align: center;">
+      <a href="${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/collections/products" class="btn">Ürünleri Kontrol Et</a>
+    </div>
+  `)
+}

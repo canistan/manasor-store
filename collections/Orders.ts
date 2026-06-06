@@ -1,4 +1,5 @@
 import { CollectionConfig } from 'payload'
+import { adminNewOrderTemplate, adminLowStockTemplate } from '../lib/email-templates'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
@@ -49,22 +50,59 @@ export const Orders: CollectionConfig = {
                     id: item.productId,
                   });
                   if (product && product.variations) {
+                    let lowStockVariant = null;
                     const newVariations = product.variations.map((v: any) => {
                       if (v.variantId === item.variationId) {
-                        return { ...v, stock: Math.max(0, v.stock - item.quantity) };
+                        const remaining = Math.max(0, v.stock - item.quantity);
+                        if (remaining <= 5) {
+                          lowStockVariant = { name: v.size || v.weight_kg + 'kg', remaining };
+                        }
+                        return { ...v, stock: remaining };
                       }
                       return v;
                     });
+                    
                     await req.payload.update({
                       collection: 'products',
                       id: product.id,
                       data: { variations: newVariations },
                     });
+
+                    // Eğer kritik stok varsa adminlere bildir
+                    if (lowStockVariant) {
+                      try {
+                        const admins = await req.payload.find({ collection: 'users', limit: 100 });
+                        for (const admin of admins.docs) {
+                          await req.payload.sendEmail({
+                            to: admin.email,
+                            subject: '⚠️ Kritik Stok Uyarısı - Manasor',
+                            html: adminLowStockTemplate(product.name, lowStockVariant.name, lowStockVariant.remaining)
+                          }).catch(e => console.error("Admin low stock email error:", e));
+                        }
+                      } catch (err) {
+                        console.error('Kritik stok admin email hatası:', err);
+                      }
+                    }
                   }
                 } catch (err) {
                   req.payload.logger.error(`Stok düşme hatası (Ürün: ${item.productId}): ${err}`);
                 }
               }
+            }
+
+            // Yeni Sipariş Yönetici Bildirimi (Sadece ödendi statüsüne geçtiğinde)
+            try {
+              const customerName = doc.customer?.name || (doc.firstName ? `${doc.firstName} ${doc.lastName}` : 'Misafir Müşteri');
+              const admins = await req.payload.find({ collection: 'users', limit: 100 });
+              for (const admin of admins.docs) {
+                await req.payload.sendEmail({
+                  to: admin.email,
+                  subject: `🎉 Yeni Sipariş (#${doc.orderNumber}) - Manasor`,
+                  html: adminNewOrderTemplate(doc.orderNumber, doc.totalPrice, customerName)
+                }).catch(e => console.error("Admin new order email error:", e));
+              }
+            } catch (err) {
+              console.error('Yeni sipariş admin email hatası:', err);
             }
 
             // Kupon Kullanım Sayısını (usedCount) Artırma
