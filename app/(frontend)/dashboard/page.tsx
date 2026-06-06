@@ -454,7 +454,7 @@ export default function DashboardPage() {
                       required 
                       value={addressForm.city || ''} 
                       onChange={e => setAddressForm({...addressForm, city: e.target.value, district: ''})} 
-                      className="w-full p-3 border border-olive-200 rounded-xl"
+                      className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 bg-white"
                     >
                       <option value="">İl Seçiniz</option>
                       {citiesData.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
@@ -466,7 +466,7 @@ export default function DashboardPage() {
                       disabled={!addressForm.city}
                       value={addressForm.district || ''} 
                       onChange={e => setAddressForm({...addressForm, district: e.target.value})} 
-                      className="w-full p-3 border border-olive-200 rounded-xl disabled:bg-gray-50"
+                      className="w-full p-3 border border-olive-200 rounded-xl disabled:bg-gray-50 text-olive-900 bg-white"
                     >
                       <option value="">İlçe Seçiniz</option>
                       {addressForm.city && citiesData.find(c => c.name === addressForm.city)?.districts.map((d: string) => (
@@ -476,7 +476,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <div>
-                  <textarea required placeholder="Açık Adres" value={addressForm.address || ''} onChange={e => setAddressForm({...addressForm, address: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl" rows={3}></textarea>
+                  <textarea required placeholder="Açık Adres" value={addressForm.address || ''} onChange={e => setAddressForm({...addressForm, address: e.target.value})} className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 bg-white" rows={3}></textarea>
                 </div>
                 
                 <div className="flex gap-6 mt-4">

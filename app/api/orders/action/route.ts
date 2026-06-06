@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       collection: 'orders',
       where: {
         id: { equals: orderId },
-        'customer': { equals: user.id }
+        'email': { equals: user.email }
       },
       limit: 1,
     });
