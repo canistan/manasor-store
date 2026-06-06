@@ -27,9 +27,10 @@ export default function DashboardPage() {
     loading: boolean,
     returnReason: string,
     returnMessage: string,
-    returnFile: File | null
+    returnFile: File | null,
+    error: string
   }>({
-    isOpen: false, orderId: '', action: null, loading: false, returnReason: '', returnMessage: '', returnFile: null
+    isOpen: false, orderId: '', action: null, loading: false, returnReason: '', returnMessage: '', returnFile: null, error: ''
   });
   const [successModal, setSuccessModal] = useState<{isOpen: boolean, message: string}>({
     isOpen: false, message: ''
@@ -129,7 +130,8 @@ export default function DashboardPage() {
       loading: false,
       returnReason: '',
       returnMessage: '',
-      returnFile: null
+      returnFile: null,
+      error: ''
     });
   };
 
@@ -138,11 +140,11 @@ export default function DashboardPage() {
     if (!orderId || !action) return;
 
     if (action === 'return' && !returnReason) {
-      alert('Lütfen bir iade sebebi seçiniz.');
+      setConfirmModal(prev => ({ ...prev, error: 'Lütfen bir iade sebebi seçiniz.' }));
       return;
     }
 
-    setConfirmModal(prev => ({ ...prev, loading: true }));
+    setConfirmModal(prev => ({ ...prev, loading: true, error: '' }));
 
     try {
       const formData = new FormData();
@@ -159,7 +161,7 @@ export default function DashboardPage() {
 
       if (res.ok) {
         const isCancel = action === 'cancel';
-        setConfirmModal({ isOpen: false, orderId: '', action: null, loading: false, returnReason: '', returnMessage: '', returnFile: null });
+        setConfirmModal({ isOpen: false, orderId: '', action: null, loading: false, returnReason: '', returnMessage: '', returnFile: null, error: '' });
         setSuccessModal({
           isOpen: true,
           message: isCancel ? 'İptal talebiniz başarıyla alınmıştır. İnceleme sonrası iade işleminiz gerçekleştirilecektir.' : 'İade talebiniz başarıyla alınmıştır. Müşteri hizmetlerimiz sizinle iletişime geçecektir.'
@@ -169,13 +171,11 @@ export default function DashboardPage() {
         setOrders(orders.map(o => o.id === orderId ? { ...o, status: isCancel ? 'cancel_requested' : 'return_requested' } : o));
       } else {
         const data = await res.json();
-        alert(data.error || 'Bir hata oluştu.');
-        setConfirmModal(prev => ({ ...prev, loading: false }));
+        setConfirmModal(prev => ({ ...prev, loading: false, error: data.error || 'Bir hata oluştu.' }));
       }
     } catch (err) {
       console.error(err);
-      alert('Sistemde geçici bir hata oluştu.');
-      setConfirmModal(prev => ({ ...prev, loading: false }));
+      setConfirmModal(prev => ({ ...prev, loading: false, error: 'Sistemde geçici bir hata oluştu.' }));
     }
   };
 
@@ -692,7 +692,7 @@ export default function DashboardPage() {
                   <select 
                     required
                     value={confirmModal.returnReason}
-                    onChange={e => setConfirmModal({...confirmModal, returnReason: e.target.value})}
+                    onChange={e => setConfirmModal({...confirmModal, returnReason: e.target.value, error: ''})}
                     className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 bg-white"
                   >
                     <option value="">Lütfen seçiniz</option>
@@ -721,6 +721,11 @@ export default function DashboardPage() {
                     className="w-full text-sm text-olive-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-olive-50 file:text-olive-700 hover:file:bg-olive-100"
                   />
                 </div>
+              </div>
+            )}
+            {confirmModal.error && (
+              <div className="mb-6 p-3 bg-red-50 text-red-600 rounded-xl border border-red-100 text-sm">
+                {confirmModal.error}
               </div>
             )}
             <div className="flex gap-4 justify-end">
