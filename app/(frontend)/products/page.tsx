@@ -20,7 +20,7 @@ export default async function ProductsPage() {
     name: doc.name,
     shortDescription: doc.shortDescription || '',
     category: doc.category || 'Diğer',
-    image: typeof doc.image === 'object' && doc.image?.url ? doc.image.url : '/images/olive_oil_bottle_1779729109843.png',
+    image: typeof doc.image === 'object' && doc.image?.url ? doc.image.url.replace('/api/media/file/', '/media/') : '/images/olive_oil_bottle_1779729109843.png',
     secondaryImage: doc.secondaryImage,
     variations: (doc.variations || []).map((v: any) => ({
       id: v.variantId,

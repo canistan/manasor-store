@@ -43,7 +43,7 @@ export default async function Home() {
   // Ürün görseli URL'sini belirle
   const getImageUrl = (product: any): string => {
     if (typeof product.image === 'object' && product.image?.url) {
-      return product.image.url;
+      return product.image.url.replace('/api/media/file/', '/media/');
     }
     return '/images/olive_oil_bottle_1779729109843.png'; // fallback
   };

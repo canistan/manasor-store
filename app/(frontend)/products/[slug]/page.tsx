@@ -64,7 +64,7 @@ export default async function ProductDetailPage({
     
     if (result.docs.length > 0) {
       const p = result.docs[0];
-      const imageUrl = typeof p.image === 'object' && p.image?.url ? p.image.url : '/images/olive_oil_bottle_1779729109843.png';
+      const imageUrl = typeof p.image === 'object' && p.image?.url ? p.image.url.replace('/api/media/file/', '/media/') : '/images/olive_oil_bottle_1779729109843.png';
       
       productData = {
         id: p.id as string,
