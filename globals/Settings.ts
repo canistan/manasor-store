@@ -20,7 +20,7 @@ export const Settings: GlobalConfig = {
             {
               name: 'freeShippingThreshold',
               type: 'number',
-              label: 'Ücretsiz Kargo Alt Limiti (TL)',
+              label: 'Kargo Alt Limiti (TL)',
               defaultValue: 1500,
               required: true,
               admin: {

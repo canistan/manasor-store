@@ -2,7 +2,11 @@ import type { CollectionConfig } from 'payload'
 import { forgotPasswordTemplate, welcomeEmailTemplate } from '../lib/email-templates'
 
 export const Users: CollectionConfig = {
-  slug: 'users',
+  slug: 'users', 
+  labels: {
+    singular: 'Yönetici',
+    plural: 'Yöneticiler',
+  },
   auth: {
     maxLoginAttempts: 5,
     lockTime: 900000, // 15 dakika (milisaniye)

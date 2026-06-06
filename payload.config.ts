@@ -19,6 +19,8 @@ import { Coupons } from './collections/Coupons'
 import { HomePage } from './globals/HomePage'
 import { AboutPage } from './globals/AboutPage'
 import { ContactPage } from './globals/ContactPage'
+import { ProductsPage } from './globals/ProductsPage'
+import { TrackingPage } from './globals/TrackingPage'
 import { Settings } from './globals/Settings'
 
 const filename = fileURLToPath(import.meta.url)
@@ -37,7 +39,7 @@ export default buildConfig({
       },
       views: {
         Dashboard: {
-          Component: '@/components/AdminDashboard',
+          Component: '@/components/admin/Dashboard',
         },
       },
     },
@@ -46,7 +48,7 @@ export default buildConfig({
 
   collections: [Users, Customers, Media, Products, Orders, RmaRequests, Subscribers, AuditLogs, Coupons],
 
-  globals: [HomePage, AboutPage, ContactPage, Settings],
+  globals: [HomePage, AboutPage, ContactPage, ProductsPage, TrackingPage, Settings],
 
   email: nodemailerAdapter({
     defaultFromAddress: 'info@manasor.com',
