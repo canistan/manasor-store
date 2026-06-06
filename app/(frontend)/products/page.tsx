@@ -15,7 +15,8 @@ export default async function ProductsPage() {
   });
 
   const products = result.docs.map((doc: any) => ({
-    id: doc.slug,
+    id: doc.id.toString(),
+    slug: doc.slug,
     name: doc.name,
     shortDescription: doc.shortDescription || '',
     category: doc.category || 'Diğer',

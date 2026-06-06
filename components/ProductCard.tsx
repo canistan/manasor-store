@@ -16,6 +16,7 @@ interface Variation {
 
 interface Product {
   id: string;
+  slug?: string;
   name: string;
   shortDescription: string;
   category: string;
@@ -55,7 +56,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <div className="group flex flex-col h-full bg-white border border-olive-100 hover:border-gold-500 transition-all duration-300 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-2">
-      <Link href={`/products/${product.id}`} className="block relative aspect-square overflow-hidden bg-[#F4EFE6] p-4 group/image">
+      <Link href={`/products/${product.slug || product.id}`} className="block relative aspect-square overflow-hidden bg-[#F4EFE6] p-4 group/image">
         <Image
           src={product.image}
           alt={`Manasor ${product.category} - ${product.name}`}
@@ -79,7 +80,7 @@ export default function ProductCard({ product }: { product: Product }) {
       </Link>
       
       <div className="flex flex-col flex-grow p-6 text-center">
-        <Link href={`/products/${product.id}`}>
+        <Link href={`/products/${product.slug || product.id}`}>
           <h3 className="text-lg font-serif text-luxury-charcoal mb-2 group-hover:text-gold-600 transition-colors line-clamp-2">
             {product.name}
           </h3>

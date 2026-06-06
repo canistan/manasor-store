@@ -188,7 +188,8 @@ export default async function Home() {
                 <div key={product.id || product.slug} className="w-full sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] xl:w-[calc(25%-1.5rem)] max-w-sm flex-shrink-0">
                   <ProductCard 
                     product={{
-                      id: product.slug,
+                      id: product.id?.toString() || product.slug,
+                      slug: product.slug,
                       name: product.name,
                       shortDescription: product.shortDescription || '',
                       category: product.category,
