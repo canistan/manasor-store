@@ -386,7 +386,7 @@ export default function DashboardPage() {
             </form>
 
             <div className="mt-12 pt-8 border-t border-red-100 max-w-xl">
-              <h4 className="text-lg font-medium text-red-600 mb-2">Tehlikeli Bölge</h4>
+              <h4 className="text-lg font-medium text-luxury-charcoal mb-2">Hesap İşlemleri</h4>
               <p className="text-sm text-olive-600 mb-4">
                 KVKK kapsamında hesabınızı silmek ve kişisel verilerinizi sistemden kaldırmak istiyorsanız bu seçeneği kullanabilirsiniz.
               </p>
