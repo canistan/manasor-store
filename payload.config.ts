@@ -5,6 +5,7 @@ import sharp from 'sharp'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
 import { Users } from './collections/Users'
 import { Customers } from './collections/Customers'
@@ -66,6 +67,17 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
 
   sharp,
+
+  plugins: [
+    ...(process.env.BLOB_READ_WRITE_TOKEN ? [
+      vercelBlobStorage({
+        collections: {
+          media: true,
+        },
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      })
+    ] : []),
+  ],
 
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
