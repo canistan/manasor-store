@@ -61,7 +61,7 @@ export default function ProductCard({ product }: { product: Product }) {
           src={product.image}
           alt={`Manasor ${product.category} - ${product.name}`}
           fill
-          className={`object-contain p-6 transition-opacity duration-700 ${product.secondaryImage ? 'group-hover/image:opacity-0' : 'group-hover/image:scale-105'}`}
+          className={`object-cover transition-opacity duration-700 ${product.secondaryImage ? 'group-hover/image:opacity-0' : 'group-hover/image:scale-105'}`}
           sizes="(max-width: 768px) 100vw, 33vw"
         />
         {product.secondaryImage && (
