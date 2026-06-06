@@ -19,6 +19,7 @@ export const Media: CollectionConfig = {
     delete: ({ req: { user } }) => !!user,
   },
   upload: {
+    disableLocalStorage: true,
     mimeTypes: ['image/*', 'application/pdf'],
   },
   fields: [
