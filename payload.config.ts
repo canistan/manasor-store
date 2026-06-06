@@ -74,14 +74,15 @@ export default buildConfig({
   sharp,
 
   plugins: [
-    ...(process.env.BLOB_READ_WRITE_TOKEN ? [
-      vercelBlobStorage({
-        collections: {
-          media: true,
+    vercelBlobStorage({
+      enabled: true,
+      collections: {
+        media: {
+          disablePayloadAccessControl: true,
         },
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-      })
-    ] : []),
+      },
+      token: process.env.BLOB_READ_WRITE_TOKEN || '',
+    })
   ],
 
   typescript: {
