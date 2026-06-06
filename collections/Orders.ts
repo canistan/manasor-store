@@ -351,6 +351,34 @@ export const Orders: CollectionConfig = {
               ],
             }
           ]
+        },
+        {
+          label: 'İptal / İade Bilgileri',
+          fields: [
+            {
+              name: 'returnReason',
+              type: 'text',
+              label: 'İade/İptal Sebebi'
+            },
+            {
+              name: 'returnMessage',
+              type: 'textarea',
+              label: 'Müşteri Açıklaması'
+            },
+            {
+              name: 'returnImages',
+              type: 'array',
+              label: 'Hasar/İade Görselleri',
+              fields: [
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  label: 'Görsel'
+                }
+              ]
+            }
+          ]
         }
       ]
     }

@@ -21,7 +21,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { orderId, action } = await req.json();
+    const contentType = req.headers.get('content-type') || '';
+    let orderId, action, returnReason, returnMessage, file;
+
+    if (contentType.includes('multipart/form-data')) {
+      const formData = await req.formData();
+      orderId = formData.get('orderId') as string;
+      action = formData.get('action') as string;
+      returnReason = formData.get('returnReason') as string;
+      returnMessage = formData.get('returnMessage') as string;
+      file = formData.get('file') as File | null;
+    } else {
+      const body = await req.json();
+      orderId = body.orderId;
+      action = body.action;
+    }
 
     if (!orderId || !action) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -58,13 +72,39 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
+    // Handle file upload if any
+    let mediaId;
+    if (file && file.size > 0) {
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      const mediaDoc = await payload.create({
+        collection: 'media',
+        data: { alt: `Return image for order ${orderId}` },
+        file: {
+          data: buffer,
+          mimetype: file.type,
+          name: file.name,
+          size: file.size,
+        }
+      });
+      mediaId = mediaDoc.id;
+    }
+
+    const updateData: any = { status: newStatus };
+    if (returnReason) updateData.returnReason = returnReason;
+    if (returnMessage) updateData.returnMessage = returnMessage;
+    if (mediaId) {
+      updateData.returnImages = [
+        { image: mediaId }
+      ];
+    }
+
     // Update order status
     await payload.update({
       collection: 'orders',
       id: orderId,
-      data: {
-        status: newStatus,
-      },
+      data: updateData,
     });
 
     // Optionally: Send email to Admin about the request (simulated)

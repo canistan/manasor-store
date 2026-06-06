@@ -20,8 +20,16 @@ export default function DashboardPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   
-  const [confirmModal, setConfirmModal] = useState<{isOpen: boolean, orderId: string, action: 'cancel'|'return'|null, loading: boolean}>({
-    isOpen: false, orderId: '', action: null, loading: false
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean, 
+    orderId: string, 
+    action: 'cancel'|'return'|null, 
+    loading: boolean,
+    returnReason: string,
+    returnMessage: string,
+    returnFile: File | null
+  }>({
+    isOpen: false, orderId: '', action: null, loading: false, returnReason: '', returnMessage: '', returnFile: null
   });
   const [successModal, setSuccessModal] = useState<{isOpen: boolean, message: string}>({
     isOpen: false, message: ''
@@ -118,26 +126,40 @@ export default function DashboardPage() {
       isOpen: true,
       orderId,
       action,
-      loading: false
+      loading: false,
+      returnReason: '',
+      returnMessage: '',
+      returnFile: null
     });
   };
 
   const confirmOrderAction = async () => {
-    const { orderId, action } = confirmModal;
+    const { orderId, action, returnReason, returnMessage, returnFile } = confirmModal;
     if (!orderId || !action) return;
+
+    if (action === 'return' && !returnReason) {
+      alert('Lütfen bir iade sebebi seçiniz.');
+      return;
+    }
 
     setConfirmModal(prev => ({ ...prev, loading: true }));
 
     try {
+      const formData = new FormData();
+      formData.append('orderId', orderId);
+      formData.append('action', action);
+      if (returnReason) formData.append('returnReason', returnReason);
+      if (returnMessage) formData.append('returnMessage', returnMessage);
+      if (returnFile) formData.append('file', returnFile);
+
       const res = await fetch('/api/orders/action', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, action })
+        body: formData
       });
 
       if (res.ok) {
         const isCancel = action === 'cancel';
-        setConfirmModal({ isOpen: false, orderId: '', action: null, loading: false });
+        setConfirmModal({ isOpen: false, orderId: '', action: null, loading: false, returnReason: '', returnMessage: '', returnFile: null });
         setSuccessModal({
           isOpen: true,
           message: isCancel ? 'İptal talebiniz başarıyla alınmıştır. İnceleme sonrası iade işleminiz gerçekleştirilecektir.' : 'İade talebiniz başarıyla alınmıştır. Müşteri hizmetlerimiz sizinle iletişime geçecektir.'
@@ -656,11 +678,51 @@ export default function DashboardPage() {
             <h3 className={`text-xl font-serif mb-4 ${confirmModal.action === 'cancel' ? 'text-red-600' : 'text-orange-600'}`}>
               {confirmModal.action === 'cancel' ? 'Siparişi İptal Et' : 'İade Talebi Oluştur'}
             </h3>
-            <p className="text-olive-700 mb-6 text-sm leading-relaxed">
-              {confirmModal.action === 'cancel' 
-                ? 'Siparişinizi iptal etmek istediğinize emin misiniz? Müşteri hizmetlerimiz iptal işleminizi onayladıktan sonra Iyzico üzerinden para iadeniz yapılacaktır.' 
-                : 'Bu siparişiniz için iade talebi oluşturmak istediğinize emin misiniz? Ekiplerimiz iade kargo kodu ve süreci için sizinle iletişime geçecektir.'}
-            </p>
+            {confirmModal.action === 'cancel' ? (
+              <p className="text-olive-700 mb-6 text-sm leading-relaxed">
+                Siparişinizi iptal etmek istediğinize emin misiniz? Müşteri hizmetlerimiz iptal işleminizi onayladıktan sonra Iyzico üzerinden para iadeniz yapılacaktır.
+              </p>
+            ) : (
+              <div className="space-y-4 mb-6 text-left">
+                <p className="text-olive-700 text-sm leading-relaxed mb-4">
+                  Gıda ve hassas ürünlerde iadeler ancak kusur/hasar durumunda kabul edilmektedir. İade talebinizin değerlendirilebilmesi için aşağıdaki bilgileri doldurunuz.
+                </p>
+                <div>
+                  <label className="block text-sm font-medium text-olive-900 mb-1">İade Sebebi *</label>
+                  <select 
+                    required
+                    value={confirmModal.returnReason}
+                    onChange={e => setConfirmModal({...confirmModal, returnReason: e.target.value})}
+                    className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 bg-white"
+                  >
+                    <option value="">Lütfen seçiniz</option>
+                    <option value="Hasarlı/Kırık/Sızdırmış Ürün">Hasarlı/Kırık/Sızdırmış Ürün</option>
+                    <option value="Yanlış Ürün Gönderimi">Yanlış Ürün Gönderimi</option>
+                    <option value="Bozuk/Kötü Ürün Kalitesi">Bozuk/Kötü Ürün Kalitesi</option>
+                    <option value="Diğer">Diğer</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-olive-900 mb-1">Açıklama</label>
+                  <textarea 
+                    placeholder="Detaylı bilgi verebilirsiniz..."
+                    value={confirmModal.returnMessage}
+                    onChange={e => setConfirmModal({...confirmModal, returnMessage: e.target.value})}
+                    className="w-full p-3 border border-olive-200 rounded-xl text-olive-900 bg-white"
+                    rows={2}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-olive-900 mb-1">Görsel Ekle (Hasar durumunda zorunludur)</label>
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={e => setConfirmModal({...confirmModal, returnFile: e.target.files?.[0] || null})}
+                    className="w-full text-sm text-olive-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-olive-50 file:text-olive-700 hover:file:bg-olive-100"
+                  />
+                </div>
+              </div>
+            )}
             <div className="flex gap-4 justify-end">
               <button 
                 onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })}
