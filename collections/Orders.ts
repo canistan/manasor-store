@@ -50,7 +50,7 @@ export const Orders: CollectionConfig = {
                     id: item.productId,
                   });
                   if (product && product.variations) {
-                    let lowStockVariant = null;
+                    let lowStockVariant: any = null;
                     const newVariations = product.variations.map((v: any) => {
                       if (v.variantId === item.variationId) {
                         const remaining = Math.max(0, v.stock - item.quantity);
