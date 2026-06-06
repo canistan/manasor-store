@@ -60,7 +60,7 @@ export async function GET() {
         from: '"Manasor Müşteri Hizmetleri" <info@manasor.com>',
         to: 'test_kullanicisi@gmail.com',
         subject: 'Bizi Değerlendirin',
-        html: rateUsTemplate('ORD-9999', 'Ahmet Yılmaz'),
+        html: rateUsTemplate('ORD-9999', 'https://maps.google.com/review', 'Ahmet Yılmaz'),
       }),
       transporter.sendMail({
         from: '"Sistem" <info@manasor.com>',

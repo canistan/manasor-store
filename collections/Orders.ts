@@ -196,11 +196,15 @@ export const Orders: CollectionConfig = {
           // Teslim Edildiğinde "Bizi Değerlendirin" Maili
           if (doc.status === 'delivered' && previousDoc?.status !== 'delivered') {
             try {
+              const settings = await req.payload.findGlobal({ slug: 'settings' });
+              // @ts-ignore
+              const reviewLink = settings.googleMapsReviewLink || `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/dashboard`;
+              
               const customerName = doc.customer?.name || (doc.firstName ? `${doc.firstName} ${doc.lastName}` : 'Değerli Müşterimiz');
               await req.payload.sendEmail({
                 to: doc.email,
                 subject: `Siparişiniz Teslim Edildi! ⭐️ (#${doc.orderNumber})`,
-                html: rateUsTemplate(doc.orderNumber, customerName)
+                html: rateUsTemplate(doc.orderNumber, reviewLink, customerName)
               });
               req.payload.logger.info(`[MAIL BAŞARILI] ${doc.email} adresine "Bizi Değerlendirin" maili gönderildi.`);
             } catch (err) {

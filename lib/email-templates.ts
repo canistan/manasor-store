@@ -173,14 +173,14 @@ export const rmaRejectedTemplate = (orderId: string, adminNote: string, customer
   `)
 }
 
-export const rateUsTemplate = (orderId: string, customerName: string = 'Değerli Müşterimiz') => {
+export const rateUsTemplate = (orderId: string, reviewLink: string, customerName: string = 'Değerli Müşterimiz') => {
   return baseEmailLayout(`
     <h2>Siparişiniz Teslim Edildi! Bizi Değerlendirin ⭐️</h2>
     <p>Merhaba ${customerName},</p>
     <p><strong>#${orderId}</strong> numaralı siparişinizin başarıyla teslim edildiğini gördük. Manasor ürünlerini tercih ettiğiniz için teşekkür ederiz.</p>
     <p>Deneyiminizi bizimle paylaşarak kendimizi geliştirmemize yardımcı olabilir veya diğer müşterilerimize rehber olabilirsiniz.</p>
     <div style="text-align: center;">
-      <a href="${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/dashboard" class="btn">Siparişimi Değerlendir</a>
+      <a href="${reviewLink}" class="btn">Siparişimi Değerlendir</a>
     </div>
   `)
 }

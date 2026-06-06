@@ -15,6 +15,19 @@ export const Settings: GlobalConfig = {
       type: 'tabs',
       tabs: [
         {
+          label: 'Sosyal Medya & İletişim',
+          fields: [
+            {
+              name: 'googleMapsReviewLink',
+              type: 'text',
+              label: 'Google Haritalar Değerlendirme Linki',
+              admin: {
+                description: 'Sipariş teslim edildiğinde müşteriye giden "Bizi Değerlendirin" mailindeki buton bu linke gider.',
+              }
+            }
+          ]
+        },
+        {
           label: 'Kargo Ayarları',
           fields: [
             {
