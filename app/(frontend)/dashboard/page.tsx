@@ -106,6 +106,36 @@ export default function DashboardPage() {
     }
   };
 
+  const handleOrderAction = async (orderId: string, action: 'cancel' | 'return') => {
+    const isCancel = action === 'cancel';
+    const message = isCancel 
+      ? 'Siparişinizi iptal etmek istediğinize emin misiniz? (Bu işlem yönetici onayından sonra iade ile tamamlanacaktır)'
+      : 'Bu sipariş için iade talebi oluşturmak istediğinize emin misiniz?';
+      
+    if (!confirm(message)) return;
+
+    try {
+      const res = await fetch('/api/orders/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, action })
+      });
+
+      if (res.ok) {
+        alert(isCancel ? 'İptal talebiniz alınmıştır.' : 'İade talebiniz alınmıştır.');
+        router.refresh();
+        // Update local state to reflect UI immediately
+        setOrders(orders.map(o => o.id === orderId ? { ...o, status: isCancel ? 'cancel_requested' : 'return_requested' } : o));
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Bir hata oluştu.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Sistemde geçici bir hata oluştu.');
+    }
+  };
+
   const handleDeleteAccount = async () => {
     setIsDeleting(true);
     try {
@@ -179,7 +209,10 @@ export default function DashboardPage() {
                           {order.status === 'paid' ? 'Hazırlanıyor' : 
                            order.status === 'pending' ? 'Beklemede' : 
                            order.status === 'shipped' ? 'Kargoya Verildi' : 
-                           order.status === 'delivered' ? 'Teslim Edildi' : 'İptal'}
+                           order.status === 'delivered' ? 'Teslim Edildi' :
+                           order.status === 'cancel_requested' ? 'İptal Bekliyor' :
+                           order.status === 'return_requested' ? 'İade Bekliyor' :
+                           order.status === 'cancelled' ? 'İptal Edildi' : 'İptal'}
                         </span>
                       </div>
                       <div className="text-olive-400">
@@ -284,6 +317,31 @@ export default function DashboardPage() {
                             </div>
                           </div>
                         </div>
+                      </div>
+                      
+                      {/* Action Buttons */}
+                      <div className="mt-6 flex justify-end space-x-4 border-t border-olive-100 pt-6">
+                        {(order.status === 'pending' || order.status === 'paid') && (
+                          <button
+                            onClick={() => handleOrderAction(order.id, 'cancel')}
+                            className="px-6 py-2 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 hover:border-red-300 font-medium transition-colors text-sm flex items-center"
+                          >
+                            Siparişi İptal Et
+                          </button>
+                        )}
+                        {order.status === 'delivered' && (
+                          <button
+                            onClick={() => handleOrderAction(order.id, 'return')}
+                            className="px-6 py-2 bg-white border border-olive-200 text-olive-700 rounded-lg hover:bg-olive-50 hover:border-olive-300 font-medium transition-colors text-sm flex items-center"
+                          >
+                            İade Talebi Oluştur
+                          </button>
+                        )}
+                        {(order.status === 'cancel_requested' || order.status === 'return_requested') && (
+                          <div className="px-6 py-2 bg-orange-50 text-orange-700 rounded-lg font-medium text-sm flex items-center">
+                            Talebiniz inceleniyor. Müşteri temsilcimiz sizinle iletişime geçecektir.
+                          </div>
+                        )}
                       </div>
                       
                     </div>
