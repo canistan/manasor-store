@@ -17,6 +17,8 @@ export default function DashboardPage() {
   
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [addressForm, setAddressForm] = useState<any>({ invoiceType: 'bireysel' });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -101,6 +103,27 @@ export default function DashboardPage() {
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    try {
+      const res = await fetch('/api/customers/delete', { method: 'POST' });
+      if (res.ok) {
+        // Çıkış yap ve anasayfaya yönlendir
+        await fetch('/api/customers/logout', { method: 'POST' });
+        router.push('/');
+        router.refresh();
+      } else {
+        const errorData = await res.json();
+        alert('Bir hata oluştu: ' + (errorData.error || 'Bilinmeyen hata'));
+        setIsDeleting(false);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Hesap silinirken bir hata oluştu.');
+      setIsDeleting(false);
     }
   };
 
@@ -303,6 +326,19 @@ export default function DashboardPage() {
                 Bilgileri Güncelle
               </button>
             </form>
+
+            <div className="mt-12 pt-8 border-t border-red-100 max-w-xl">
+              <h4 className="text-lg font-medium text-red-600 mb-2">Tehlikeli Bölge</h4>
+              <p className="text-sm text-olive-600 mb-4">
+                KVKK kapsamında hesabınızı silmek ve kişisel verilerinizi sistemden kaldırmak istiyorsanız bu seçeneği kullanabilirsiniz.
+              </p>
+              <button 
+                onClick={() => setShowDeleteModal(true)}
+                className="bg-white border border-red-200 text-red-600 px-6 py-3 rounded-xl font-medium hover:bg-red-50 transition-colors"
+              >
+                Hesabımı Sil (Anonimleştir)
+              </button>
+            </div>
           </div>
         );
       case 'addresses':
@@ -491,6 +527,38 @@ export default function DashboardPage() {
 
         </div>
       </div>
+
+      {/* Hesap Silme Onay Modalı */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => !isDeleting && setShowDeleteModal(false)}></div>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative z-10 animate-fade-in-up">
+            <h3 className="text-xl font-serif text-red-600 mb-4">Hesabınızı Silmek İstediğinize Emin Misiniz?</h3>
+            <p className="text-olive-700 mb-4 text-sm leading-relaxed">
+              Bu işlem geri alınamaz. KVKK kapsamında kişisel profil bilgileriniz kalıcı olarak silinecek ve anonimleştirilecektir.
+            </p>
+            <p className="text-olive-700 mb-6 text-sm leading-relaxed bg-red-50 p-3 rounded-lg border border-red-100">
+              <strong>Önemli:</strong> Daha önce vermiş olduğunuz siparişlere ait fatura verileri yasal zorunluluklar (Vergi Usul Kanunu) gereği yasal süreler boyunca saklanmaya devam edecektir.
+            </p>
+            <div className="flex gap-4 justify-end">
+              <button 
+                onClick={() => setShowDeleteModal(false)}
+                disabled={isDeleting}
+                className="px-5 py-2.5 rounded-xl font-medium text-olive-600 hover:bg-olive-50 transition-colors disabled:opacity-50"
+              >
+                Vazgeç
+              </button>
+              <button 
+                onClick={handleDeleteAccount}
+                disabled={isDeleting}
+                className="px-5 py-2.5 rounded-xl font-medium bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center"
+              >
+                {isDeleting ? 'Siliniyor...' : 'Evet, Hesabımı Sil'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -127,5 +127,27 @@ export const Customers: CollectionConfig = {
       on: 'customer',
       label: 'Müşterinin Siparişleri',
     },
+    {
+      name: 'accountStatus',
+      type: 'select',
+      label: 'Hesap Durumu',
+      defaultValue: 'active',
+      options: [
+        { label: 'Aktif', value: 'active' },
+        { label: 'Anonimleştirildi (Silindi)', value: 'anonymized' },
+      ],
+      admin: {
+        position: 'sidebar',
+      }
+    },
+    {
+      name: 'anonymizedAt',
+      type: 'date',
+      label: 'Anonimleştirilme Tarihi',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      }
+    },
   ],
 }
