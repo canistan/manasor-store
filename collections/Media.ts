@@ -22,33 +22,6 @@ export const Media: CollectionConfig = {
   upload: {
     staticDir: path.resolve(process.cwd(), 'public/media'),
     mimeTypes: ['image/*', 'application/pdf'],
-    formatOptions: {
-      format: 'webp',
-      options: { quality: 85 }
-    },
-    imageSizes: [
-      {
-        name: 'thumbnail',
-        width: 400,
-        height: 400,
-        position: 'centre',
-        formatOptions: { format: 'webp', options: { quality: 80 } },
-      },
-      {
-        name: 'card',
-        width: 768,
-        height: 1024,
-        position: 'centre',
-        formatOptions: { format: 'webp', options: { quality: 80 } },
-      },
-      {
-        name: 'hero',
-        width: 1920,
-        height: 1080,
-        position: 'centre',
-        formatOptions: { format: 'webp', options: { quality: 80 } },
-      },
-    ],
   },
   fields: [
     {
