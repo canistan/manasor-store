@@ -27,7 +27,7 @@ export default async function ContactPage() {
       <section className="relative w-full h-[50vh] min-h-[300px] flex items-center justify-center text-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src={hero?.backgroundImage?.url || "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=2000&auto=format&fit=crop"}
+            src={hero?.backgroundImage?.url || "/images/hero-bg.jpg"}
             alt="ZeytinCo İletişim"
             fill
             className="object-cover"

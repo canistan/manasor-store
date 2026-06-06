@@ -55,7 +55,7 @@ export default async function Home() {
       <section className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center text-center">
         <div className="absolute inset-0 z-0">
           <Image
-            src={homePageData?.hero?.backgroundImage?.url || "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=2000&auto=format&fit=crop"}
+            src={homePageData?.hero?.backgroundImage?.url || "/images/hero-bg.jpg"}
             alt="Zeytin Bahçesi"
             fill
             className="object-cover"
@@ -143,7 +143,7 @@ export default async function Home() {
               homePageData.categories.map((cat: any, index: number) => (
                 <Link key={index} href={cat.link || "/products"} className="group flex flex-col items-center text-center">
                   <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
-                    <Image src={cat.image?.url || "https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=500&q=80"} alt={cat.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <Image src={cat.image?.url || "/images/category-oil.jpg"} alt={cat.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                   </div>
                   <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">{cat.title}</h3>
                 </Link>
@@ -152,13 +152,13 @@ export default async function Home() {
               <>
                 <Link href="/products" className="group flex flex-col items-center text-center">
                   <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
-                    <Image src="https://images.unsplash.com/photo-1610547939489-73202bc6afda?w=500&q=80" alt="Ahşap masada dalıyla birlikte organik natürel sızma zeytinyağı" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <Image src="/images/category-oil.jpg" alt="Ahşap masada dalıyla birlikte organik natürel sızma zeytinyağı" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                   </div>
                   <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Zeytinyağları</h3>
                 </Link>
                 <Link href="/products" className="group flex flex-col items-center text-center">
                   <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg group-hover:border-gold-400 transition-colors bg-white">
-                    <Image src="https://images.unsplash.com/photo-1591122523233-22037c1dec9f?w=500&q=80" alt="Doğal ahşap tabakta taze siyah ve yeşil zeytin çeşitleri" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <Image src="/images/category-olives.jpg" alt="Doğal ahşap tabakta taze siyah ve yeşil zeytin çeşitleri" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                   </div>
                   <h3 className="text-lg font-medium text-luxury-charcoal group-hover:text-gold-600 transition-colors">Zeytin Çeşitleri</h3>
                 </Link>

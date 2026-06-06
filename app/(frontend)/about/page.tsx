@@ -31,7 +31,7 @@ export default async function AboutPage() {
       <section className="relative w-full h-[60vh] min-h-[400px] flex items-center justify-center text-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src={hero?.backgroundImage?.url || "https://images.unsplash.com/photo-1591122523233-22037c1dec9f?q=80&w=2000&auto=format&fit=crop"}
+            src={hero?.backgroundImage?.url || "/images/category-olives.jpg"}
             alt="Gemlik Zeytin Bahçeleri"
             fill
             className="object-cover"
@@ -58,7 +58,7 @@ export default async function AboutPage() {
             <div className="lg:w-1/2 relative">
               <div className="relative aspect-[4/5] w-full rounded-2xl overflow-hidden shadow-2xl">
                 <Image
-                  src={story?.image?.url || "https://images.unsplash.com/photo-1501959915551-4e8d30928317?q=80&w=1000&auto=format&fit=crop"}
+                  src={story?.image?.url || "/images/story-bg.jpg"}
                   alt="Zeytin Hasadı"
                   fill
                   className="object-cover hover:scale-105 transition-transform duration-1000"
