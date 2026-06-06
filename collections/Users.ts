@@ -4,6 +4,8 @@ import { forgotPasswordTemplate, welcomeEmailTemplate } from '../lib/email-templ
 export const Users: CollectionConfig = {
   slug: 'users',
   auth: {
+    maxLoginAttempts: 5,
+    lockTime: 900000, // 15 dakika (milisaniye)
     forgotPassword: {
       generateEmailHTML: (args) => {
         const token = args?.token;

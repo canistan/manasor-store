@@ -8,6 +8,8 @@ export const Customers: CollectionConfig = {
     plural: 'Müşteriler',
   },
   auth: {
+    maxLoginAttempts: 5,
+    lockTime: 600000, // 10 dakika
     forgotPassword: {
       generateEmailHTML: (args) => {
         const token = args?.token;
