@@ -140,3 +140,47 @@ export const adminLowStockTemplate = (productName: string, variantName: string, 
     </div>
   `)
 }
+
+export const orderShippedTemplate = (orderId: string, trackingNumber: string, trackingUrl: string, customerName: string = 'Değerli Müşterimiz') => {
+  return baseEmailLayout(`
+    <h2>Siparişiniz Kargoya Verildi! 📦</h2>
+    <p>Merhaba ${customerName},</p>
+    <p><strong>#${orderId}</strong> numaralı siparişiniz yola çıktı. Ürünlerinize en kısa sürede kavuşmanızı diliyoruz.</p>
+    <p><strong>Kargo Takip Numaranız:</strong> ${trackingNumber}</p>
+    <div style="text-align: center;">
+      <a href="${trackingUrl}" class="btn">Kargomu Takip Et</a>
+    </div>
+  `)
+}
+
+export const rmaApprovedTemplate = (orderId: string, adminNote: string, customerName: string = 'Değerli Müşterimiz') => {
+  return baseEmailLayout(`
+    <h2>İade/Değişim Talebiniz Onaylandı ✅</h2>
+    <p>Merhaba ${customerName},</p>
+    <p><strong>#${orderId}</strong> numaralı siparişinize ait iade/hasar bildiriminiz ekibimiz tarafından incelenmiş ve <strong>onaylanmıştır</strong>.</p>
+    ${adminNote ? `<p><strong>Yönetici Notu:</strong> ${adminNote}</p>` : ''}
+    <p>Sürecin devamı için müşteri hizmetlerimiz veya sistem üzerinden bilgilendirilmeye devam edeceksiniz.</p>
+  `)
+}
+
+export const rmaRejectedTemplate = (orderId: string, adminNote: string, customerName: string = 'Değerli Müşterimiz') => {
+  return baseEmailLayout(`
+    <h2>İade/Değişim Talebiniz Hakkında ❌</h2>
+    <p>Merhaba ${customerName},</p>
+    <p><strong>#${orderId}</strong> numaralı siparişinize ait iade/hasar bildiriminiz ekibimiz tarafından incelenmiş, ancak maalesef <strong>reddedilmiştir</strong>.</p>
+    ${adminNote ? `<p><strong>Açıklama:</strong> ${adminNote}</p>` : ''}
+    <p>Detaylı bilgi için iletişim sayfamızdan bize ulaşabilirsiniz.</p>
+  `)
+}
+
+export const rateUsTemplate = (orderId: string, customerName: string = 'Değerli Müşterimiz') => {
+  return baseEmailLayout(`
+    <h2>Siparişiniz Teslim Edildi! Bizi Değerlendirin ⭐️</h2>
+    <p>Merhaba ${customerName},</p>
+    <p><strong>#${orderId}</strong> numaralı siparişinizin başarıyla teslim edildiğini gördük. Manasor ürünlerini tercih ettiğiniz için teşekkür ederiz.</p>
+    <p>Deneyiminizi bizimle paylaşarak kendimizi geliştirmemize yardımcı olabilir veya diğer müşterilerimize rehber olabilirsiniz.</p>
+    <div style="text-align: center;">
+      <a href="${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/dashboard" class="btn">Siparişimi Değerlendir</a>
+    </div>
+  `)
+}

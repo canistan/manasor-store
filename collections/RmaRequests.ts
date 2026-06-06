@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { rmaApprovedTemplate, rmaRejectedTemplate } from '../lib/email-templates'
 
 export const RmaRequests: CollectionConfig = {
   slug: 'rma_requests',
@@ -26,6 +27,47 @@ export const RmaRequests: CollectionConfig = {
     create: ({ req: { user } }) => !!user, // Müşteriler talep oluşturabilir
     update: ({ req: { user } }) => user?.role === 'admin', // Sadece admin güncelleyebilir (onay/red)
     delete: ({ req: { user } }) => user?.role === 'admin',
+  },
+  hooks: {
+    afterChange: [
+      async ({ doc, previousDoc, operation, req }) => {
+        if (operation === 'update' && doc.admin_status !== previousDoc?.admin_status) {
+          try {
+            // Fetch the customer to get the email
+            const customer = await req.payload.findByID({
+              collection: 'customers',
+              id: typeof doc.customer === 'object' ? doc.customer.id : doc.customer,
+            });
+
+            // Fetch the order to get the order number
+            const order = await req.payload.findByID({
+              collection: 'orders',
+              id: typeof doc.order === 'object' ? doc.order.id : doc.order,
+            });
+
+            const customerName = customer.name || customer.email;
+            const orderNumber = order.orderNumber;
+            const adminNote = doc.admin_notes || '';
+
+            if (doc.admin_status === 'approved_refund') {
+              await req.payload.sendEmail({
+                to: customer.email,
+                subject: `İade/Değişim Talebiniz Onaylandı (#${orderNumber})`,
+                html: rmaApprovedTemplate(orderNumber, adminNote, customerName)
+              });
+            } else if (doc.admin_status === 'rejected') {
+              await req.payload.sendEmail({
+                to: customer.email,
+                subject: `İade/Değişim Talebiniz Reddedildi (#${orderNumber})`,
+                html: rmaRejectedTemplate(orderNumber, adminNote, customerName)
+              });
+            }
+          } catch (err) {
+            req.payload.logger.error(`RMA status email failed to send: ${err}`);
+          }
+        }
+      }
+    ]
   },
   fields: [
     {

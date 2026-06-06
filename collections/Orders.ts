@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload'
-import { adminNewOrderTemplate, adminLowStockTemplate } from '../lib/email-templates'
+import { adminNewOrderTemplate, adminLowStockTemplate, orderSuccessTemplate, orderShippedTemplate, rateUsTemplate } from '../lib/email-templates'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
@@ -90,9 +90,18 @@ export const Orders: CollectionConfig = {
               }
             }
 
-            // Yeni Sipariş Yönetici Bildirimi (Sadece ödendi statüsüne geçtiğinde)
+            // Yeni Sipariş Yönetici ve Müşteri Bildirimi (Sadece ödendi statüsüne geçtiğinde)
             try {
               const customerName = doc.customer?.name || (doc.firstName ? `${doc.firstName} ${doc.lastName}` : 'Misafir Müşteri');
+              
+              // Müşteriye Sipariş Alındı Maili
+              await req.payload.sendEmail({
+                to: doc.email,
+                subject: `Siparişiniz Başarıyla Alındı (#${doc.orderNumber}) - Manasor`,
+                html: orderSuccessTemplate(doc.orderNumber, doc.totalPrice, customerName)
+              }).catch(e => console.error("Customer new order email error:", e));
+
+              // Yöneticilere Bildirim
               const admins = await req.payload.find({ collection: 'users', limit: 100 });
               for (const admin of admins.docs) {
                 await req.payload.sendEmail({
@@ -102,7 +111,7 @@ export const Orders: CollectionConfig = {
                 }).catch(e => console.error("Admin new order email error:", e));
               }
             } catch (err) {
-              console.error('Yeni sipariş admin email hatası:', err);
+              console.error('Yeni sipariş email hatası:', err);
             }
 
             // Kupon Kullanım Sayısını (usedCount) Artırma
@@ -156,9 +165,19 @@ export const Orders: CollectionConfig = {
             }
           }
           
-          // Kargo Takip Numarası Eklendiğinde Otomatik Mail Tetikleyici (Simülasyon)
+          // Kargo Takip Numarası Eklendiğinde Otomatik Mail Tetikleyici
           if (doc.trackingNumber && doc.trackingNumber !== previousDoc?.trackingNumber) {
-            req.payload.logger.info(`[MAIL SİMÜLASYONU] ${doc.email} adresine "Siparişiniz Kargoya Verildi" maili gönderildi. Takip No: ${doc.trackingNumber}`);
+            try {
+              const customerName = doc.customer?.name || (doc.firstName ? `${doc.firstName} ${doc.lastName}` : 'Değerli Müşterimiz');
+              await req.payload.sendEmail({
+                to: doc.email,
+                subject: `Siparişiniz Kargoya Verildi! 📦 (#${doc.orderNumber})`,
+                html: orderShippedTemplate(doc.orderNumber, doc.trackingNumber, doc.trackingUrl || '', customerName)
+              });
+              req.payload.logger.info(`[MAIL BAŞARILI] ${doc.email} adresine "Siparişiniz Kargoya Verildi" maili gönderildi.`);
+            } catch (err) {
+              req.payload.logger.error(`Sipariş kargolandı mail hatası: ${err}`);
+            }
             
             // Eğer sipariş durumu henüz 'shipped' yapılmadıysa otomatik yapalım
             if (doc.status !== 'shipped' && doc.status !== 'delivered') {
@@ -171,6 +190,21 @@ export const Orders: CollectionConfig = {
                } catch (err) {
                  req.payload.logger.error(`Sipariş durumu shipped yapılamadı: ${err}`);
                }
+            }
+          }
+
+          // Teslim Edildiğinde "Bizi Değerlendirin" Maili
+          if (doc.status === 'delivered' && previousDoc?.status !== 'delivered') {
+            try {
+              const customerName = doc.customer?.name || (doc.firstName ? `${doc.firstName} ${doc.lastName}` : 'Değerli Müşterimiz');
+              await req.payload.sendEmail({
+                to: doc.email,
+                subject: `Siparişiniz Teslim Edildi! ⭐️ (#${doc.orderNumber})`,
+                html: rateUsTemplate(doc.orderNumber, customerName)
+              });
+              req.payload.logger.info(`[MAIL BAŞARILI] ${doc.email} adresine "Bizi Değerlendirin" maili gönderildi.`);
+            } catch (err) {
+              req.payload.logger.error(`Değerlendirme maili gönderme hatası: ${err}`);
             }
           }
         }
