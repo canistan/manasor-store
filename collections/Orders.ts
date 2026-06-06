@@ -212,6 +212,11 @@ export const Orders: CollectionConfig = {
         { label: 'İptal / İade Edildi', value: 'cancelled' },
       ],
       required: true,
+      admin: {
+        components: {
+          Cell: '@/components/OrderStatusCell',
+        }
+      }
     },
     {
       name: 'paymentReference',

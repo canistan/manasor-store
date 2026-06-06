@@ -35,6 +35,11 @@ export default buildConfig({
         Logo: '@/components/AdminLogo',
         Icon: '@/components/AdminLogo',
       },
+      views: {
+        Dashboard: {
+          Component: '@/components/AdminDashboard',
+        },
+      },
     },
     avatar: 'default',
   },
