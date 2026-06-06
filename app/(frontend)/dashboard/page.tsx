@@ -19,6 +19,13 @@ export default function DashboardPage() {
   const [addressForm, setAddressForm] = useState<any>({ invoiceType: 'bireysel' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  
+  const [confirmModal, setConfirmModal] = useState<{isOpen: boolean, orderId: string, action: 'cancel'|'return'|null, loading: boolean}>({
+    isOpen: false, orderId: '', action: null, loading: false
+  });
+  const [successModal, setSuccessModal] = useState<{isOpen: boolean, message: string}>({
+    isOpen: false, message: ''
+  });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -106,13 +113,20 @@ export default function DashboardPage() {
     }
   };
 
-  const handleOrderAction = async (orderId: string, action: 'cancel' | 'return') => {
-    const isCancel = action === 'cancel';
-    const message = isCancel 
-      ? 'Siparişinizi iptal etmek istediğinize emin misiniz? (Bu işlem yönetici onayından sonra iade ile tamamlanacaktır)'
-      : 'Bu sipariş için iade talebi oluşturmak istediğinize emin misiniz?';
-      
-    if (!confirm(message)) return;
+  const handleOrderAction = (orderId: string, action: 'cancel' | 'return') => {
+    setConfirmModal({
+      isOpen: true,
+      orderId,
+      action,
+      loading: false
+    });
+  };
+
+  const confirmOrderAction = async () => {
+    const { orderId, action } = confirmModal;
+    if (!orderId || !action) return;
+
+    setConfirmModal(prev => ({ ...prev, loading: true }));
 
     try {
       const res = await fetch('/api/orders/action', {
@@ -122,17 +136,24 @@ export default function DashboardPage() {
       });
 
       if (res.ok) {
-        alert(isCancel ? 'İptal talebiniz alınmıştır.' : 'İade talebiniz alınmıştır.');
+        const isCancel = action === 'cancel';
+        setConfirmModal({ isOpen: false, orderId: '', action: null, loading: false });
+        setSuccessModal({
+          isOpen: true,
+          message: isCancel ? 'İptal talebiniz başarıyla alınmıştır. İnceleme sonrası iade işleminiz gerçekleştirilecektir.' : 'İade talebiniz başarıyla alınmıştır. Müşteri hizmetlerimiz sizinle iletişime geçecektir.'
+        });
+        
         router.refresh();
-        // Update local state to reflect UI immediately
         setOrders(orders.map(o => o.id === orderId ? { ...o, status: isCancel ? 'cancel_requested' : 'return_requested' } : o));
       } else {
         const data = await res.json();
         alert(data.error || 'Bir hata oluştu.');
+        setConfirmModal(prev => ({ ...prev, loading: false }));
       }
     } catch (err) {
       console.error(err);
       alert('Sistemde geçici bir hata oluştu.');
+      setConfirmModal(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -226,7 +247,7 @@ export default function DashboardPage() {
                     <div className="border-t border-olive-100 bg-olive-50/30 p-6">
                       
                       {/* Tracker Path */}
-                      {order.status !== 'cancelled' && (
+                      {['pending', 'paid', 'shipped', 'delivered'].includes(order.status) ? (
                         <div className="mb-8 hidden sm:block">
                           <div className="relative">
                             <div className="overflow-hidden h-2 mb-4 text-xs flex rounded-full bg-olive-200 relative z-0">
@@ -264,6 +285,20 @@ export default function DashboardPage() {
                                 <span>Teslim Edildi</span>
                               </div>
                             </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mb-8">
+                          <div className={`p-6 rounded-xl border ${order.status === 'cancelled' ? 'bg-red-50 border-red-100 text-red-800' : 'bg-orange-50 border-orange-100 text-orange-800'}`}>
+                            <h4 className="font-serif text-lg mb-2 flex items-center">
+                              {order.status === 'cancel_requested' ? 'Sipariş İptal Talebi Alındı' : 
+                               order.status === 'return_requested' ? 'Sipariş İade Talebi Alındı' : 'Sipariş İptal Edildi'}
+                            </h4>
+                            <p className="text-sm">
+                              {order.status === 'cancel_requested' || order.status === 'return_requested' 
+                                ? 'Talebiniz ekibimize ulaştı ve inceleniyor. Müşteri temsilcimiz en kısa sürede sizinle iletişime geçecek veya ödeme iadeniz Iyzico üzerinden yapılacaktır.'
+                                : 'Bu siparişiniz iptal edilmiş olup ilgili tutar kartınıza iade edilmiştir. İadenin kartınıza yansıması bankanıza bağlı olarak 1-3 iş günü sürebilir.'}
+                            </p>
                           </div>
                         </div>
                       )}
@@ -336,11 +371,6 @@ export default function DashboardPage() {
                           >
                             İade Talebi Oluştur
                           </button>
-                        )}
-                        {(order.status === 'cancel_requested' || order.status === 'return_requested') && (
-                          <div className="px-6 py-2 bg-orange-50 text-orange-700 rounded-lg font-medium text-sm flex items-center">
-                            Talebiniz inceleniyor. Müşteri temsilcimiz sizinle iletişime geçecektir.
-                          </div>
                         )}
                       </div>
                       
@@ -614,6 +644,61 @@ export default function DashboardPage() {
                 {isDeleting ? 'Siliniyor...' : 'Evet, Hesabımı Sil'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sipariş Aksiyon (İptal/İade) Onay Modalı */}
+      {confirmModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => !confirmModal.loading && setConfirmModal({ ...confirmModal, isOpen: false })}></div>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative z-10 animate-fade-in-up">
+            <h3 className={`text-xl font-serif mb-4 ${confirmModal.action === 'cancel' ? 'text-red-600' : 'text-orange-600'}`}>
+              {confirmModal.action === 'cancel' ? 'Siparişi İptal Et' : 'İade Talebi Oluştur'}
+            </h3>
+            <p className="text-olive-700 mb-6 text-sm leading-relaxed">
+              {confirmModal.action === 'cancel' 
+                ? 'Siparişinizi iptal etmek istediğinize emin misiniz? Müşteri hizmetlerimiz iptal işleminizi onayladıktan sonra Iyzico üzerinden para iadeniz yapılacaktır.' 
+                : 'Bu siparişiniz için iade talebi oluşturmak istediğinize emin misiniz? Ekiplerimiz iade kargo kodu ve süreci için sizinle iletişime geçecektir.'}
+            </p>
+            <div className="flex gap-4 justify-end">
+              <button 
+                onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+                disabled={confirmModal.loading}
+                className="px-5 py-2.5 rounded-xl font-medium text-olive-600 hover:bg-olive-50 transition-colors disabled:opacity-50"
+              >
+                Vazgeç
+              </button>
+              <button 
+                onClick={confirmOrderAction}
+                disabled={confirmModal.loading}
+                className={`px-5 py-2.5 rounded-xl font-medium text-white transition-colors disabled:opacity-50 flex items-center ${confirmModal.action === 'cancel' ? 'bg-red-600 hover:bg-red-700' : 'bg-orange-500 hover:bg-orange-600'}`}
+              >
+                {confirmModal.loading ? 'İşleniyor...' : 'Evet, Onaylıyorum'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Başarı Modalı */}
+      {successModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSuccessModal({ isOpen: false, message: '' })}></div>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 relative z-10 animate-fade-in-up text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-xl font-serif text-luxury-charcoal mb-2">Talebiniz Alındı</h3>
+            <p className="text-olive-600 mb-8 text-sm leading-relaxed">
+              {successModal.message}
+            </p>
+            <button 
+              onClick={() => setSuccessModal({ isOpen: false, message: '' })}
+              className="w-full py-3 rounded-xl font-medium bg-olive-900 text-white hover:bg-gold-500 transition-colors"
+            >
+              Tamam
+            </button>
           </div>
         </div>
       )}
